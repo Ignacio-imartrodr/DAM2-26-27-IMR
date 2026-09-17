@@ -1,0 +1,60 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "GeneradorHilos",
+            "request": "launch",
+            "mainClass": "PSER.GeneradorHilos",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "Hilo",
+            "request": "launch",
+            "mainClass": "PSER.Hilo",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "factorial",
+            "request": "launch",
+            "mainClass": "Otros.factorial",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "recursivo",
+            "request": "launch",
+            "mainClass": "Otros.recursivo",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "Ej2",
+            "request": "launch",
+            "mainClass": "UD1.Ej2",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "Ej3",
+            "request": "launch",
+            "mainClass": "UD1.Ej3",
+            "projectName": "DAM2-AD-26-27-IMR_d585af0e"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "args": [
+                "src",
+                "README.md"
+            ]
+        }
+    ]
+}
