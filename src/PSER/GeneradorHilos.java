@@ -9,22 +9,22 @@ public class GeneradorHilos {
         }
     }
 }
+/*
+class Hilo extends Thread {
+    public Hilo(String nombre) {
+        super(nombre);
+    }
 
-     class Hilo extends Thread {
-        public Hilo(String nombre) {
-            super(nombre);
-        }
-
-        @Override 
-        public void run() {
-            final int CANT_IT = 10;
-            for (int i = 0; i < CANT_IT; i++) {
-                System.out.println(getName() + " > " + i);
-                /*try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                }*/
-            }
+    @Override 
+    public void run() {
+        final int CANT_IT = 10;
+        for (int i = 0; i < CANT_IT; i++) {
+            System.out.println(getName() + " > " + i);
+            /*try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+            }*//*
         }
     }
+}*/
 
