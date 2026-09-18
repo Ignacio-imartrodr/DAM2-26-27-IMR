@@ -1,30 +1,43 @@
 package ADAT.UD1;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.JFileChooser;
 
 public class EjemploCopiaArchivos {
 
+    public static void main(String[] args) {
+        File origen = null;
+        File destino = null;
 
-   public static void main(String[] args) throws IOException {
-       FileInputStream in = null;
-       FileOutputStream out = null;
-       try {
-           in = new FileInputStream("origen.txt");
-           out = new FileOutputStream("destino.txt");
-           int c;
-           while ((c = in.read()) != -1) {
-               out.write(c);
-           }
-       } finally { // Hay que cerrar el flujo en cualquier condición.
-           if (in != null) {
-               in.close();
-           }
-           if (out != null) {
-               out.close();
-           }
-       }
-   }
+        JFileChooser chooser = new JFileChooser(".");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            origen = chooser.getSelectedFile();
+        }
+
+        JFileChooser chooser2 = new JFileChooser(".");
+        chooser2.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        if (chooser2.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            destino = chooser2.getSelectedFile();
+        }
+
+        try (var in = new BufferedInputStream(new FileInputStream(origen));
+                var out = new BufferedOutputStream(new FileOutputStream(destino));) {
+            int c;
+            while ((c = in.read()) != -1) {
+                out.write(c);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Fichero no encontrado");
+        } catch (IOException e) {
+            System.out.println("Error de E/S");
+        }
+    }
 }

@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ParticipacionEnClase",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.ParticipacionEnClase",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "pruebarArchivosTxt",
+            "request": "launch",
+            "mainClass": "Otros.pruebarArchivosTxt",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "GeneradorHilos",
             "request": "launch",
             "mainClass": "PSER.GeneradorHilos",
