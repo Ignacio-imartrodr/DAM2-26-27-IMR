@@ -14,12 +14,12 @@ public class EjemploFlujoSerializado {
         Persona persona2 = new Persona("Marta", LocalDate.of(2001, 2, 2), "12345");
 
         // Escribir objetos serializados
-        /*try (var out = new ObjectOutputStream(new FileOutputStream(RUTA))) {
+        try (var out = new ObjectOutputStream(new FileOutputStream(RUTA))) {
             out.writeObject(persona1);
             out.writeObject(persona2);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
         // Leer Objetos serializados
         try (var in = new ObjectInputStream(new FileInputStream(RUTA))) {
