@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AnalisisTexto",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.Texto.AnalisisTexto",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "CifradoBinario",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.CifradoBinario",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "EjemploFlujoSerializado",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.Serialización.EjemploFlujoSerializado",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "FirmasHexadecimales",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.FirmasHexadecimales",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "ParticipacionEnClase",
             "request": "launch",
             "mainClass": "ADAT.UD1.ParticipacionEnClase",
