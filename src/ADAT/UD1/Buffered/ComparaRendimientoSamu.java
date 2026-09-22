@@ -1,9 +1,9 @@
-package ADAT.ud1.FlujosBufer;
+package ADAT.UD1.Buffered;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
-public class ComparaRendimiento {
+public class ComparaRendimientoSamu {
     public static void main(String[] args) {
         int numeroBytes = 1000000;
 

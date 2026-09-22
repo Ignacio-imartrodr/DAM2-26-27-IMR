@@ -1,4 +1,4 @@
-package ADAT.UD1;
+package ADAT.UD1.Buffered;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

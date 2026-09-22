@@ -1,0 +1,7 @@
+Cant: 1000000 bytes 
+FileOutput time: 2026788500
+BufferedOutput time: 40582200
+------------------------
+Cant: 20 bytes 
+FileOutput time: 117200
+BufferedOutput time: 49300

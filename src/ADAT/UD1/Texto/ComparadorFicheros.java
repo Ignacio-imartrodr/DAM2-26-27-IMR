@@ -12,21 +12,23 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Crea un programa que solicite un fichero de texto y cuente el número de
- * caracteres, de vocales, de consonantes, de dígitos y de espacios en blanco.
+ * Crea un programa que compare dos ficheros de texto e indique si son idénticos
+ * y, en
+ * caso de no serlo, en que línea y columna tienen el primer caracter distinto
  * 
  * @author Ignacio MR
  */
-public class AnalisisTexto {
+public class ComparadorFicheros {
     private final static String RUTA_A_ARCHIVOS = "src\\ADAT\\FicherosDatos";
+
     private static File selectorArchivo(boolean crear, boolean soloTxt) {
         JFileChooser chooser = new JFileChooser(RUTA_A_ARCHIVOS);
         if (soloTxt) {
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setFileFilter(new FileFilter() { //Creo un filtro para que solo acepte archivos de texto
+            chooser.setFileFilter(new FileFilter() { // Creo un filtro para que solo acepte archivos de texto
                 @Override
                 public boolean accept(File f) {
-                    String name = f.getName(); 
+                    String name = f.getName();
                     int posExt = name.lastIndexOf(".");
                     if (posExt != -1) {
                         name = name.substring(posExt);
@@ -40,8 +42,7 @@ public class AnalisisTexto {
                 public String getDescription() {
                     return "TEXT files";
                 }
-                
-                
+
             });
         }
         int selector = crear ? chooser.showSaveDialog(null) : chooser.showOpenDialog(null);
@@ -93,51 +94,74 @@ public class AnalisisTexto {
         }
         return error;
     }
-    public static void main(String[] args) {
-        File txtFile = selectorArchivo(false, true);
-        if (txtFile != null) {
-            System.out.println("Archivo seleccionado: " + txtFile.getAbsolutePath());
-            List<String> texto = leerTxt(txtFile.getAbsolutePath());
-            if (texto.size() <= 0){
-                System.out.println("Fichero de texto vacío");
-            } else if(texto.getFirst().equals("-1")) {
-                for (int i = 1; i < texto.size(); i++) {
-                    System.out.println(texto.get(i));
-                }
-            } else {
-                int nChar = 0;
-                int nVocal = 0;
-                int nCons = 0;
-                int nDig = 0;
-                int nBlank = 0;
-                for (String string : texto) {
-                    nChar += string.length();
-                    for (int i = 0; i < string.length(); i++) {
-                        char letra = string.charAt(i);
-                        switch (letra) {
-                            case 'a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú':
-                                nVocal++;
-                                break;
-                            case Character.SPACE_SEPARATOR, '\s':
-                                nBlank++;
-                                break;
-                            default:
-                                if (Character.isDigit(letra)) {
-                                    nDig++;
-                                } else if (Character.isLetter(letra)) {
-                                    nCons++;
-                                }
-                                break;
-                        }
-                    }
-                }
-                System.out.println("El archivo \"" + txtFile.getName() + "\" contiene:");
-                System.out.println(nChar + " carácteres");
-                System.out.println(nVocal + " vocales");
-                System.out.println(nCons + " consonantes");
-                System.out.println(nDig + " dígitos");
-                System.out.println(nBlank + " espacios blancos");
+
+    private static int compararLineas(String l1, String l2) {
+        int length1 = l1.length();
+        int length2 = l2.length();
+        int smallLength = length1 < length2 ? length1 : length2;
+        for (int i = 0; i < smallLength; i++) {
+            char c1 = l1.charAt(i);
+            char c2 = l2.charAt(i);
+            if (Character.compare(c1, c2) != 0) {
+                return i;
             }
         }
-    }    
+        if (length1 != length2) {
+            return smallLength;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        File txtFile1 = selectorArchivo(false, true);
+        List<String> texto1;
+        if (txtFile1 != null) {
+            System.out.println("Archivo seleccionado: " + txtFile1.getAbsolutePath());
+            texto1 = leerTxt(txtFile1.getAbsolutePath());
+            File txtFile2 = selectorArchivo(false, true);
+            List<String> texto2;
+            if (txtFile2 != null) {
+                System.out.println("Archivo seleccionado: " + txtFile2.getAbsolutePath());
+                texto2 = leerTxt(txtFile2.getAbsolutePath());
+                boolean diferecia = false;
+                int nLineaDif = -1;
+                int posDif = -1;
+                int sizeTxt1 = texto1.size();
+                int sizeTxt2 = texto2.size();
+                if (sizeTxt1 == sizeTxt2) {
+                    for (int i = 0; !diferecia && i < sizeTxt1; i++) {
+                        String linea1 = texto1.get(i);
+                        String linea2 = texto2.get(i);
+                        posDif = compararLineas(linea1, linea2);
+                        if (posDif != -1) {
+                            nLineaDif = i;
+                            diferecia = true;
+                        }
+                    }
+                } else {
+                    nLineaDif = (sizeTxt1 > sizeTxt2 ? sizeTxt2 : sizeTxt1);
+                    for (int i = 0; i < nLineaDif; i++) {
+                        String linea1 = texto1.get(i);
+                        String linea2 = texto2.get(i);
+                        posDif = compararLineas(linea1, linea2);
+                        if (posDif != -1) {
+                            nLineaDif = i;
+                            diferecia = true;
+                        }
+                    }
+                    if (!diferecia) {
+                        diferecia = true;
+                        nLineaDif++;
+                        posDif = 0;
+                    }
+                }
+
+                if (diferecia) {
+                    System.out.println("Los documentos son diferentes en el carácter " + posDif + " de la línea " + nLineaDif + ".");
+                } else {
+                    System.out.println("Los documentos son iguales.");
+                }
+            }
+        }
+    }
 }

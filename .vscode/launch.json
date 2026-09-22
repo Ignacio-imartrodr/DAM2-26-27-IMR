@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ComparaRendimiento",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.Buffered.ComparaRendimiento",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "LineasNumeradas",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.Texto.LineasNumeradas",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "ComparadorFicheros",
+            "request": "launch",
+            "mainClass": "ADAT.UD1.Texto.ComparadorFicheros",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "GeneradorHilos",
+            "request": "launch",
+            "mainClass": "PSER.GeneradorHilos",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AnalisisTexto",
             "request": "launch",
             "mainClass": "ADAT.UD1.Texto.AnalisisTexto",

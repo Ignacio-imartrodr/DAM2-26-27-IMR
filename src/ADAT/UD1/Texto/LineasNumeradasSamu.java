@@ -1,11 +1,11 @@
-package ADAT.ud1.flujosTexto;
+package ADAT.UD1.Texto;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
 
-public class LineasNumeradas {
+public class LineasNumeradasSamu {
     public static void main(String[] args) {
         File origen = new File("DATOS\\alumnos.txt");
         File destino = new File(

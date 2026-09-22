@@ -1,9 +1,11 @@
 package ADAT.UD1.Texto;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,21 +14,22 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Crea un programa que solicite un fichero de texto y cuente el número de
- * caracteres, de vocales, de consonantes, de dígitos y de espacios en blanco.
+ * Crea un programa que lea un fichero de texto y genere una copia en la que
+ * cada línea vaya precedida por el número de línea (“1: “, “2: “, 3: “, etc.)
  * 
  * @author Ignacio MR
  */
-public class AnalisisTexto {
+public class LineasNumeradas {
     private final static String RUTA_A_ARCHIVOS = "src\\ADAT\\FicherosDatos";
+
     private static File selectorArchivo(boolean crear, boolean soloTxt) {
         JFileChooser chooser = new JFileChooser(RUTA_A_ARCHIVOS);
         if (soloTxt) {
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setFileFilter(new FileFilter() { //Creo un filtro para que solo acepte archivos de texto
+            chooser.setFileFilter(new FileFilter() { // Creo un filtro para que solo acepte archivos de texto
                 @Override
                 public boolean accept(File f) {
-                    String name = f.getName(); 
+                    String name = f.getName();
                     int posExt = name.lastIndexOf(".");
                     if (posExt != -1) {
                         name = name.substring(posExt);
@@ -40,8 +43,7 @@ public class AnalisisTexto {
                 public String getDescription() {
                     return "TEXT files";
                 }
-                
-                
+
             });
         }
         int selector = crear ? chooser.showSaveDialog(null) : chooser.showOpenDialog(null);
@@ -94,50 +96,26 @@ public class AnalisisTexto {
         return error;
     }
     public static void main(String[] args) {
-        File txtFile = selectorArchivo(false, true);
-        if (txtFile != null) {
-            System.out.println("Archivo seleccionado: " + txtFile.getAbsolutePath());
-            List<String> texto = leerTxt(txtFile.getAbsolutePath());
-            if (texto.size() <= 0){
-                System.out.println("Fichero de texto vacío");
-            } else if(texto.getFirst().equals("-1")) {
-                for (int i = 1; i < texto.size(); i++) {
-                    System.out.println(texto.get(i));
+        File fileIn = selectorArchivo(false, true);
+        System.out.println("Archivo seleccionado: " + fileIn.getAbsolutePath());
+        String fileName = fileIn.getName();
+        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        String rutaOut = fileIn.getParent() + "\\" + fileName.substring(0, (fileName.length() - fileExtension.length())) + "Numerado" + fileExtension;
+        File fileOut = new File(rutaOut);
+        try (var out = new BufferedWriter(new FileWriter(fileOut));) {
+            List<String> txtOg = leerTxt(fileIn.getAbsolutePath());
+            int sizeTxt = txtOg.size();
+            for (int i = 0; i < sizeTxt; i++) {
+                out.write(i + " :" + txtOg.get(i));
+                if (i < sizeTxt -1) {
+                    out.write("\n");
                 }
-            } else {
-                int nChar = 0;
-                int nVocal = 0;
-                int nCons = 0;
-                int nDig = 0;
-                int nBlank = 0;
-                for (String string : texto) {
-                    nChar += string.length();
-                    for (int i = 0; i < string.length(); i++) {
-                        char letra = string.charAt(i);
-                        switch (letra) {
-                            case 'a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú':
-                                nVocal++;
-                                break;
-                            case Character.SPACE_SEPARATOR, '\s':
-                                nBlank++;
-                                break;
-                            default:
-                                if (Character.isDigit(letra)) {
-                                    nDig++;
-                                } else if (Character.isLetter(letra)) {
-                                    nCons++;
-                                }
-                                break;
-                        }
-                    }
-                }
-                System.out.println("El archivo \"" + txtFile.getName() + "\" contiene:");
-                System.out.println(nChar + " carácteres");
-                System.out.println(nVocal + " vocales");
-                System.out.println(nCons + " consonantes");
-                System.out.println(nDig + " dígitos");
-                System.out.println(nBlank + " espacios blancos");
             }
-        }
-    }    
+            out.flush();
+        } catch (FileNotFoundException e) {
+            System.out.println("Fichero no encontrado");
+        } catch (IOException IOE) {
+            System.out.println("Error de E/S");
+        } catch (Exception ex){}
+    }
 }

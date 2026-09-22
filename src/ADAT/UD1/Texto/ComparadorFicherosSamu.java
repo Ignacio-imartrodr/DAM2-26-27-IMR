@@ -1,10 +1,10 @@
-package ADAT.ud1.flujosTexto;
+package ADAT.UD1.Texto;
 
 import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
-public class ComparadorFicheros {
+public class ComparadorFicherosSamu {
     public static void main(String[] args) {
         File origen1 = new File("DATOS\\alumnos.txt");
         File origen2 = new File("DATOS\\alumnos copy.txt");
