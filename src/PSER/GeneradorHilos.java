@@ -1,15 +1,18 @@
 package PSER;
 
 public class GeneradorHilos {
-    public static void main(String[] args) {
+    public void main(String[] args) {
         final int CANT_HILOS = 10;
+        Hilo h = null;
         for (int i = 0; i < CANT_HILOS; i++) {
-            Hilo h = new Hilo("hilo" + i);
+            h = new Hilo("hilo" + i);
             h.start();
         }
+        while (Thread.activeCount() > 1); //espera a que solo quede el hilo main
+        System.out.println("Fin del programa");
     }
 }
-/*
+/*// Esta es la clase hilo
 class Hilo extends Thread {
     public Hilo(String nombre) {
         super(nombre);
