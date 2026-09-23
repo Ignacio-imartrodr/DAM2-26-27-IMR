@@ -1,11 +1,11 @@
-package ADAT.ud1.FlujosBufer;
+package ADAT.UD1.Buffered;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
-public class LecturaPorLineas {
+public class LecturaPorLineasSamu {
     public static void main(String[] args) {
         File origen = new File("DATOS\\alumnos.txt");
         String palabraClave = "A";
