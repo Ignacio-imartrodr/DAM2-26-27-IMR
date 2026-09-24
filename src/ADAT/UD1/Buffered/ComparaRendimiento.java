@@ -29,9 +29,9 @@ import java.util.Scanner;
  * @author Ignacio MR
  */
 public class ComparaRendimiento {
-    private final static String RUTA_BASIC = "src\\ADAT\\UD1\\Buffered\\DocPruebas\\FileOutput.bin";
-    private final static String RUTA_BUFFER = "src\\ADAT\\UD1\\Buffered\\DocPruebas\\BufferedOutput.bin";
-    private final static String RUTA_RECORD = "src\\ADAT\\UD1\\Buffered\\DocPruebas\\PruebasRendimiento.txt";
+    private final static String RUTA_BASIC = "src\\ComparaRendimientoIMR\\FileOutput.bin";
+    private final static String RUTA_BUFFER = "src\\ComparaRendimientoIMR\\BufferedOutput.bin";
+    private final static String RUTA_RECORD = "src\\ComparaRendimientoIMR\\PruebasRendimiento.txt";
 
     /**
      * Lee un archivo de texto por lineas utilizando un buffer
@@ -77,7 +77,7 @@ public class ComparaRendimiento {
         try (Scanner sc = new Scanner(System.in)) {
             String txt = sc.nextLine();
             for (int i = 0; i < txt.length(); i++) {
-                if (!Character.isDigit(txt.charAt(i)) || txt.charAt(i) == '-') {
+                if (!Character.isDigit(txt.charAt(i))) {
                     return null;
                 }
             }
@@ -158,11 +158,12 @@ public class ComparaRendimiento {
                     }
                 }
             }
-            
         } catch (FileNotFoundException e) {
             System.out.println("Fichero no encontrado");
         } catch (IOException IOE) {
             System.out.println("Error de E/S");
-        } catch (Exception ex){}
+        } catch (Exception ex){
+            System.out.println(ex.getStackTrace());
+        }
     }
 }
