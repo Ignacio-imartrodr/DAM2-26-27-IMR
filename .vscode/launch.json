@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ContadorConHilos",
+            "request": "launch",
+            "mainClass": "PSER.ContadorConHilos",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "LecturaPorLineas",
             "request": "launch",
             "mainClass": "ADAT.UD1.Buffered.LecturaPorLineas",
