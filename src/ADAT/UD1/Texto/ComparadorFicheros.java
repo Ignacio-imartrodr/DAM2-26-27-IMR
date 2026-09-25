@@ -1,4 +1,4 @@
-package ADAT.UD1.Texto;
+package adat.ud1.texto;
 
 import java.io.BufferedReader;
 import java.io.File;

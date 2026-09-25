@@ -1,4 +1,4 @@
-package ADAT.UD1.Buffered;
+package adat.ud1.buffers;
 
 import java.io.BufferedReader;
 import java.io.File;

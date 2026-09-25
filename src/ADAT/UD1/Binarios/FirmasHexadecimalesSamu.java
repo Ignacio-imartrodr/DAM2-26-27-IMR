@@ -1,4 +1,4 @@
-package ADAT.UD1.Binarios;
+package adat.ud1.binarios;
 
 import java.io.FileInputStream;
 

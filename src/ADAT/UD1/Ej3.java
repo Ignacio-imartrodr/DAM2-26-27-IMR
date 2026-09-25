@@ -1,4 +1,4 @@
-package ADAT.UD1;
+package adat.ud1;
 
 import java.io.File;
 import java.util.Scanner;

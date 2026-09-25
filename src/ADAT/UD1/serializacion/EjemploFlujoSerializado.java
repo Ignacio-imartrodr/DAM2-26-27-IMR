@@ -1,4 +1,4 @@
-package ADAT.UD1.Serialización;
+package adat.ud1.serializacion;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
