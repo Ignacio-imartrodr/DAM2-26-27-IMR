@@ -1,4 +1,4 @@
-package Otros.Ajedrez.Utilidades;
+package otros.ajedrez.Utilidades;
 
 /**
  * @author Ignacio MR

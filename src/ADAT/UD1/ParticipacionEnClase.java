@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import Otros.ManejarTxt;
+import otros.ManejarTxt;
 
 public class ParticipacionEnClase {
     final static String RUTA_ALUMNOS = "src\\ADAT\\FicherosDatos\\alumnos.txt";
