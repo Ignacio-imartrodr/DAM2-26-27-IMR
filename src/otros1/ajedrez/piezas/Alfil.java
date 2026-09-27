@@ -1,20 +1,20 @@
-package otros.piezas;
+package otros1.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
-public class Caballo extends Pieza {
-    public Caballo(){
+public class Alfil extends Pieza {
+    public Alfil(){
         this.posicion = null;
         this.isWhite = false;
     }
-    public Caballo(int x, int y, boolean isWhite){
+    public Alfil(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
         } else {
             throw new PiezaException("Posición no válida");
         }
     }
-    
+
     @Override
     public boolean mover(Integer[] pos, Boolean isEating) {
         if (pos == null) {
@@ -24,19 +24,18 @@ public class Caballo extends Pieza {
             return false;
         }
         boolean valido = false;
-        boolean isLShape = (Math.abs(pos[POS_X] - posicion[POS_X]) == 2 && Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1)
-                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) == 2 && Math.abs(pos[POS_X] - posicion[POS_X]) == 1);
-        if (isLShape) {
+        boolean isDiagonal = Math.abs(pos[POS_X] - posicion[POS_X]) == Math.abs(pos[POS_Y] - posicion[POS_Y]);
+        if (isDiagonal) {
             valido = true;
         }
         return valido;
     }
     @Override
     protected char getChar() {
-        return 'C';
+        return 'A';
     }
     @Override
     public int[] getPosXIni() {
-        return new int[] {1, 6};
+        return new int[] {2, 5};
     }
 }

@@ -1,13 +1,13 @@
-package otros.piezas;
+package otros1.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
-public class Torre extends Pieza {
-    public Torre(){
+public class Caballo extends Pieza {
+    public Caballo(){
         this.posicion = null;
         this.isWhite = false;
     }
-    public Torre(int x, int y, boolean isWhite){
+    public Caballo(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
         } else {
@@ -24,19 +24,19 @@ public class Torre extends Pieza {
             return false;
         }
         boolean valido = false;
-        boolean isTranversal = (Math.abs(pos[POS_X] - posicion[POS_X]) != 0 && pos[POS_Y] == posicion[POS_Y])
-                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) != 0 && pos[POS_X] == posicion[POS_X]);
-        if (isTranversal) {
+        boolean isLShape = (Math.abs(pos[POS_X] - posicion[POS_X]) == 2 && Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1)
+                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) == 2 && Math.abs(pos[POS_X] - posicion[POS_X]) == 1);
+        if (isLShape) {
             valido = true;
         }
         return valido;
     }
     @Override
     protected char getChar() {
-        return 'T';
+        return 'C';
     }
     @Override
     public int[] getPosXIni() {
-        return new int[] {0, 7};
+        return new int[] {1, 6};
     }
 }

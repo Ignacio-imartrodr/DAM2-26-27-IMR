@@ -1,4 +1,4 @@
-package otros.ajedrez;
+package otros1.ajedrez;
 
 import java.util.ArrayList;
 import java.util.List;

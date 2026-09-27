@@ -1,13 +1,13 @@
-package otros.piezas;
+package otros1.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
-public class Alfil extends Pieza {
-    public Alfil(){
+public class Rey extends Pieza {
+    public Rey(){
         this.posicion = null;
         this.isWhite = false;
     }
-    public Alfil(int x, int y, boolean isWhite){
+    public Rey(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
         } else {
@@ -24,18 +24,20 @@ public class Alfil extends Pieza {
             return false;
         }
         boolean valido = false;
-        boolean isDiagonal = Math.abs(pos[POS_X] - posicion[POS_X]) == Math.abs(pos[POS_Y] - posicion[POS_Y]);
-        if (isDiagonal) {
+        boolean isTranversal = (Math.abs(pos[POS_X] - posicion[POS_X]) == 1 && pos[POS_Y] == posicion[POS_Y])
+                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1 && pos[POS_X] == posicion[POS_X]);
+        boolean isDiagonal = Math.abs(pos[POS_X] - posicion[POS_X]) == 1 && Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1;
+        if (isTranversal || isDiagonal) {
             valido = true;
         }
         return valido;
     }
     @Override
     protected char getChar() {
-        return 'A';
+        return 'R';
     }
     @Override
     public int[] getPosXIni() {
-        return new int[] {2, 5};
+        return new int[] {4};
     }
 }

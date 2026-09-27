@@ -1,4 +1,4 @@
-package otros.piezas;
+package otros1.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
