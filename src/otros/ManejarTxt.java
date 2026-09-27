@@ -1,4 +1,4 @@
-package otros1;
+package otros;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

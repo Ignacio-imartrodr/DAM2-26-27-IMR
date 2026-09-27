@@ -1,13 +1,13 @@
-package otros1.ajedrez.piezas;
+package otros.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
-public class Rey extends Pieza {
-    public Rey(){
+public class Reina extends Pieza {
+    public Reina(){
         this.posicion = null;
         this.isWhite = false;
     }
-    public Rey(int x, int y, boolean isWhite){
+    public Reina(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
         } else {
@@ -24,9 +24,9 @@ public class Rey extends Pieza {
             return false;
         }
         boolean valido = false;
-        boolean isTranversal = (Math.abs(pos[POS_X] - posicion[POS_X]) == 1 && pos[POS_Y] == posicion[POS_Y])
-                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1 && pos[POS_X] == posicion[POS_X]);
-        boolean isDiagonal = Math.abs(pos[POS_X] - posicion[POS_X]) == 1 && Math.abs(pos[POS_Y] - posicion[POS_Y]) == 1;
+        boolean isTranversal = (Math.abs(pos[POS_X] - posicion[POS_X]) != 0 && pos[POS_Y] == posicion[POS_Y])
+                            || (Math.abs(pos[POS_Y] - posicion[POS_Y]) != 0 && pos[POS_X] == posicion[POS_X]);
+        boolean isDiagonal = Math.abs(pos[POS_X] - posicion[POS_X]) == Math.abs(pos[POS_Y] - posicion[POS_Y]);
         if (isTranversal || isDiagonal) {
             valido = true;
         }
@@ -34,10 +34,10 @@ public class Rey extends Pieza {
     }
     @Override
     protected char getChar() {
-        return 'R';
+        return 'Q';
     }
     @Override
     public int[] getPosXIni() {
-        return new int[] {4};
+        return new int[] {3};
     }
 }

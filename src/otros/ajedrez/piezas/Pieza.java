@@ -1,4 +1,4 @@
-package otros1.ajedrez.piezas;
+package otros.ajedrez.piezas;
 
 public abstract class Pieza implements Comparable<Pieza>{
     //TODO validar que no se salten entre si (quizas implementar en tablero)

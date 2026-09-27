@@ -1,4 +1,4 @@
-package otros1.ajedrez;
+package otros.ajedrez;
 
 public class Partida {
     Tablero tablero;

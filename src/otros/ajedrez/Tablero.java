@@ -1,15 +1,15 @@
-package otros1.ajedrez;
+package otros.ajedrez;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import otros.piezas.Alfil;
-import otros.piezas.Caballo;
-import otros.piezas.Peon;
-import otros.piezas.Pieza;
-import otros.piezas.Reina;
-import otros.piezas.Rey;
-import otros.piezas.Torre;
+import otros.ajedrez.piezas.Alfil;
+import otros.ajedrez.piezas.Caballo;
+import otros.ajedrez.piezas.Peon;
+import otros.ajedrez.piezas.Pieza;
+import otros.ajedrez.piezas.Reina;
+import otros.ajedrez.piezas.Rey;
+import otros.ajedrez.piezas.Torre;
 
 public class Tablero {
     private final static int TAMAÑO_LADO_TABLERO = 8;
