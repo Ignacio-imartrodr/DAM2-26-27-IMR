@@ -13,99 +13,120 @@ import otros.ajedrez.piezas.Torre;
 
 public class Tablero {
     private final static int TAMAÑO_LADO_TABLERO = 8;
-    private String[][] tablero;
-    public List<Pieza> piezas;
+    private final static String CASILLA_VACIA = "-";
+    private Pieza[][] tabPiezas;
 
-    public Tablero() { //TODO arreglar
-        this.tablero = getTableroVacio();
-        this.piezas = new ArrayList<>(32);
+    public Tablero() {
+        List<Pieza> lPiezas = new ArrayList<>(32);
         Pieza p;
         int[] posicionesX;
         int posXIni;
 
         p = new Peon();
         for (int i = 0; i < p.getCantPiezas(); i++) {
-            this.piezas.add(new Peon(i, p.getPosYIni(), false));
+            lPiezas.add(new Peon(i, p.getPosYIni(), false));
             p.setColor(true);
-            this.piezas.add(new Peon(i, p.getPosYIni(), true));
+            lPiezas.add(new Peon(i, p.getPosYIni(), true));
             p.setColor(false);
         }
 
         p = new Rey();
         posXIni = p.getPosXIni()[0];
-        this.piezas.add(new Rey(posXIni, p.getPosYIni(), false));
+        lPiezas.add(new Rey(posXIni, p.getPosYIni(), false));
         p.setColor(true);
-        this.piezas.add(new Rey(posXIni, p.getPosYIni(), true));
+        lPiezas.add(new Rey(posXIni, p.getPosYIni(), true));
 
         p = new Reina();
         posXIni = p.getPosXIni()[0];
-        this.piezas.add(new Reina(posXIni, p.getPosYIni(), false));
+        lPiezas.add(new Reina(posXIni, p.getPosYIni(), false));
         p.setColor(true);
-        this.piezas.add(new Reina(posXIni, p.getPosYIni(), true));
+        lPiezas.add(new Reina(posXIni, p.getPosYIni(), true));
 
         p = new Alfil();
         posicionesX = p.getPosXIni();
         for (int i = 0; i < posicionesX.length; i++) {
-            this.piezas.add(new Alfil(posicionesX[i], p.getPosYIni(), false));
+            lPiezas.add(new Alfil(posicionesX[i], p.getPosYIni(), false));
             p.setColor(true);
-            this.piezas.add(new Alfil(posicionesX[i], p.getPosYIni(), true));
+            lPiezas.add(new Alfil(posicionesX[i], p.getPosYIni(), true));
             p.setColor(false);
         }
 
         p = new Caballo();
         posicionesX = p.getPosXIni();
         for (int i = 0; i < posicionesX.length; i++) {
-            this.piezas.add(new Caballo(posicionesX[i], p.getPosYIni(), false));
+            lPiezas.add(new Caballo(posicionesX[i], p.getPosYIni(), false));
             p.setColor(true);
-            this.piezas.add(new Caballo(posicionesX[i], p.getPosYIni(), true));
+            lPiezas.add(new Caballo(posicionesX[i], p.getPosYIni(), true));
             p.setColor(false);
         }
 
         p = new Torre();
         posicionesX = p.getPosXIni();
         for (int i = 0; i < posicionesX.length; i++) {
-            this.piezas.add(new Torre(posicionesX[i], p.getPosYIni(), false));
+            lPiezas.add(new Torre(posicionesX[i], p.getPosYIni(), false));
             p.setColor(true);
-            this.piezas.add(new Torre(posicionesX[i], p.getPosYIni(), true));
+            lPiezas.add(new Torre(posicionesX[i], p.getPosYIni(), true));
             p.setColor(false);
         }
-        
-        for (Pieza pieza : this.piezas) {
+
+        tabPiezas = new Pieza[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
+        for (Pieza pieza : lPiezas) {
             Integer[] posiciones = pieza.getPosicion();
-            this.tablero[posiciones[Pieza.POS_Y]][posiciones[Pieza.POS_Y]] = pieza.getForma();
+            this.tabPiezas[posiciones[Pieza.POS_Y]][posiciones[Pieza.POS_X]] = pieza;
         }
     }
 
-    public String[][] getTablero() {
-        return tablero;
-    }
-    public String getTableroFull() {
-        String[] filas = getTableroRows();
-        String t = "";
-        for (int i = 0; i < filas.length - 1; i++) {
-            t += filas[i] + "\n";
+    public  String[][] getTableroVacio() {
+        String[][] tabVacio = new String[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
+        for (int i = 0; i < tabVacio.length; i++) {
+            for (int j = 0; j < tabVacio[i].length; j++) {
+                tabVacio[i][j] = CASILLA_VACIA;
+            }
         }
-        t += filas[filas.length -1];
-        return t;
+        return tabVacio;
     }
-    public String[] getTableroRows() {
-        String[] filas = new String[8];
+
+    public Pieza[] getPiezasActivas() {
+        List<Pieza> lPiezas = new ArrayList<>();
+        for (int i = 0; i < this.tabPiezas.length; i++) {
+            for (Pieza pieza : this.tabPiezas[i]) {
+                if (pieza != null) {
+                    lPiezas.add(pieza);
+                }
+            }
+        }
+        int nPiezas = lPiezas.size();
+        Pieza[] p = new Pieza[nPiezas];
+        for (int i = 0; i < nPiezas; i++) {
+            p[i] = lPiezas.get(i);
+        }
+        return p;
+    }
+    public String getTableroString() {
+        String res = "";
+        Pieza[] piezasActivas = getPiezasActivas();
+        String[][] tablero = getTableroVacio();
+        for (Pieza pieza : piezasActivas) {
+            Integer[] posiciones = pieza.getPosicion();
+            tablero[posiciones[Pieza.POS_Y]][posiciones[Pieza.POS_X]] = pieza.getForma();
+        }
+
         for (int i = 0; i < tablero.length; i++) {
-            for (int j = 0; j < filas.length - 1; j++) {
-                String casilla = tablero[i][j];
-                filas[i] += casilla + "\s";
+            for (int j = 0; j < tablero[i].length; j++) {
+                if (j == tablero[i].length - 1) {
+                    res += tablero[i][j];
+                } else {
+                    res += tablero[i][j] + " ";
+                }
             }
-            filas[i] += tablero[i][tablero[i].length - 1];
+            if (i != tablero.length - 1) {
+                res += "\n";
+            }
         }
-        return filas;
+        return res;
     }
-    public static String[][] getTableroVacio(){
-        String[][] tableroVacio = new String[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
-        for (int i = 0; i < tableroVacio.length; i++) {
-            for (int j = 0; j < tableroVacio[i].length; j++) {
-                tableroVacio[i][j] = "-";
-            }
-        }
-        return tableroVacio;
+
+    public Pieza getPieza(int x, int y){
+        return this.tabPiezas[y][x];
     }
 }

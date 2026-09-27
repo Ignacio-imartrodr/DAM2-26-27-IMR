@@ -12,9 +12,6 @@ public abstract class Pieza implements Comparable<Pieza>{
     public Integer[] getPosicion() {
         return posicion;
     }
-    public boolean isWhite() {
-        return isWhite;
-    }
     public String getForma(){
         return isWhite ? String.valueOf(getChar()).toUpperCase() : String.valueOf(getChar()).toLowerCase();
     }
@@ -23,6 +20,9 @@ public abstract class Pieza implements Comparable<Pieza>{
     }
     public int getPosYIni() {
         return isWhite  ? TAMAÑO_TABLERO - 1 : 0;
+    }
+    public boolean isWhite() {
+        return isWhite;
     }
 
     public void setColor(boolean isWhite) {

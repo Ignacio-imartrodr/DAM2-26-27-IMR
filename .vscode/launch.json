@@ -9,6 +9,13 @@
             "name": "Partida",
             "request": "launch",
             "mainClass": "otros.ajedrez.Partida",
+            "projectName": "DAM2-26-27-IMR_fac21486"
+        },
+        {
+            "type": "java",
+            "name": "Partida",
+            "request": "launch",
+            "mainClass": "otros.ajedrez.Partida",
             "projectName": "DAM2-26-27-IMR_81cea406"
         },
         {
