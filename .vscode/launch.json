@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ComparaRendimiento",
+            "request": "launch",
+            "mainClass": "adat.ud1.buffers.ComparaRendimiento",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "CompararRendimientoSimple",
+            "request": "launch",
+            "mainClass": "adat.ud1.buffers.CompararRendimientoSimple",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "Partida",
             "request": "launch",
             "mainClass": "otros.ajedrez.Partida",
