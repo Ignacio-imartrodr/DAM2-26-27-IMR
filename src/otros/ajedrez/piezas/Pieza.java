@@ -26,8 +26,6 @@ public abstract class Pieza implements Comparable<Pieza>{
     public boolean isWhite() {
         return isWhite;
     }
-    public abstract boolean validarPosX();
-    public abstract boolean validarPosY();
 
     public void setColor(boolean isWhite) {
         this.isWhite = isWhite;
@@ -63,18 +61,22 @@ public abstract class Pieza implements Comparable<Pieza>{
     
     @Override
     public int compareTo(Pieza o) {
-        int compCol = Boolean.compare(this.isWhite(), o.isWhite());
+        int compCol = Boolean.compare(o.isWhite(), this.isWhite());// Priero el color negro y luego el blanco
         if (compCol != 0) {
             return compCol;
         }
-        return Character.compare(this.getChar(), o.getChar());
+        int compLetra = Character.compare(this.getChar(), o.getChar());// Ordena alfabeticamente
+        if (compLetra != 0) {
+            return compLetra;
+        }
+        return Integer.compare(o.getPosicion()[POS_X], this.getPosicion()[POS_X]);// De izquierda a derecha en el tablero
     }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(posicion);
-        result = prime * result + (isWhite ? 1231 : 1237);
+        result = prime * result + (isWhite ? 1237 : 1231);
         return result;
     }
     @Override

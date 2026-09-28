@@ -1,7 +1,6 @@
 package otros.ajedrez;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -20,7 +19,7 @@ public class Tablero {
     private Pieza[][] tabPiezas;
 
     public Tablero() {
-        Set<Pieza> lPiezas = new TreeSet<Pieza>();
+        Set<Pieza> lPiezas = new TreeSet<>();
         Pieza p;
         int[] posicionesX;
         int posXIni;
@@ -131,9 +130,45 @@ public class Tablero {
     }
 
     private boolean isCheckMate(boolean toWhite) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isCheckMate'");
+        boolean isCheck = isCheck(toWhite);
+        if (isCheck) {
+            //TODO compobar si es Mate
+        }
+        return isCheck;
     }
+    private boolean isCheck(boolean toWhite){
+        Pieza[] p = getPiezasActivas();
+        Pieza reyAtacked = null;
+        int posDifColores = -1;
+        for (int i = 0; i < p.length; i++) {
+            if (p[i] instanceof Rey) {
+                if (toWhite) {
+                    if (p[i].isWhite()) {
+                        reyAtacked = p[i];
+                    }
+                } else {
+                    if (!p[i].isWhite()) {
+                        reyAtacked = p[i];
+                    }
+                }
+            }
+            if (p[i].isWhite()) {
+                posDifColores = (toWhite ? i : p.length - i);
+            }
+        }
+        boolean isCheck = false;
+        if (toWhite) {
+            for (int i = 0; i < posDifColores && !isCheck; i++) { // Solo las piezas negras
+                validarMovimiento(p[i].getPosicion(), reyAtacked.getPosicion(), !reyAtacked.isWhite());
+            }
+        } else {
+            for (int i = posDifColores; i < p.length && !isCheck; i++) { // Solo las piezas blancas
+                validarMovimiento(p[i].getPosicion(), reyAtacked.getPosicion(), !reyAtacked.isWhite());
+            }
+        }
+        return isCheck;
+    }
+
     public  String[][] getTableroVacio() {
         String[][] tabVacio = new String[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
         for (int i = 0; i < tabVacio.length; i++) {
@@ -144,7 +179,7 @@ public class Tablero {
         return tabVacio;
     }
     public Pieza[] getPiezasActivas() {
-        List<Pieza> lPiezas = new ArrayList<>();
+        Set<Pieza> lPiezas = new TreeSet<>();
         for (int i = 0; i < this.tabPiezas.length; i++) {
             for (Pieza pieza : this.tabPiezas[i]) {
                 if (pieza != null) {
@@ -152,10 +187,10 @@ public class Tablero {
                 }
             }
         }
-        int nPiezas = lPiezas.size();
-        Pieza[] p = new Pieza[nPiezas];
-        for (int i = 0; i < nPiezas; i++) {
-            p[i] = lPiezas.get(i);
+        Pieza[] p = new Pieza[lPiezas.size()];
+        Iterator<Pieza> it = lPiezas.iterator();
+        for (int i = 0; it.hasNext(); i++) {
+            p[i] = it.next();
         }
         return p;
     }
@@ -186,7 +221,7 @@ public class Tablero {
         return this.tabPiezas[y][x];
     }
 
-    public boolean validarMovimiento(Integer[] posPieza, Integer[] posXY, boolean isWhiteTurn){
+    public boolean validarMovimiento(Integer[] posPieza, Integer[] posXY, boolean isWhiteTurn){ //TODO comprobar si funciona
         if (posXY == null || posPieza == null) {
             return false;
         }
