@@ -7,6 +7,10 @@ public class Peon extends Pieza {
         this.posicion = null;
         this.isWhite = false;
     }
+    public Peon(boolean isWhite){
+        this.posicion = null;
+        this.isWhite = isWhite;
+    }
     public Peon(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
@@ -16,7 +20,7 @@ public class Peon extends Pieza {
     }
 
     @Override
-    public boolean mover(Integer[] pos, Boolean isEating) {
+    public boolean validarMov(Integer[] pos, Boolean isEating) {
         if (pos == null) {
             return true;
         }

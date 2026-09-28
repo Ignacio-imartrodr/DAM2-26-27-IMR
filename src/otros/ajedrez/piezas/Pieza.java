@@ -1,5 +1,7 @@
 package otros.ajedrez.piezas;
 
+import java.util.Arrays;
+
 public abstract class Pieza implements Comparable<Pieza>{
     //TODO validar que no se salten entre si (quizas implementar en tablero)
     protected final static int TAMAÑO_TABLERO = 8;
@@ -24,6 +26,8 @@ public abstract class Pieza implements Comparable<Pieza>{
     public boolean isWhite() {
         return isWhite;
     }
+    public abstract boolean validarPosX();
+    public abstract boolean validarPosY();
 
     public void setColor(boolean isWhite) {
         this.isWhite = isWhite;
@@ -54,7 +58,7 @@ public abstract class Pieza implements Comparable<Pieza>{
     }
 
     public abstract int[] getPosXIni();
-    public abstract boolean mover(Integer[] pos, Boolean isEating);
+    public abstract boolean validarMov(Integer[] pos, Boolean isEating);
     protected abstract char getChar();
     
     @Override
@@ -65,4 +69,28 @@ public abstract class Pieza implements Comparable<Pieza>{
         }
         return Character.compare(this.getChar(), o.getChar());
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(posicion);
+        result = prime * result + (isWhite ? 1231 : 1237);
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Pieza other = (Pieza) obj;
+        if (!Arrays.equals(posicion, other.posicion))
+            return false;
+        if (isWhite != other.isWhite)
+            return false;
+        return true;
+    }
+    
 }

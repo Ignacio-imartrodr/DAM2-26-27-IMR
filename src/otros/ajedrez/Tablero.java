@@ -2,7 +2,10 @@ package otros.ajedrez;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import otros.ajedrez.Utilidades.PiezaException;
 import otros.ajedrez.piezas.Alfil;
 import otros.ajedrez.piezas.Caballo;
 import otros.ajedrez.piezas.Peon;
@@ -17,7 +20,7 @@ public class Tablero {
     private Pieza[][] tabPiezas;
 
     public Tablero() {
-        List<Pieza> lPiezas = new ArrayList<>(32);
+        Set<Pieza> lPiezas = new TreeSet<Pieza>();
         Pieza p;
         int[] posicionesX;
         int posXIni;
@@ -69,13 +72,68 @@ public class Tablero {
             p.setColor(false);
         }
 
-        tabPiezas = new Pieza[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
+        this(lPiezas);
+    }
+    public Tablero(Set<Pieza> lPiezas){
+        this.tabPiezas = new Pieza[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
         for (Pieza pieza : lPiezas) {
             Integer[] posiciones = pieza.getPosicion();
             this.tabPiezas[posiciones[Pieza.POS_Y]][posiciones[Pieza.POS_X]] = pieza;
         }
     }
+    public Tablero(Pieza[][] tablero){
+        boolean hasWhiteKing = false;
+        boolean hasBlackKing = false;
+        boolean hasOneEach = true;
+        for (int y = 0; y < tablero.length && hasOneEach; y++) {
+            for (int x = 0; x < tablero[y].length && hasOneEach; x++) {
+                Pieza p = tablero[y][x];
+                if ( p != null) {
+                    p.setPosicion(x, y);
+                    if (p instanceof Rey) {
+                        if (p.isWhite()) {
+                            if (!hasWhiteKing) {
+                                hasWhiteKing = true;
+                            } else {
+                                hasOneEach = false;
+                            }
+                        } else {
+                            if (!hasBlackKing) {
+                                hasBlackKing = true;
+                            } else {
+                                hasOneEach = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        hasOneEach = (hasBlackKing && hasWhiteKing && hasOneEach);
+        boolean isMate = false;
+        if (hasOneEach) {
+            for (int y = 0; y < tablero.length && !isMate; y++) {
+                for (int x = 0; x < tablero[y].length && hasOneEach; x++) {
+                    Pieza p = tablero[y][x];
+                    if (p != null) {
+                        if (p instanceof Rey) {
+                            if (isCheckMate(p.isWhite())) {
+                                isMate = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (isMate) {
+            throw new PiezaException("En un tablero debe haber mínimo un rey de cada color sin estar en jaque mate");
+        }
+        this.tabPiezas = tablero;
+    }
 
+    private boolean isCheckMate(boolean toWhite) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isCheckMate'");
+    }
     public  String[][] getTableroVacio() {
         String[][] tabVacio = new String[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
         for (int i = 0; i < tabVacio.length; i++) {
@@ -85,7 +143,6 @@ public class Tablero {
         }
         return tabVacio;
     }
-
     public Pieza[] getPiezasActivas() {
         List<Pieza> lPiezas = new ArrayList<>();
         for (int i = 0; i < this.tabPiezas.length; i++) {
@@ -125,8 +182,45 @@ public class Tablero {
         }
         return res;
     }
-
     public Pieza getPieza(int x, int y){
         return this.tabPiezas[y][x];
+    }
+
+    public boolean validarMovimiento(Integer[] posPieza, Integer[] posXY, boolean isWhiteTurn){
+        if (posXY == null || posPieza == null) {
+            return false;
+        }
+        Pieza p = getPieza(posPieza[Pieza.POS_X], posPieza[Pieza.POS_Y]);
+        if (p == null || (p.isWhite() != isWhiteTurn)) {
+            return false;
+        }
+        boolean isValido = true;
+        boolean isEating = getPieza(posXY[Pieza.POS_X], posXY[Pieza.POS_Y]) != null;
+        if (p.validarMov(posXY, isEating)) {
+            if (!(p.getForma().equalsIgnoreCase("C"))) {
+                for (int i = p.getPosicion()[Pieza.POS_X]; i < posXY[Pieza.POS_X]; i++) {
+                    for (int j = p.getPosicion()[Pieza.POS_Y]; j < posXY[Pieza.POS_Y]; j++) {
+                        if (getPieza(i, j) != null){
+                            if ((p.getForma().equalsIgnoreCase("R"))) {
+                                Pieza[] piezas = getPiezasActivas();
+                                for (int k = 0; k < piezas.length && isValido; k++) {
+                                    Pieza pieza = piezas[k];
+                                    if (pieza.isWhite() != p.isWhite() && !pieza.getClass().equals(p.getClass())) {
+                                        if (validarMovimiento(pieza.getPosicion(), p.getPosicion(), pieza.isWhite())) {
+                                            isValido = false;
+                                        }
+                                    }
+                                }
+                            } else {
+                                isValido = false;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            isValido = false;
+        }
+        return isValido;
     }
 }

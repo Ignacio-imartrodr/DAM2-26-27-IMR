@@ -106,7 +106,7 @@ public class ComparaRendimiento {
             }
             outA.flush();
             long fin = System.nanoTime();
-            recordBasic += (fin - inicio) + " ms";
+            recordBasic += (fin - inicio) + " ns";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +117,7 @@ public class ComparaRendimiento {
             }
             outB.flush();
             long fin = System.nanoTime();
-            recordBuffer += (fin - inicio) + " ms";
+            recordBuffer += (fin - inicio) + " ns";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,6 +135,7 @@ public class ComparaRendimiento {
         } catch (Exception e) {
             System.out.println("Error creando el archivo de Record");
         }
+
         try (var out = new BufferedWriter(new FileWriter(RUTA_RECORD));) {
             if (preRecord == null) {
                 out.write(fullRecord);
