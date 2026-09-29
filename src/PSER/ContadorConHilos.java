@@ -4,24 +4,33 @@ import java.util.Random;
 
 public class ContadorConHilos {
     public static void main(String[] args) {
-        final int CANT_HILOS = 3;
+        final int N_HILOS = 3;
         Random rnd = new Random();
-        int[] contador = new int[1];
-        int esperado = 0;
-        HiloIncrementador[] hilos = new HiloIncrementador[CANT_HILOS];
-        for (int i = 0; i < CANT_HILOS; i++) {
-            int cant = rnd.nextInt(1,10);
-            esperado += cant;
-            hilos[i] = new HiloIncrementador("hilo " + i + " - " + cant, cant, contador);
-            hilos[i].start();
-        }
-        for (Thread hilo : hilos) {
+        int esperado;
+        Contador cont = new Contador();
+        do {
+            esperado = 0;
+            cont.reset();
+            HiloIncrementador[] hilos = new HiloIncrementador[N_HILOS];
+            for (int i = 0; i < N_HILOS; i++) {
+                int cant = rnd.nextInt(10,100);
+                esperado += cant;
+                hilos[i] = new HiloIncrementador("hilo " + i + " - " + cant, cant, cont);
+                hilos[i].start();
+            }
+            for (Thread hilo : hilos) {
+                try {
+                    hilo.join();
+                } catch (Exception e) {}
+            }
+            System.out.println("Contador final = " + cont.getContador());
+            System.out.println("Contador esperado: " + esperado);
             try {
-                hilo.join();
-            } catch (Exception e) {}
-        }
-        System.out.println("Contador final = " + contador[0]);
-        System.out.println("Contador esperado: " + esperado);
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+            }
+        } while (cont.getContador() == esperado);
+        System.out.println("El programa Falló!");
     }
 }
 
@@ -29,23 +38,47 @@ public class ContadorConHilos {
  * HiloIncrementador
  */
 class HiloIncrementador extends Thread {
-    int[] contador;
-    int cantRnd;
-    public HiloIncrementador(String nombre, int cant, int[] contador) {
+    Contador contador;
+    int nAumentos;
+
+    public HiloIncrementador(String nombre, int nAumentos, Contador contador) {
         super(nombre);
+        this.nAumentos = nAumentos;
         this.contador = contador;
-        this.cantRnd = cant;
     }
 
-    @Override 
+    @Override
     public void run() {
-        for (int i = 0; i < cantRnd; i++) {
-            System.out.println(getName() + " > " + contador[0] + " + 1");
-            contador[0]++;
-            /*try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-            }*/
+        for (int i = 0; i < nAumentos; i++) {
+            synchronized(contador){
+                System.out.println(getName() + " > " + contador.getContador() + " + 1");
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                }
+                contador.incrementar();
+            }
         }
+    }
+}
+
+/**
+ * Contador
+ */
+class Contador {
+    private int contador;
+
+    public Contador(){
+        this.contador = 0;
+    }
+
+    public synchronized void incrementar(){
+        contador++;
+    }
+    public void reset(){
+        contador = 0;
+    }
+    public int getContador(){
+        return contador;
     }
 }
