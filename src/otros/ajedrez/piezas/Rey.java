@@ -3,6 +3,7 @@ package otros.ajedrez.piezas;
 import otros.ajedrez.Utilidades.PiezaException;
 
 public class Rey extends Pieza {
+    //Versión "silguentón" doble
     public Rey(){
         this.posicion = null;
         this.isWhite = false;

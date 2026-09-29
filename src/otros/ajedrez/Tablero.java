@@ -81,6 +81,7 @@ public class Tablero {
         }
     }
     public Tablero(Pieza[][] tablero){
+        this.tabPiezas = tablero;
         boolean hasWhiteKing = false;
         boolean hasBlackKing = false;
         boolean hasOneEach = true;
@@ -108,35 +109,19 @@ public class Tablero {
             }
         }
         hasOneEach = (hasBlackKing && hasWhiteKing && hasOneEach);
-        boolean isMate = false;
-        if (hasOneEach) {
-            for (int y = 0; y < tablero.length && !isMate; y++) {
-                for (int x = 0; x < tablero[y].length && hasOneEach; x++) {
-                    Pieza p = tablero[y][x];
-                    if (p != null) {
-                        if (p instanceof Rey) {
-                            if (isCheckMate(p.isWhite())) {
-                                isMate = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (isMate) {
+        if (!hasOneEach) {
             throw new PiezaException("En un tablero debe haber mínimo un rey de cada color sin estar en jaque mate");
         }
-        this.tabPiezas = tablero;
     }
 
-    private boolean isCheckMate(boolean toWhite) {
+    public boolean isCheckMate(boolean toWhite) {
         boolean isCheck = isCheck(toWhite);
         if (isCheck) {
-            //TODO compobar si es Mate
+            //TODO compobar si es Jacke Mate
         }
         return isCheck;
     }
-    private boolean isCheck(boolean toWhite){
+    public boolean isCheck(boolean toWhite){
         Pieza[] p = getPiezasActivas();
         Pieza reyAtacked = null;
         int posDifColores = -1;
