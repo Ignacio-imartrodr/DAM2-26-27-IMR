@@ -2,26 +2,44 @@ package otros.ajedrez.piezas;
 
 public class ReySilguenton extends Pieza {
     // Rey versión "silguentón" doble
-    private static final ReySilguenton BLANCO = new ReySilguenton(true);
-    private static final ReySilguenton NEGRO = new ReySilguenton(false);
+    private static ReySilguenton blanco = null;
+    private static ReySilguenton negro = null;
 
     private ReySilguenton(){}
-    private  ReySilguenton(boolean isWhite){
+    private ReySilguenton(boolean isWhite){
         this.posicion = null;
         this.isWhite = isWhite;
     }
-    public ReySilguenton getInstance(int x, int y, boolean isWhite){
-        ReySilguenton r = isWhite ? BLANCO : NEGRO;
+    private static synchronized void createInstance(boolean isWhite){
+        if (isWhite) {
+            blanco = new ReySilguenton(true);
+        } else {
+            negro = new ReySilguenton(false);
+        }
+
+    }
+    public static ReySilguenton getInstance(int x, int y, boolean isWhite){
+        if (isWhite ? (blanco == null) : (negro == null)) {
+            createInstance(isWhite);
+        }
+        ReySilguenton r = isWhite ? blanco : negro;
         r.setPosicion(x, y);
         return r;
     }
     
-    private boolean setPosicion(Integer[] pos){
-        return super.setPosicion(pos[0], pos[1]);
-    }
     @Override
     public boolean setPosicion(Integer x, Integer y) {
-        return false;
+        boolean correcto = false;
+        if (x != null && y != null) {
+            if (validarLimPos(new Integer[]{x, y})) {
+                correcto = true;
+                Integer[] pos = new Integer[2];
+                pos[POS_X] = x;
+                pos[POS_Y] = y;
+                this.posicion = pos;
+            }
+        }
+        return correcto;
     }
     @Override
     public boolean validarMov(Integer[] pos, Boolean isEating) {

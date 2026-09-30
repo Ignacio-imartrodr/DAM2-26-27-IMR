@@ -61,9 +61,9 @@ public abstract class Pieza implements Comparable<Pieza>{
     
     @Override
     public int compareTo(Pieza o) {
-        int compCol = Boolean.compare(o.isWhite(), this.isWhite());// Priero el color negro y luego el blanco
-        if (compCol != 0) {
-            return compCol;
+        int compColor = Boolean.compare(o.isWhite(), this.isWhite());// Primero el color negro y luego el blanco
+        if (compColor != 0) {
+            return compColor;
         }
         int compLetra = Character.compare(this.getChar(), o.getChar());// Ordena alfabeticamente
         if (compLetra != 0) {
@@ -88,9 +88,9 @@ public abstract class Pieza implements Comparable<Pieza>{
         if (getClass() != obj.getClass())
             return false;
         Pieza other = (Pieza) obj;
-        if (!Arrays.equals(posicion, other.posicion))
-            return false;
         if (isWhite != other.isWhite)
+            return false;
+        if (!Arrays.equals(posicion, other.posicion))
             return false;
         return true;
     }

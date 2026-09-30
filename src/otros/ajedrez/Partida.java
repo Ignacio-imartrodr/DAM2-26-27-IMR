@@ -7,7 +7,7 @@ import otros.ajedrez.piezas.Caballo;
 import otros.ajedrez.piezas.Peon;
 import otros.ajedrez.piezas.Pieza;
 import otros.ajedrez.piezas.Reina;
-import otros.ajedrez.piezas.Rey;
+import otros.ajedrez.piezas.ReySilguenton;
 
 public class Partida {
     boolean isWhiteTurn;
@@ -24,6 +24,7 @@ public class Partida {
         this.tablero = tab;
         this.timerInicio = tIni;
         this.isWhiteTurn = isWhiteTurn;
+        this.isRuning = !tab.isCheckMate(isWhiteTurn);
     }
 
     public Tablero getTablero(){
@@ -46,19 +47,19 @@ public class Partida {
     }
     
     public boolean start(){
-        boolean isInactive = this.timerInicio == -1;
-        if (!isInactive) {
+        boolean isInactive = this.isRuning =(this.timerInicio == -1 || !this.tablero.isCheckMate(isWhiteTurn));
+        if (isInactive) {
             this.timerInicio = System.currentTimeMillis();
-            this.isWhiteTurn = this.isRuning = true;
+            this.isWhiteTurn = true;
         }
         return isInactive;
     }
     /**
-     * @return {@code true} si blancas es el ganador de la partida.
+     * @return {@code this} La instancia de esta partida.
      */
-    public boolean finish(){
+    public Partida finish(){
         this.isRuning = false;
-        return isWhiteTurn;
+        return this;
     }
     /**
      * Pide por terminal un movimiento con formato {@code [A-Ha-h]\d\s?[A-Ha-h]\d}
@@ -77,7 +78,7 @@ public class Partida {
             if (mov.matches(regex)) {
                 for (int i = 1; i <= pos.length; i++) {
                     if (i % 2 == 0) {
-                        pos[i - 1] = Character.toLowerCase(mov.charAt(i - 1)) - 'a';//TODO comprovar que valor devuelve
+                        pos[i - 1] = Character.toLowerCase(mov.charAt(i - 1)) - 'a';//TODO comprobar que valor debuelve
                     } else {
                         pos[i - 1] = Integer.valueOf(String.valueOf(mov.charAt(i - 1)));
                     }
@@ -90,25 +91,75 @@ public class Partida {
         }
         return pos;
     }
+    public static boolean limpiarPantalla() {
+        // Detectar el sistema operativo
+        String sistemaOperativo = System.getProperty("os.name").toLowerCase();
+
+        if (sistemaOperativo.contains("win")) {
+            // Comando para Windows (ejecuta el comando 'cls' en el cmd)
+            try {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            // Comando para Linux y Mac (ejecuta el comando 'clear' usando secuencias ANSI)
+            System.out.print("\\033[H\\033[2J");
+            System.out.flush();
+        }
+        return true;
+    }
+    public void mostrar(){
+        Thread visualizador = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                synchronized(getTablero()){
+                    System.out.println(getTablero().getTableroString());
+                    mostrarTimer();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {System.out.println("Error esperando");}
+                    Partida.limpiarPantalla();
+                }
+            }
+
+        });
+        if(isRuning){
+            visualizador.start();
+        } else {
+            System.out.println(getTablero().getTableroString());
+            System.out.println((getTimer()/1000) + "s");
+        }
+    }
+    private void mostrarTimer(){
+        int sistemaTemp = 60;
+        int t = Integer.valueOf(getTimer()/1000 + "");
+        int s = t % sistemaTemp;
+        int m = (t / sistemaTemp);
+        m -= (sistemaTemp * (m / sistemaTemp));
+        int h = t / (sistemaTemp * sistemaTemp);
+        System.out.println(h + "h " + m + "\' " + s + "\"");
+    }
     public static void main(String[] args) {
         Pieza[][] piezas = new Pieza[][] {
-            {null, null, new Rey(), new Reina(), null, null, null, null},
+            {null, null, ReySilguenton.getInstance(2, 0, false), new Reina(), null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, new Alfil(true), null, null, null, null},
             {null, null, null, null, null, null, new Peon(), null},
             {null, null, null, null, null, null, null, new Caballo()},
             {null, null, null, null, null, null, null, null},
-            {null, new Rey(true), null, null, null, null, null, null}
+            {null, ReySilguenton.getInstance(1, 7, true), null, null, null, null, null, null}
         };
         Tablero t = new Tablero(piezas);
         Partida p = new Partida(t, -1, true);
+        //Partida p = new Partida();
         p.start();
-        //TODO hacer turnos y juego
-        while (p.isRuning()) {
-            System.out.println(p.getTablero().getTableroString());
-            System.out.println((p.getTimer()/1000) + "s");
-            p.finish();
+        while (p.isRuning()) {//TODO hacer turnos y juego
+            p.mostrar();
+            if (p.getTablero().isCheckMate(p.isWhiteTurn())) {
+                p.finish();
+            }
         }
     }
 }

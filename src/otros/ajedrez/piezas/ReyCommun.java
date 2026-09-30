@@ -2,17 +2,17 @@ package otros.ajedrez.piezas;
 
 import otros.ajedrez.Utilidades.PiezaException;
 
-public class Rey extends Pieza {
+public class ReyCommun extends Pieza {
     //Versión "silguentón" doble
-    public Rey(){
+    public ReyCommun(){
         this.posicion = null;
         this.isWhite = false;
     }
-    public Rey(boolean isWhite){
+    public ReyCommun(boolean isWhite){
         this.posicion = null;
         this.isWhite = isWhite;
     }
-    public Rey(int x, int y, boolean isWhite){
+    public ReyCommun(int x, int y, boolean isWhite){
         if (super.setPosicion(x, y)) {
             this.isWhite = isWhite;
         } else {

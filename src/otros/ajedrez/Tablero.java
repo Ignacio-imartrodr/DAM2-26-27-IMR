@@ -10,7 +10,8 @@ import otros.ajedrez.piezas.Caballo;
 import otros.ajedrez.piezas.Peon;
 import otros.ajedrez.piezas.Pieza;
 import otros.ajedrez.piezas.Reina;
-import otros.ajedrez.piezas.Rey;
+import otros.ajedrez.piezas.ReyCommun;
+import otros.ajedrez.piezas.ReySilguenton;
 import otros.ajedrez.piezas.Torre;
 
 public class Tablero {
@@ -32,11 +33,11 @@ public class Tablero {
             p.setColor(false);
         }
 
-        p = new Rey();
+        p = new ReyCommun();
         posXIni = p.getPosXIni()[0];
-        lPiezas.add(new Rey(posXIni, p.getPosYIni(), false));
+        lPiezas.add(ReySilguenton.getInstance(posXIni, p.getPosYIni(), false));
         p.setColor(true);
-        lPiezas.add(new Rey(posXIni, p.getPosYIni(), true));
+        lPiezas.add(ReySilguenton.getInstance(posXIni, p.getPosYIni(), true));
 
         p = new Reina();
         posXIni = p.getPosXIni()[0];
@@ -90,7 +91,7 @@ public class Tablero {
                 Pieza p = tablero[y][x];
                 if ( p != null) {
                     p.setPosicion(x, y);
-                    if (p instanceof Rey) {
+                    if (p instanceof ReyCommun || p instanceof ReySilguenton) {
                         if (p.isWhite()) {
                             if (!hasWhiteKing) {
                                 hasWhiteKing = true;
@@ -114,19 +115,19 @@ public class Tablero {
         }
     }
 
-    public boolean isCheckMate(boolean toWhite) {
+    public synchronized boolean isCheckMate(boolean toWhite) {
         boolean isCheck = isCheck(toWhite);
         if (isCheck) {
             //TODO compobar si es Jacke Mate
         }
         return isCheck;
     }
-    public boolean isCheck(boolean toWhite){
+    public synchronized boolean isCheck(boolean toWhite){
         Pieza[] p = getPiezasActivas();
         Pieza reyAtacked = null;
         int posDifColores = -1;
         for (int i = 0; i < p.length; i++) {
-            if (p[i] instanceof Rey) {
+            if (p[i] instanceof ReyCommun || p[i] instanceof ReySilguenton) {
                 if (toWhite) {
                     if (p[i].isWhite()) {
                         reyAtacked = p[i];
@@ -154,7 +155,7 @@ public class Tablero {
         return isCheck;
     }
 
-    public  String[][] getTableroVacio() {
+    public static String[][] getTableroVacio() {
         String[][] tabVacio = new String[TAMAÑO_LADO_TABLERO][TAMAÑO_LADO_TABLERO];
         for (int i = 0; i < tabVacio.length; i++) {
             for (int j = 0; j < tabVacio[i].length; j++) {
@@ -163,7 +164,7 @@ public class Tablero {
         }
         return tabVacio;
     }
-    public Pieza[] getPiezasActivas() {
+    public synchronized Pieza[] getPiezasActivas() {
         Set<Pieza> lPiezas = new TreeSet<>();
         for (int i = 0; i < this.tabPiezas.length; i++) {
             for (Pieza pieza : this.tabPiezas[i]) {
@@ -179,10 +180,10 @@ public class Tablero {
         }
         return p;
     }
-    public String getTableroString() {
+    public synchronized String getTableroString() {
         String res = "";
         Pieza[] piezasActivas = getPiezasActivas();
-        String[][] tablero = getTableroVacio();
+        String[][] tablero = Tablero.getTableroVacio();
         for (Pieza pieza : piezasActivas) {
             Integer[] posiciones = pieza.getPosicion();
             tablero[posiciones[Pieza.POS_Y]][posiciones[Pieza.POS_X]] = pieza.getForma();
@@ -202,11 +203,11 @@ public class Tablero {
         }
         return res;
     }
-    public Pieza getPieza(int x, int y){
+    public synchronized Pieza getPieza(int x, int y){
         return this.tabPiezas[y][x];
     }
 
-    public boolean validarMovimiento(Integer[] posPieza, Integer[] posXY, boolean isWhiteTurn){ //TODO comprobar si funciona
+    public synchronized boolean validarMovimiento(Integer[] posPieza, Integer[] posXY, boolean isWhiteTurn){ //TODO comprobar si funciona
         if (posXY == null || posPieza == null) {
             return false;
         }
