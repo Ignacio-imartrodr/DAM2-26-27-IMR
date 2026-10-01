@@ -15,7 +15,7 @@ import otros.ajedrez.piezas.ReySilguenton;
 import otros.ajedrez.piezas.Torre;
 
 public class Tablero {
-    private final static int TAMAÑO_LADO_TABLERO = 8;
+    private final static int TAMAÑO_LADO_TABLERO = Pieza.TAMAÑO_TABLERO;
     private final static String CASILLA_VACIA = "-";
     private Pieza[][] tabPiezas;
 

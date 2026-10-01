@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public abstract class Pieza implements Comparable<Pieza>{
     //TODO validar que no se salten entre si (quizas implementar en tablero)
-    protected final static int TAMAÑO_TABLERO = 8;
+    public final static int TAMAÑO_TABLERO = 8;
     protected Integer[] posicion; //Guarda fila(x) - columna(y), ten cuidado al ponerlo en un doble array[y][x]
     protected boolean isWhite;
     protected int cantPiezas = getPosXIni().length;
