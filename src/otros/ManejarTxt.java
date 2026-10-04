@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ManejarTxt {
     /**
@@ -86,5 +88,15 @@ public class ManejarTxt {
             texto = texto + lineas.getLast();
         }
         return writeInTxt(rutaObjetivo, texto, conservar);
+    }
+    public static void main(String[] args) {
+        String txt = "EsTe texto es una pRueBa";
+        System.out.println(txt.startsWith("EsTe"));
+        System.out.println(txt.startsWith("[Ee][Ss][Tt][Ee]"));
+        System.out.println(txt.matches("[Ee][Ss][Te][Ee]"));
+        Matcher a = Pattern.compile("[Ee][Ss][Tt][Ee]").matcher(txt);
+        System.out.println(a.lookingAt());
+        Matcher b = Pattern.compile("[Tt][Ee][Xx][Tt][Oo]").matcher(txt);
+        System.out.println(b.find());
     }
 }

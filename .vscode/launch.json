@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ExamenAiken",
+            "request": "launch",
+            "mainClass": "adat.ud1.ExamenAiken",
+            "projectName": "DAM2-26-27-IMR_fac21486"
+        },
+        {
+            "type": "java",
+            "name": "ManejarTxt",
+            "request": "launch",
+            "mainClass": "otros.ManejarTxt",
+            "projectName": "DAM2-26-27-IMR_fac21486"
+        },
+        {
+            "type": "java",
             "name": "EleccionesMunicipales",
             "request": "launch",
             "mainClass": "PSER.EleccionesMunicipales",
