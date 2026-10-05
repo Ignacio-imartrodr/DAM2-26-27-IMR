@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><Examen>
+    <Preguntas>
+        <Pregunta1>
+            ¿Cuál es la capital de Francia?
+            <RespuestaA>A. Madrid</RespuestaA>
+            <RespuestaB>B. Roma</RespuestaB>
+            <RespuestaC>C. París</RespuestaC>
+            <RespuestaD>D. Berlín</RespuestaD>
+            <Correcta>C</Correcta>
+            <RespuestaEscogida>A</RespuestaEscogida>
+        </Pregunta1>
+        <Pregunta2>
+            ¿Cuál es el planeta más grande de nuestro sistema solar?
+            <RespuestaA>A. Tierra</RespuestaA>
+            <RespuestaB>B. Júpiter</RespuestaB>
+            <RespuestaC>C. Saturno</RespuestaC>
+            <RespuestaD>D. Marte</RespuestaD>
+            <Correcta>B</Correcta>
+            <RespuestaEscogida>B</RespuestaEscogida>
+        </Pregunta2>
+        <Pregunta3>
+            ¿Cuál es la fórmula química del agua?
+            <RespuestaA>A. CO2</RespuestaA>
+            <RespuestaB>B. H2O</RespuestaB>
+            <RespuestaC>C. O2</RespuestaC>
+            <RespuestaD>D. NaCl</RespuestaD>
+            <Correcta>B</Correcta>
+            <RespuestaEscogida>C</RespuestaEscogida>
+        </Pregunta3>
+    </Preguntas>
+</Examen>
