@@ -25,7 +25,7 @@
             <RespuestaC>C. O2</RespuestaC>
             <RespuestaD>D. NaCl</RespuestaD>
             <Correcta>B</Correcta>
-            <RespuestaEscogida>C</RespuestaEscogida>
+            <RespuestaEscogida/>
         </Pregunta3>
     </Preguntas>
 </Examen>

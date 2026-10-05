@@ -23,6 +23,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
@@ -31,6 +33,7 @@ public class ExamenAiken {
     private static final String RUTA_EXAMEN = "src\\adat\\FicherosDatos\\examenCulturaGeneral.txt";
     private static final String RUTA_EXAMEN_JSON = "src\\adat\\FicherosDatos\\examenCulturaGeneralJSON.json";
     private static final String RUTA_EXAMEN_XML = "src\\adat\\FicherosDatos\\examenCulturaGeneralXML.xml";
+
     public static void main(String[] args) {
         List<String[]> lPreguntas = new ArrayList<>();
         List<String> lCorrectas = new ArrayList<>();
@@ -40,7 +43,7 @@ public class ExamenAiken {
         do {
             correcta = pregunta[pregunta.length - 1];
             lCorrectas.add(correcta.substring(correcta.length() - 1));
-            lPreguntas.add(Arrays.copyOf(pregunta, pregunta.length -1));
+            lPreguntas.add(Arrays.copyOf(pregunta, pregunta.length - 1));
             nPregunta++;
             pregunta = leerPregunta(nPregunta);
         } while (pregunta != null);
@@ -58,17 +61,19 @@ public class ExamenAiken {
             correctas[nPregunta] = string;
             nPregunta++;
         }
-        Examen e = new ExamenAiken.Examen(preguntas, correctas, new String[] {"A", "B", "C"});
-        //e.start();
+        Examen e = new ExamenAiken.Examen(preguntas, correctas, new String[] { "A", "B", null });
+        // e.start();
         writeJSON(e);
         writeXML(e);
-        Examen ex = readJSON(RUTA_EXAMEN_JSON);
-        System.out.println();
+        Examen eJSON = readJSON(RUTA_EXAMEN_JSON);
+        Examen eXML = readXML(RUTA_EXAMEN_XML);
+        System.out.println(eJSON.getNota());
+        System.out.println(eXML.getNota());
     }
 
-    public static String[] leerPregunta(int nPregunta){
+    public static String[] leerPregunta(int nPregunta) {
         List<String> l = new ArrayList<>();
-        try (BufferedReader in = new BufferedReader(new FileReader(RUTA_EXAMEN))){
+        try (BufferedReader in = new BufferedReader(new FileReader(RUTA_EXAMEN))) {
             boolean end = false;
             int nActualPregunta = 1;
             while (!end) {
@@ -100,68 +105,98 @@ public class ExamenAiken {
         }
         return res;
     }
-    public static Examen readJSON(String ruta){
+
+    public static Examen readJSON(String ruta) {
         Gson gson = new Gson();
         Examen ex = null;
-        try (BufferedReader in = new BufferedReader(new FileReader(ruta))){
+        try (BufferedReader in = new BufferedReader(new FileReader(ruta))) {
             ex = gson.fromJson(in, Examen.class);
         } catch (Exception e) {
             e.getStackTrace();
         }
         return ex;
     }
-    public static Examen readXML(String ruta){
+
+    public static Examen readXML(String ruta) {
         Document d = null;
         try {
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(ruta);
         } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
-        Element ePreguntas = d.getElementById("Preguntas");
-        List<String[]> lPreguntas = new ArrayList<>();
-        List<String> lCorrectas = new ArrayList<>();
-        int nPregunta = 1;
-        String preg = d.getElementById("Pregunta" + nPregunta).getTextContent();
-        String[] pregunta;
-        String correcta;
-        do {
-            lCorrectas.add(ePreguntas.get);
-            lPreguntas.add(Arrays.copyOf(pregunta, pregunta.length -1));
-            nPregunta++;
-            pregunta = leerPregunta(nPregunta);
-        } while (pregunta != null);
+        NodeList contenedores = d.getDocumentElement().getElementsByTagName("Preguntas");
+        NodeList nodosPregunta = contenedores.item(0).getChildNodes();
+        List<String[]> preguntas = new ArrayList<>();
+        List<String> correctas = new ArrayList<>();
+        List<String> respuestas = new ArrayList<>();
 
-        String[][] preguntas = new String[lPreguntas.size()][];
-        nPregunta = 0;
-        for (String[] strings : lPreguntas) {
-            preguntas[nPregunta] = strings;
-            nPregunta++;
-        }
+        for (int i = 0; i < nodosPregunta.getLength(); i++) {
+            Node nodo = nodosPregunta.item(i);
+            if (nodo.getNodeType() != Node.ELEMENT_NODE) {
+                continue; // Ignora los saltos de línea y la indentación.
+            }
 
-        String[] correctas = new String[lCorrectas.size()];
-        nPregunta = 0;
-        for (String string : lCorrectas) {
-            correctas[nPregunta] = string;
-            nPregunta++;
+            Element elementoPregunta = (Element) nodo;
+            NodeList campos = elementoPregunta.getChildNodes();
+            String enunciado = null;
+            String correcta = null;
+            String respuestaEscogida = null;
+            List<String> opciones = new ArrayList<>();
+
+            for (int j = 0; j < campos.getLength(); j++) {
+                Node campo = campos.item(j);
+
+                if (campo.getNodeType() == Node.TEXT_NODE
+                        && enunciado == null
+                        && !campo.getNodeValue().isBlank()) {
+                    enunciado = campo.getNodeValue().strip();
+                } else if (campo.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elemento = (Element) campo;
+                    String etiqueta = elemento.getTagName();
+                    String texto = elemento.getTextContent().strip();
+
+                    if (etiqueta.matches("Respuesta[A-Z]")) {
+                        opciones.add(texto);
+                    } else if (etiqueta.equals("Correcta")) {
+                        correcta = texto;
+                    } else if (etiqueta.equals("RespuestaEscogida") && !texto.isEmpty()) {
+                        respuestaEscogida = texto;
+                    }
+                }
+            }
+
+            String[] pregunta = new String[opciones.size() + 1];
+            pregunta[0] = enunciado;
+            for (int j = 0; j < opciones.size(); j++) {
+                pregunta[j + 1] = opciones.get(j);
+            }
+
+            preguntas.add(pregunta);
+            correctas.add(correcta);
+            respuestas.add(respuestaEscogida);
         }
-        Examen e;
-        return null;
+        return new Examen(
+                preguntas.toArray(new String[0][]),
+                correctas.toArray(new String[0]),
+                respuestas.toArray(new String[0]));
     }
-    public static boolean writeJSON(Examen e){
+
+    public static boolean writeJSON(Examen e) {
         Gson gson = new Gson();
         String json = gson.toJson(e);
         try (var out = new BufferedWriter(new FileWriter(RUTA_EXAMEN_JSON));) {
-           out.write(json);
+            out.write(json);
         } catch (FileNotFoundException e1) {
             System.out.println("Fichero no encontrado");
         } catch (IOException IOE) {
             System.out.println("Error de E/S");
-        } catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getStackTrace());
         }
         return false;
     }
-    public static boolean writeXML(Examen e){
+
+    public static boolean writeXML(Examen e) {
         Document d = null;
         try {
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -179,7 +214,7 @@ public class ExamenAiken {
             preg = d.createElement("Pregunta" + (i + 1));
             preg.setTextContent(preguntas[i][0]);
             for (int j = 1; j < preguntas[i].length; j++) {
-                
+
                 resp = d.createElement("Respuesta" + (Character.toString('A' + (j - 1))));
                 resp.setTextContent(preguntas[i][j]);
                 preg.appendChild(resp);
@@ -194,7 +229,7 @@ public class ExamenAiken {
             preg.appendChild(resp);
             p.appendChild(preg);
         }
-        
+
         ex.appendChild(p);
         Transformer optimus = null;
         try {
@@ -202,7 +237,7 @@ public class ExamenAiken {
         } catch (TransformerConfigurationException | TransformerFactoryConfigurationError e1) {
             e1.printStackTrace();
         }
-        
+
         optimus.setOutputProperty("indent", "yes");
         try {
             optimus.transform(new DOMSource(ex), new StreamResult(RUTA_EXAMEN_XML));
@@ -218,7 +253,6 @@ public class ExamenAiken {
         String[] correctas;
         Float nota;
 
-        
         public Examen(String[][] preguntas, String[] correctas) {
             if (preguntas == null || correctas == null || preguntas.length != correctas.length) {
                 throw new IllegalArgumentException();
@@ -228,33 +262,38 @@ public class ExamenAiken {
             respuestas = null;
             nota = null;
         }
+
         public Examen(String[][] preguntas, String[] correctas, String[] respuestas) {
-            if (respuestas == null || preguntas == null || correctas == null || preguntas.length != correctas.length || correctas.length != respuestas.length || preguntas.length != respuestas.length) {
+            this(preguntas, correctas);
+            if (preguntas == null || correctas == null || preguntas.length != correctas.length) {
                 throw new IllegalArgumentException();
             }
-            this.preguntas = preguntas;
-            this.correctas = correctas;
+            if (respuestas != null && correctas.length != respuestas.length) {
+                throw new IllegalArgumentException();
+            }
             this.respuestas = respuestas;
-            nota = null;
         }
 
         public String[][] getPreguntas() {
             return preguntas;
         }
+
         public String[] getRespuestas() {
             return respuestas;
         }
+
         public String[] getCorrectas() {
             return correctas;
         }
+
         public Float getNota() {
             if (nota == null) {
                 nota = calculateNota();
             }
             return nota;
         }
-        
-        private Float calculateNota(){
+
+        private Float calculateNota() {
             Float nota = 0f;
             if (respuestas == null) {
                 return nota;
@@ -264,26 +303,29 @@ public class ExamenAiken {
                     nota++;
                 }
             }
-            nota *= 10f/correctas.length;
+            nota *= 10f / correctas.length;
             return nota;
         }
-        public void start(){
+
+        public void start() {
             String[] res = new String[correctas.length];
             String[] resValidas = null;
             boolean isValid = true;
             for (int i = 0; i < preguntas.length; i++) {
                 String[] pregunta = preguntas[i];
-                    resValidas = new String[pregunta.length - 1];
-                    for (int j = 0; j < pregunta.length; j++) {
-                        System.out.println(pregunta[j]);
-                        if (isValid && j > 0) resValidas[j - 1] = pregunta[j].substring(0, 1);
-                    }
+                resValidas = new String[pregunta.length - 1];
+                for (int j = 0; j < pregunta.length; j++) {
+                    System.out.println(pregunta[j]);
+                    if (isValid && j > 0)
+                        resValidas[j - 1] = pregunta[j].substring(0, 1);
+                }
                 System.out.println("Respuesta:");
                 res[i] = pedirTxt();
                 isValid = false;
                 for (int j = 0; res[i] != null && j < resValidas.length && !isValid; j++) {
                     isValid = res[i].equalsIgnoreCase(resValidas[j]);
-                    if (isValid) res[i] = resValidas[j];
+                    if (isValid)
+                        res[i] = resValidas[j];
                 }
                 if (!isValid && res[i] != null) {
                     System.out.println("Respuesta no valida. Escoja una de las letras: " + Arrays.toString(resValidas));
@@ -293,8 +335,10 @@ public class ExamenAiken {
             this.respuestas = res;
         }
     }
+
     private static Scanner sc = new Scanner(System.in);
-    public static String pedirTxt(){
+
+    public static String pedirTxt() {
         String res = null;
         try {
             res = sc.nextLine();
