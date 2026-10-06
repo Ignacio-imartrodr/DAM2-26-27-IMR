@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FaltasSerializadas",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.corregido.imartrodr.FaltasSerializadas",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "MeteogaliciaTemperaturaConcello",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.entregado.imartrodr.MeteogaliciaTemperaturaConcello",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "MeteogaliciaTemperaturaConcello",
             "request": "launch",
             "mainClass": "adat.ud1.examen.corregido.imartrodr.MeteogaliciaTemperaturaConcello",
