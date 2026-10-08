@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.Random;
 
 public class EleccionesMunicipales {
-    final static int N_PARTIDOS = 3;
-    final static int CENSO = 9;
+    final static String[] NOMBRE_PARTIDOS = new String[] {"PP", "PSOE", "VOX", "SUMAR","JUNX"};
+    final static int CENSO = 10000;
 
     public static void main(String[] args) {
-        Urna urna = new Urna(N_PARTIDOS);
-        for (int i = 0; i < N_PARTIDOS; i++) {
-            urna.addPartido(new Partido(String.valueOf(i)));
-        }
+        Urna urna = new Urna(NOMBRE_PARTIDOS);
         Votante[] votantes = new Votante[CENSO];
         for (int i = 0; i < CENSO; i++) {
             votantes[i] = new Votante("Votante " + i, urna);
@@ -42,11 +39,11 @@ public class EleccionesMunicipales {
         System.out.println("Votantes: " + CENSO);
         System.out.println("Resultados:");
         urna.mostrarVotos();
-        String[] ganadores = urna.getGanadores();
+        Partido[] ganadores = urna.getGanadores();
         if (ganadores.length == 1) {
-            System.out.println("El ganador de la votacion es el partido: " + ganadores[0]);
+            System.out.println("El ganador de la votacion es el partido " + ganadores[0]);
         } else {
-            System.out.println("Los ganadores empatados son: " + Arrays.toString(ganadores));
+            System.out.println("Los ganadores empatados son:\n" + Arrays.toString(ganadores));
         }
     }
 
@@ -71,7 +68,7 @@ public class EleccionesMunicipales {
                 System.out.println("Error mientras pensaba");
             }
             int partido = escogerVoto();
-            System.out.println(getName() + " > Partido " + partido + " + 1");
+            System.out.println(getName() + " > Partido " + urna.getNombrePartido(partido) + " + 1");
             urna.votar(partido);
         }
 
@@ -110,36 +107,28 @@ public class EleccionesMunicipales {
         public String getNombre() {
             return nombre;
         }
+
+        @Override
+        public String toString() {
+            return nombre + ", votos: " + contador;
+        }
+        
     }
 
     /**
      * Urna
      */
     private static class Urna {
-        List<Partido> partidos;
+        Partido[] partidos;
 
-        /*
-         * public Urna() {
-         * this.partidos = new ArrayList<>();
-         * }
-         */
-
-        public Urna(int nPartidos) {
-            this.partidos = new ArrayList<>(nPartidos);
+        public Urna(String[] partidos) {
+            this.partidos = new Partido[partidos.length];
+            int i = 0;
+            for (String partido : partidos) {
+                this.partidos[i] = new Partido(partido);
+                i++;
+            }
         }
-
-        /*
-         * public Urna(List<Partido> partidos) {
-         * this.partidos = new ArrayList<>(partidos);
-         * }
-         * 
-         * public Urna(Partido[] partidos) {
-         * this.partidos = new ArrayList<>();
-         * for (Partido partido : partidos) {
-         * this.partidos.add(partido);
-         * }
-         * }
-         */
 
         public synchronized int getVotosTotales() {
             int nVotos = 0;
@@ -148,46 +137,31 @@ public class EleccionesMunicipales {
             }
             return nVotos;
         }
-
-        public synchronized int getNumPartidos() {
-            return partidos.size();
+        public String getNombrePartido(int partido) {
+            return partidos[partido].getNombre();
+        }
+        public int getNumPartidos() {
+            return partidos.length;
         }
 
-        /*public synchronized int getVotosGanador() {
-            int maxVotos = partidos.get(0).getContador();
-            int votosAct;
-            for (int i = 1; i < partidos.size(); i++) {
-                votosAct = partidos.get(i).getContador();
-                if (votosAct > maxVotos) {
-                    maxVotos = votosAct;
-                }
-            }
-            return maxVotos;
-        }*/
-
-        public synchronized String[] getGanadores() {
-            List<Integer> ganadores = new ArrayList<>();
-            /*int max = getVotosGanador();
-            for (int i = 0; i < partidos.size(); i++) {
-                if (partidos.get(i).getContador() == max) {
-                    ganadores.add(i);
-                }
-            }*/
-            int max = 0;
+        public synchronized Partido[] getGanadores() {
+            List<Partido> ganadores = new ArrayList<>();
+            int max = partidos[0].getContador();
+            ganadores.add(partidos[0]);
             Partido partido;
-            for (int i = 0; i < partidos.size(); i++) {
-                partido = partidos.get(i);
+            for (int i = 1; i < partidos.length; i++) {
+                partido = partidos[i];
                 if (partido.getContador() > max) {
-                    ganadores = new ArrayList<>();
-                    ganadores.add(i);
+                    ganadores.clear();
+                    ganadores.add(partidos[i]);
                     max = partido.getContador();
                 } else if (partido.getContador() == max) {
-                    ganadores.add(i);
+                    ganadores.add(partidos[i]);
                 }
             }
-            String[] res = new String[ganadores.size()];
+            Partido[] res = new Partido[ganadores.size()];
             for (int i = 0; i < res.length; i++) {
-                res[i] = partidos.get(ganadores.get(i)).getNombre();
+                res[i] = ganadores.get(i);
             }
             return res;
         }
@@ -199,22 +173,13 @@ public class EleccionesMunicipales {
         }
 
         public boolean votar(int partido) {
-            synchronized (partidos.get(partido)) {
-                if (partido < 0 || partido >= partidos.size()) {
+            synchronized (partidos[partido]) {
+                if (partido < 0 || partido >= partidos.length) {
                     return false;
                 }
             }
-            partidos.get(partido).incrementar();
+            partidos[partido].incrementar();
             return true;
-        }
-
-        public boolean addPartido(Partido partido) {
-            synchronized (partidos){
-                if (getVotosTotales() > 0) {
-                    return false;
-                }
-                return this.partidos.add(partido);
-            }
         }
     }
 }

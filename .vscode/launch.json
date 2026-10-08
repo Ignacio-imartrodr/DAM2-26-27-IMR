@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AparcamientoCoches",
+            "request": "launch",
+            "mainClass": "PSER.AparcamientoCoches",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "FaltasSerializadas",
             "request": "launch",
             "mainClass": "adat.ud1.examen.corregido.imartrodr.FaltasSerializadas",
