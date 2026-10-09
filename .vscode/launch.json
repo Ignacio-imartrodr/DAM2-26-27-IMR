@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppInstituto",
+            "request": "launch",
+            "mainClass": "adat.ud2.Instituto.AppInstituto",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "Ejemplo1JdbcH2",
+            "request": "launch",
+            "mainClass": "adat.ud2.Ejemplo1JdbcH2",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AparcamientoCoches",
             "request": "launch",
             "mainClass": "PSER.AparcamientoCoches",
