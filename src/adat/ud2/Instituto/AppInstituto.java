@@ -36,7 +36,7 @@ public class AppInstituto {
             stmt.execute("INSERT INTO alumnos VALUES(DEFAULT, 'Marta', 'Perez Gonzalez', '2007-8-9', 'DAM2', 7)");
             stmt.execute("INSERT INTO alumnos VALUES(DEFAULT, 'Josue', 'Perez Gonzalez', '2007-8-9', 'DAM2', 4.9)");
             stmt.execute("INSERT INTO alumnos VALUES(DEFAULT, 'Antonio', 'Perez Gonzalez', '2007-8-9', 'DAM2', 8.7)");
-
+            int numClientes = 5;
             // Recuperar Listado de alumnos
             System.out.println("\nLISTADO DE ALUMNOS:");
             sql = "SELECT * FROM alumnos";
@@ -52,15 +52,26 @@ public class AppInstituto {
             }
 
             Scanner sc = new Scanner(System.in);
-            System.out.print("\nIndica el id del alumno a recuperar: ");
-            /* Ejemplos de entradas para SQL Injection
-               "1 OR 1=1" para obtener todos los registros
-               "1; delete from alumnos" para ejecutar otra consulta que borre todos los alumnos
-             */ 
-            String idR = sc.nextLine();
+            Integer numId = null;
+            while (numId == null) {
+                System.out.print("\nIndica el id del alumno a recuperar: ");
+                /* Ejemplos de entradas para SQL Injection
+                   "1 OR 1=1" para obtener todos los registros
+                   "1; delete from alumnos" para ejecutar otra consulta que borre todos los alumnos
+                 */ 
+                try {
+                    numId = sc.nextInt();
+                } catch (Exception e) {
+                    sc.nextLine();
+                    numId = null;
+                }
+                if (numId == null || numClientes < numId || numId <= 0) {
+                    System.out.println("Valor no valido para la busqueda");
+                    numId = null;
+                }
+            }
             sc.close();
-
-            sql = "SELECT * FROM alumnos WHERE id = " + idR;
+            sql = "SELECT * FROM alumnos WHERE id = " + numId;
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -71,7 +82,6 @@ public class AppInstituto {
                 Double notaMedia = rs.getDouble(6);
                 System.out.println("Alumno " + id + ": " + name + " " + apellidos + ", nacido = " + fechaNacimiento + ", curso = " + curso + ", nota media = " + notaMedia);
             }
-
             // Recuperar Listado de alumnos
             System.out.println("\nLISTADO DE ALUMNOS:");
             sql = "SELECT * FROM alumnos";
