@@ -9,7 +9,7 @@ public class AparcamientoCoches {
         Parking parking = new Parking(N_PLAZAS);
         parking.mostrarPlazas();
         Coche[] coches = new Coche[N_COCHES];
-        for (int i = 0; i < N_COCHES; i++) {;
+        for (int i = 0; i < N_COCHES; i++) {
             coches[i] = new Coche("C" + /*i*/String.valueOf((char)('A' + i)), parking);
             coches[i].start();
         }
@@ -27,19 +27,7 @@ public class AparcamientoCoches {
             this.parking = parking;
         }
 
-        @Override
-        public void run() {
-            aparcar();
-
-            try {
-                Thread.sleep(rnd.nextInt(1000,5000));
-            } catch (InterruptedException ex) {
-                System.out.println("Error mientras esperaba");
-            }
-
-            parking.salir(this);
-        }
-        public void aparcar(){
+        /*public void aparcar(){
             int plaza;
             do {
                 plaza = parking.getPlazaLibre();
@@ -48,6 +36,18 @@ public class AparcamientoCoches {
                 }
             } while ( plaza == -1 || !parking.aparcar(this, plaza));
             parking.mostrarPlazas();
+        }*/
+
+        @Override
+        public void run() {
+            parking.aparcar(this);
+            try {
+                Thread.sleep(rnd.nextInt(100,500));
+            } catch (InterruptedException ex) {
+                System.out.println("Error mientras hacía recados");
+            }
+
+            parking.salir(this);
         }
     }
 
@@ -110,8 +110,46 @@ public class AparcamientoCoches {
             System.out.println(parking);
         }
 
-        public boolean aparcar(Coche c, int plaza) {
+        private boolean aparcar(Coche c, int plaza) {
+            if (plaza < 0 || plaza >= plazas.length) {
+                return false;
+            }
             return plazas[plaza].aparcar(c);
+        }
+
+        public synchronized void aparcar(Coche c){
+            int plaza;
+            if ((plaza = getPlazaLibre()) == -1) {
+                try {
+                    wait(); //HACE QUE ESPEREN POR EL PARKING, ESPERA A QUE NOTIFIQUEN UNA LIBERACIÓN
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                plaza = getPlazaLibre();
+            }
+            aparcar(c, plaza);
+            
+         /* int plaza; // ES LO MISMO QUE ARRIVA PERO SE ASEGURA QUE LA VA A APARCAR SIEMPRE AUNQUE NO HAGA FALTA GRACIAS A USAR notify() EN VEZ DE notifyAll()
+            while ((plaza = getPlazaLibre()) == -1) {
+                try {
+                    wait(); //HACE QUE ESPEREN POR EL PARKING, ESPERA A QUE NOTIFIQUEN UNA LIBERACIÓN
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            aparcar(c, plaza); */
+
+          /*int plaza = getPlazaLibre();
+            if (plaza == -1) {
+                try {
+                    c.wait(); // NO HACE ESPERAR AL COCHE HACE QUE ESPEREN POR ÉL
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                aparcar(c, getPlazaLibre());
+            } else {
+                aparcar(c, plaza); 
+            }*/
         }
         
         public boolean salir(Coche c){
@@ -123,6 +161,9 @@ public class AparcamientoCoches {
             }
             if (isLeaving) {
                 mostrarPlazas();
+                synchronized (this){
+                    notify();
+                }
             }
             return isLeaving;
         }
