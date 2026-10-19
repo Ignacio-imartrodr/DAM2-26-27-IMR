@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppBiblioteca",
+            "request": "launch",
+            "mainClass": "adat.ud2.biblioteca.AppBiblioteca",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "ExportarJsonEmpleados",
             "request": "launch",
             "mainClass": "adat.ud1.examen.entregado.imartrodr.ExportarJsonEmpleados",

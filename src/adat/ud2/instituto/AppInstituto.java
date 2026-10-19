@@ -1,4 +1,4 @@
-package adat.ud2.insti;
+package adat.ud2.instituto;
 
 import java.sql.Connection;
 import java.sql.Date;
