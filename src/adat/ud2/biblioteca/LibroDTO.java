@@ -5,13 +5,15 @@ import java.time.LocalDate;
 public class LibroDTO {
     private int id;
     private String titulo;
-    private LocalDate fechaPublicación;
+    private String autor;
+    private LocalDate fechaPub;
     private Double valoracion;
     
-    public LibroDTO(int id, String titulo, LocalDate fechaNacimiento, Double valoracion) {
+    public LibroDTO(int id, String titulo, String autor, LocalDate fechaNacimiento, Double valoracion) {
         this.id = id;
         this.titulo = titulo;
-        this.fechaPublicación = fechaNacimiento;
+        this.autor = autor;
+        this.fechaPub = fechaNacimiento;
         if (valoracion == null || !setValoracion(valoracion)) {
             valoracion = null;
         }
@@ -40,12 +42,20 @@ public class LibroDTO {
         this.titulo = titulo;
     }
 
-    public LocalDate getFechaPublicación() {
-        return fechaPublicación;
+    public String getAutor() {
+        return autor;
     }
 
-    public void setFechaPublicación(LocalDate fechaPublicacion) {
-        this.fechaPublicación = fechaPublicacion;
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public LocalDate getFechaPub() {
+        return fechaPub;
+    }
+
+    public void setFechaPub(LocalDate fechaPublicacion) {
+        this.fechaPub = fechaPublicacion;
     }
 
     public Double getValoracion() {
@@ -62,7 +72,7 @@ public class LibroDTO {
 
     @Override
     public String toString() {
-        return "LibroDTO [id= " + id + ", titulo= " + titulo + ", fechaPublicación= " + fechaPublicación + ", valoracion= "
+        return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + autor + ", fecha publicación= " + fechaPub + ", valoración= "
                 + (valoracion == 0. ? "Sin valoración" : valoracion ) + "]";
     }
 }

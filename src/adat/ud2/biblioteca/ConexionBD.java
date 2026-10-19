@@ -6,19 +6,18 @@ import java.sql.SQLException;
 
 public class ConexionBD {
     public static Connection conectar() {
-        String url = "jdbc:h2:./././BD/biblioteca";
-        String user = "sa";
-        String pass = "";
+        final String URL = "jdbc:h2:./././BD/biblioteca";
+        final String USER = "sa";
+        final String PASS = "";
 
         Connection con = null;
 
         try {
-            con = DriverManager.getConnection(url, user, pass);
+            con = DriverManager.getConnection(URL, USER, PASS);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
         return con;
     }
-
 }
