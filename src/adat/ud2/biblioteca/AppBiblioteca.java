@@ -35,48 +35,38 @@ public class AppBiblioteca {
                 case 0:
                     // Crear Tabla/BD
 
-                    try (Statement statement = con.createStatement();) {
-                        String sql = """
-                                CREATE TABLE libros (
-                                  id INT PRIMARY KEY AUTO_INCREMENT,
-                                  titulo VARCHAR (100),
-                                  autor VARCHAR (50),
-                                  fecha_publicacion DATE,
-                                  valoracion DECIMAL (4,2)
-                                );
-                                """;
-                        statement.executeUpdate(sql);
-                        System.out.println("tabla creada con exito");
-                    } catch (SQLException e) {
+                    if (crearTabla(con)) {
+                        System.out.println("Tabla creada con exito");
+                    } else {
                         System.out.println("La tabla ya existe");
                     }
                     break;
                 case 1:
                     // Insertar
 
-                    LibroDTO libro = pedirLibro(sc);
-                    if (libroDAO.insertar(libro)) {
+                    if (insertar(sc, libroDAO)) {
                         System.out.println("Libro insertado correctamente");
                     } else {
-                        System.out.println("Error al insertar el libro: " + libro);
+                        System.out.println("Error al insertar el libro");
                     }
                     break;
                 case 2:
                     // Listar
 
-                    System.out.println("\nLIBROS\n=======");
                     List<LibroDTO> libros = libroDAO.findAll();
-                    libros.forEach(System.out::println);
+                    if (libros.size() > 0) {
+                        System.out.println("\nLIBROS\n==========");
+                        libros.forEach(System.out::println);
+                    } else {
+                        System.out.println("No hay libros guardados");
+                    }
                     break;
                 case 3:
                     // Buscar por ID
 
-                    System.out.print("Id del libro a recuperar: ");
-                    Integer id = pedirInt(sc);
-                    id = id == null ? -1 : id;
-                    libro = libroDAO.find(new LibroDTO(id));
+                    LibroDTO libro = findById(sc, libroDAO);
                     if (libro != null) {
-                        System.out.println(libro);
+                        System.out.println("LIBRO ENCONTRADO: " + libro);
                     } else {
                         System.out.println("Error al recuperar el libro (o no existe)");
                     }
@@ -84,69 +74,19 @@ public class AppBiblioteca {
                 case 4:
                     // Actualizar
 
-                    System.out.println("Id del libro que quiere actualizar?");
-                    id = pedirInt(sc);
-                    id = id == null ? -1 : id;
-                    libro = libroDAO.find(new LibroDTO(id));
-                    if (libro != null) {
-                        boolean cancelar = false;
-                        System.out.println("Que parametro quiere modificar?\nOPCIONES");
-                        System.out.println("0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\nOtro - Cancelar");
-                        int nParam = sc.nextInt();
-                        switch (nParam) {
-                            case 0:
-                                LibroDTO libro2 = pedirLibro(sc);
-                                libro2.setId(libro.getId());
-                                libro = libro2;
-                                break;
-                            
-                            case 1:
-                                libro.setTitulo(sc.nextLine());
-                                break;
-
-                            case 2:
-                                libro.setAutor(pedirAutor(sc));
-                                break;
-
-                            case 3:
-                                libro.setFechaPub(pedirFecha(sc));
-                                break;
-                            
-                            case 4:
-                                libro.setValoracion(pedirValoracion(sc));
-                                break;
-                            
-                            default:
-                                cancelar = true;
-                                break;
-                        }
-                        if (cancelar) {
-                            System.out.println("Operación cancelada");
-                        } else {
-                            if (libroDAO.actualizar(libro)) {
-                                System.out.println("Libro actualizado correctamente");
-                            } else {
-                                System.out.println("Error al actualizar el libro");
-                            }
-                        }
+                    if (actualizar(sc, libroDAO)) {
+                        System.out.println("Libro actualizado correctamente");
+                    } else {
+                        System.out.println("Operación cancelada");
                     }
-
                     break;
                 case 5:
                     // Eliminar
-
-                    System.out.print("Id del libro a borrar: ");
-                    try {
-                        id = pedirInt(sc);
-                        id = id == null ? -1 : id;
-                        if (libroDAO.borrar(new LibroDTO(id))) {
-                            System.out.println("Libro borrado correctamente");
-                        } else {
-                            System.out.println("Error al borrar el libro");
-                        }
-                    } catch (Exception e) {
-                        sc.nextLine();
-                        System.out.println("Id no válida");
+                    
+                    if(eliminar(sc, libroDAO)) {
+                        System.out.println("Libro borrado correctamente");
+                    } else {
+                        System.out.println("Error al borrar el libro");
                     }
                     break;
                 case 6:
@@ -165,6 +105,104 @@ public class AppBiblioteca {
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static boolean insertar(Scanner sc, LibroDAOtran libroDAO) {
+        LibroDTO libro = pedirLibro(sc);
+        if (libroDAO.insertar(libro)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean eliminar(Scanner sc, LibroDAOtran libroDAO) {
+        System.out.print("Id del libro a borrar: ");
+        try {
+            Integer id = pedirInt(sc);
+            id = id == null ? -1 : id;
+            return libroDAO.borrar(new LibroDTO(id));
+        } catch (Exception e) {
+            sc.nextLine();
+            System.out.println("Id no válida");
+            return false;
+        }
+    }
+
+    private static boolean actualizar(Scanner sc, LibroDAOtran libroDAO) {
+        System.out.println("Id del libro que quiere actualizar?");
+        Integer id = pedirInt(sc);
+        id = id == null ? -1 : id;
+        LibroDTO libro = libroDAO.find(new LibroDTO(id));
+        boolean isSuccess = libro != null;
+        if (isSuccess) {
+            System.out.println("Que parametro quiere modificar?\nOPCIONES");
+            System.out.println("0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\nOtro - Cancelar");
+            int nParam = sc.nextInt();
+            switch (nParam) {
+                case 0:
+                    LibroDTO libro2 = pedirLibro(sc);
+                    libro2.setId(libro.getId());
+                    libro = libro2;
+                    break;
+
+                case 1:
+                    libro.setTitulo(sc.nextLine());
+                    break;
+
+                case 2:
+                    libro.setAutor(pedirAutor(sc));
+                    break;
+
+                case 3:
+                    libro.setFechaPub(pedirFecha(sc));
+                    break;
+
+                case 4:
+                    if (!libro.setValoracion(pedirValoracion(sc))) {
+                        System.out.println("Error asignando la Valoración");
+                        isSuccess = false;
+                    }
+                    break;
+
+                default:
+                    isSuccess = false;
+                    break;
+            }
+        }
+        if (isSuccess) {
+            if (!libroDAO.actualizar(libro)) {
+                isSuccess = false;
+                System.out.println("Error al actualizar el libro");
+            }
+        }
+        return isSuccess;
+    }
+    private static LibroDTO findById(Scanner sc, LibroDAOtran libroDAO) {
+        LibroDTO libro;
+        System.out.print("Id del libro a recuperar: ");
+        Integer id = pedirInt(sc);
+        id = id == null ? -1 : id;
+        libro = libroDAO.find(new LibroDTO(id));
+        return libro;
+    }
+
+    private static boolean crearTabla(Connection con) {
+        try (Statement statement = con.createStatement();) {
+            String sql = """
+                    CREATE TABLE libros (
+                      id INT PRIMARY KEY AUTO_INCREMENT,
+                      titulo VARCHAR (100),
+                      autor VARCHAR (50),
+                      fecha_publicacion DATE,
+                      valoracion DECIMAL (4,2)
+                    );
+                    """;
+            statement.executeUpdate(sql);
+            return true;
+        } catch (SQLException e) {
+            return false;
         }
     }
 
@@ -220,17 +258,22 @@ public class AppBiblioteca {
 
     private static Double pedirValoracion(Scanner sc) {
         Double valoracion = null;
+        String opciones = "[0 - 5.0] (0 para dejar sin puntuación)";
+        String msjErr = "Valoración no válida, " + opciones;
         while (valoracion == null) {
             try {
-                System.out.println("Valoración media del libro? [0 - 5.0] (0 para dejar sin puntuación)");
+                System.out.println("Valoración media del libro? " + opciones);
                 valoracion = sc.nextDouble();
                 if (valoracion < 0. || valoracion > 5.) {
-                    System.out.println("Valoración no válida, solo de 0 a 5 (0 para dejar sin puntuación)");
+
+                    System.out.println(msjErr);
+
                     valoracion = null;
                 }
             } catch (Exception e) {
                 sc.nextLine();
-                System.out.println("Valoración no válida, solo de 0 a 5 (0 para dejar sin puntuación)");
+
+                System.out.println(msjErr);
             }
         }
         return valoracion;

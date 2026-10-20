@@ -43,8 +43,9 @@ public class LibroDAOtran {
     public boolean insertar(LibroDTO libro) {
         String sql = """
                 INSERT INTO libros
+                (titulo, autor, fecha_publicacion, valoracion)
                 VALUES
-                (DEFAULT, ?, ?, ?, ?)
+                (?, ?, ?, ?)
                 """;
         try {
             int parIndx = 0;
