@@ -1,4 +1,4 @@
-package PSER;
+package PSER.baseHilos;
 
 public class GeneradorHilos {
     public void main(String[] args) {

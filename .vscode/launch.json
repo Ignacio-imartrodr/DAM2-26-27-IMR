@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppOficina",
+            "request": "launch",
+            "mainClass": "PSER.oficina.AppOficina",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppBibliotecaOld",
             "request": "launch",
             "mainClass": "adat.ud2.biblioteca.old.AppBibliotecaOld",
