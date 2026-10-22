@@ -1,4 +1,4 @@
-package adat.ud2.biblioteca.old;
+package adat.ud2.oldBiblioteca;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

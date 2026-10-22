@@ -28,9 +28,9 @@ public class AppBiblioteca {
             try {
                 opcion = sc.nextInt();
             } catch (Exception e) { 
-                sc.nextLine();
                 opcion = -1;
             }
+            sc.nextLine();
             switch (opcion) {
                 case 0:
                     // Crear Tabla/BD
@@ -140,6 +140,7 @@ public class AppBiblioteca {
             System.out.println("Que parametro quiere modificar?\nOPCIONES");
             System.out.println("0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\nOtro - Cancelar");
             int nParam = sc.nextInt();
+            sc.nextLine();
             switch (nParam) {
                 case 0:
                     LibroDTO libro2 = pedirLibro(sc);
@@ -207,7 +208,6 @@ public class AppBiblioteca {
     }
 
     private static LibroDTO pedirLibro(Scanner sc) {
-        sc.nextLine();
         System.out.println("Titulo del libro?");
         String titulo = sc.nextLine();
 
@@ -225,16 +225,16 @@ public class AppBiblioteca {
         try {
             id = sc.nextInt();
         } catch (Exception e) {
-            sc.nextLine();
             id = null;
         }
+        sc.nextLine();
         return id;
     }
 
     private static String pedirAutor(Scanner sc){
         System.out.println("Autor del libro? (-1 para desconocido)");
         String autor = sc.nextLine();
-        if (autor.equals("-1")) {
+        if (autor.equals("-1") || autor.isEmpty()) {
             autor = null;
         }
         return autor;
@@ -264,6 +264,7 @@ public class AppBiblioteca {
             try {
                 System.out.println("Valoración media del libro? " + opciones);
                 valoracion = sc.nextDouble();
+                sc.nextLine();
                 if (valoracion < 0. || valoracion > 5.) {
 
                     System.out.println(msjErr);
@@ -271,7 +272,6 @@ public class AppBiblioteca {
                     valoracion = null;
                 }
             } catch (Exception e) {
-                sc.nextLine();
 
                 System.out.println(msjErr);
             }

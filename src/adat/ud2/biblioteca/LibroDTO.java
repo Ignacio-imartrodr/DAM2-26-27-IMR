@@ -72,7 +72,7 @@ public class LibroDTO {
 
     @Override
     public String toString() {
-        return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + autor + ", fecha publicación= " + fechaPub + ", valoración= "
+        return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + (autor == null ? "Autor desconocido" : autor) + ", fecha publicación= " + fechaPub + ", valoración= "
                 + (valoracion == 0. ? "Sin valoración" : valoracion ) + "]";
     }
 }

@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "tablaProfesor",
+            "request": "launch",
+            "mainClass": "adat.ud2.CRUD_DAO_DTO_Profesor_Scarbmora.CRUD_DAO_DTO_Profesor_Scarbmora.tablaProfesor",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "tablaProfesor",
+            "request": "launch",
+            "mainClass": "adat.ud2.CRUD_DAO_DTO_Profesores_Scarbmora.tablaProfesor",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppOficina",
             "request": "launch",
             "mainClass": "PSER.oficina.AppOficina",
