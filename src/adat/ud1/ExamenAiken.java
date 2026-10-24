@@ -62,7 +62,7 @@ public class ExamenAiken {
             nPregunta++;
         }
         Examen e = new ExamenAiken.Examen(preguntas, correctas, new String[] { "A", "B", null });
-        // e.start();
+        e.start();
         writeJSON(e);
         writeXML(e);
         Examen eJSON = readJSON(RUTA_EXAMEN_JSON);
@@ -155,7 +155,7 @@ public class ExamenAiken {
                     String etiqueta = elemento.getTagName();
                     String texto = elemento.getTextContent().strip();
 
-                    if (etiqueta.matches("Respuesta[A-Z]")) {
+                    if (etiqueta.matches("Respuesta.*")) {
                         opciones.add(texto);
                     } else if (etiqueta.equals("Correcta")) {
                         correcta = texto;
@@ -175,10 +175,7 @@ public class ExamenAiken {
             correctas.add(correcta);
             respuestas.add(respuestaEscogida);
         }
-        return new Examen(
-                preguntas.toArray(new String[0][]),
-                correctas.toArray(new String[0]),
-                respuestas.toArray(new String[0]));
+        return new Examen(preguntas.toArray(new String[0][]), correctas.toArray(new String[0]), respuestas.toArray(new String[0]));
     }
 
     public static boolean writeJSON(Examen e) {

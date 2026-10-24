@@ -1,0 +1,54 @@
+{
+    "listaObservacionConcellos": [
+        {
+            "nomeConcello": "A Coruña",
+            "humedad": 75,
+            "temperatura": 17.8
+        },
+        {
+            "nomeConcello": "Santiago de Compostela",
+            "humedad": 80,
+            "temperatura": 16.4
+        },
+        {
+            "nomeConcello": "Ourense",
+            "humedad": 70,
+            "temperatura": 22.1
+        },
+        {
+            "nomeConcello": "Marín",
+            "humedad": 78,
+            "temperatura": 18.5
+        },
+        {
+            "nomeConcello": "Vigo",
+            "humedad": 85,
+            "temperatura": 19.2
+        },
+        {
+            "nomeConcello": "Lugo",
+            "humedad": 72,
+            "temperatura": 15.3
+        },
+        {
+            "nomeConcello": "Pontevedra",
+            "humedad": 82,
+            "temperatura": 18.9
+        },
+        {
+            "nomeConcello": "Ferrol",
+            "humedad": 76,
+            "temperatura": 17.1
+        },
+        {
+            "nomeConcello": "Vilagarcía de Arousa",
+            "humedad": 79,
+            "temperatura": 18.2
+        },
+        {
+            "nomeConcello": "Lalín",
+            "humedad": 74,
+            "temperatura": 14.8
+        }
+    ]
+}

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Ignacio Martínez Rodríguez
  */
 public class MeteogaliciaTemperaturaConcello {
-    public final static String RUTA_JSON = "DATOS\\observacionConcellos.json";
+    public final static String RUTA_JSON = "src\\adat\\ud1\\examen\\DATOS\\observacionConcellos.json";
     public static void main(String[] args) {
         String json = null;
         try (var in = new BufferedReader(new FileReader(RUTA_JSON))) {

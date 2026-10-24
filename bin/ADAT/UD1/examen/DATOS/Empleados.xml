@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<empleados>
+    <empleado id="1">
+        <nombre>Ana García</nombre>
+        <departamento>Informática</departamento>
+        <salario>35000</salario>
+    </empleado>
+    <empleado id="2">
+        <nombre>Luis Pérez</nombre>
+        <departamento>Recursos Humanos</departamento>
+        <salario>28000</salario>
+    </empleado>
+    <empleado id="3">
+        <nombre>María López</nombre>
+        <departamento>Informática</departamento>
+        <salario>42000</salario>
+    </empleado>
+    <empleado id="4">
+        <nombre>Carlos Rodríguez</nombre>
+        <departamento>Desenvolvemento</departamento>
+        <salario>38500</salario>
+    </empleado>
+    <empleado id="5">
+        <nombre>Sonia Martínez</nombre>
+        <departamento>Contabilidad</departamento>
+        <salario>31000</salario>
+    </empleado>
+    <empleado id="6">
+        <nombre>Javier Fernández</nombre>
+        <departamento>Informática</departamento>
+        <salario>45000</salario>
+    </empleado>
+    <empleado id="7">
+        <nombre>Laura Gómez</nombre>
+        <departamento>Recursos Humanos</departamento>
+        <salario>29500</salario>
+    </empleado>
+    <empleado id="8">
+        <nombre>Marcos Vázquez</nombre>
+        <departamento>Ventas</departamento>
+        <salario>33000</salario>
+    </empleado>
+</empleados>

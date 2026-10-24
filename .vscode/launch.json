@@ -6,6 +6,90 @@
     "configurations": [
         {
             "type": "java",
+            "name": "tablaProfesor",
+            "request": "launch",
+            "mainClass": "adat.ud2.CRUD_DAO_DTO_Profesor_Scarbmora.CRUD_DAO_DTO_Profesor_Scarbmora.tablaProfesor",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "tablaProfesor",
+            "request": "launch",
+            "mainClass": "adat.ud2.CRUD_DAO_DTO_Profesores_Scarbmora.tablaProfesor",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AppOficina",
+            "request": "launch",
+            "mainClass": "PSER.oficina.AppOficina",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AppBibliotecaOld",
+            "request": "launch",
+            "mainClass": "adat.ud2.biblioteca.old.AppBibliotecaOld",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AppBiblioteca",
+            "request": "launch",
+            "mainClass": "adat.ud2.biblioteca.AppBiblioteca",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "ExportarJsonEmpleados",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.entregado.imartrodr.ExportarJsonEmpleados",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "FaltasSerializadas",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.entregado.imartrodr.FaltasSerializadas",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AppInstituto",
+            "request": "launch",
+            "mainClass": "adat.ud2.Instituto.AppInstituto",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "Ejemplo1JdbcH2",
+            "request": "launch",
+            "mainClass": "adat.ud2.Ejemplo1JdbcH2",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AparcamientoCoches",
+            "request": "launch",
+            "mainClass": "PSER.AparcamientoCoches",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "FaltasSerializadas",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.corregido.imartrodr.FaltasSerializadas",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "MeteogaliciaTemperaturaConcello",
+            "request": "launch",
+            "mainClass": "adat.ud1.examen.entregado.imartrodr.MeteogaliciaTemperaturaConcello",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "MeteogaliciaTemperaturaConcello",
             "request": "launch",
             "mainClass": "adat.ud1.examen.corregido.imartrodr.MeteogaliciaTemperaturaConcello",

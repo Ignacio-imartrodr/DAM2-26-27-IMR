@@ -11,7 +11,7 @@ import com.google.gson.Gson;
  * @author Ignacio Martínez Rodríguez
  */
 public class ExportarJsonEmpleados {
-    public final static String RUTA_JSON = "DATOS\\empleados.json";
+    public final static String RUTA_JSON = "src\\adat\\ud1\\examen\\DATOS\\empleados.json";
     public static boolean exportarJson(List<Empleado> empleados, String fichero){
         Gson gson = new Gson();
         Empleado[] emp = new Empleado[empleados.size()];

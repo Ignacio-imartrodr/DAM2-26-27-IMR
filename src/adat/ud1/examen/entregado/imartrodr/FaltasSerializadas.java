@@ -17,8 +17,8 @@ import java.util.List;
  * @author Ignacio Martínez Rodríguez
  */
 public class FaltasSerializadas {
-    public final static String RUTA_CSV = "DATOS\\consultaxeradorinformes.csv";
-    public final static String RUTA_BIN = "DATOS\\FaltasAsistencia.dat";
+    public final static String RUTA_CSV = "src\\adat\\ud1\\examen\\DATOS\\consultaxeradorinformes.csv";
+    public final static String RUTA_BIN = "src\\adat\\ud1\\examen\\DATOS\\FaltasAsistencia.dat";
 
     public static void main(String[] args) {
         String[] csv = leerCSV();
