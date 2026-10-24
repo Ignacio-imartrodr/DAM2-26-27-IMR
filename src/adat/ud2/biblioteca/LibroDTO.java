@@ -8,18 +8,17 @@ public class LibroDTO {
     private String autor;
     private LocalDate fechaPub;
     private Double valoracion;
+    private UsuarioDTO usuario;
     
-    public LibroDTO(int id, String titulo, String autor, LocalDate fechaNacimiento, Double valoracion) {
+    public LibroDTO(int id, String titulo, String autor, LocalDate fechaNacimiento, Double valoracion, UsuarioDTO usuario) {
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.fechaPub = fechaNacimiento;
+        this.usuario = usuario;
         if (valoracion == null || !setValoracion(valoracion)) {
             valoracion = null;
         }
-    }
-
-    public LibroDTO() {
     }
 
     public LibroDTO(int id) {
@@ -28,10 +27,6 @@ public class LibroDTO {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitulo() {
@@ -69,10 +64,18 @@ public class LibroDTO {
         this.valoracion = valoracion;
         return true;
     }
+    
+    public UsuarioDTO getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioDTO usuario) {
+        this.usuario = usuario;
+    }
 
     @Override
     public String toString() {
         return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + (autor == null ? "Autor desconocido" : autor) + ", fecha publicación= " + fechaPub + ", valoración= "
-                + (valoracion == 0. ? "Sin valoración" : valoracion ) + "]";
+                + (valoracion == 0. ? "Sin valoración" : valoracion ) + "Poseedor actual: "+ (usuario == null ? "Ninguno" : usuario.toString()) + "]";
     }
 }

@@ -19,25 +19,45 @@ public class LibroDAOtran {
         this.con = con;
     }
 
-    public List<LibroDTO> findAll() {
-        List<LibroDTO> libros = null;
-
-        try (Statement sentenciaSQL = con.createStatement()){
-            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
-            libros = new ArrayList<>();
-            while (rs.next()) {
-                libros.add(new LibroDTO(
-                        rs.getInt("id"),
-                        rs.getString("titulo"),
-                        rs.getString("autor"),
-                        rs.getDate("fecha_publicacion").toLocalDate(),
-                        rs.getDouble("valoracion")));
+    public boolean beginTransaction(){
+        boolean isSuccess = false;
+        try {
+            if (!con.getAutoCommit()) {
+                System.err.println("Transacción ya en curso");
+            } else {
+                con.setAutoCommit(false);
+                isSuccess = true;
             }
-            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return libros;
+        return isSuccess;
+    }
+    public boolean endTransaction(boolean hasSucceded){
+        boolean isSuccess = false;
+        
+        try {
+            if (con.getAutoCommit()) {
+                System.err.println("No hay ninguna transacción ya en curso");
+                return isSuccess;
+            }
+            if (hasSucceded) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+            isSuccess = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return isSuccess;
     }
 
     public boolean insertar(LibroDTO libro) {
@@ -62,11 +82,34 @@ public class LibroDAOtran {
         }
     }
 
-    public boolean borrar(LibroDTO libro) {
-        return borrar(libro.getId());
+    public boolean insertar(UsuarioDTO us) {
+        String sql = """
+                INSERT INTO usuarios
+                (nombre)
+                VALUES
+                (?)
+                """;
+        try {
+            int parIndx = 0;
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            //sentenciaSQL.setInt(++parIndx, libro.getId());
+            sentenciaSQL.setString(++parIndx, us.getNombre());
+            return sentenciaSQL.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public boolean borrar(int id) {
+    public boolean borrar(LibroDTO libro) {
+        return borrarLibro(libro.getId());
+    }
+
+    public boolean borrar(UsuarioDTO us) {
+        return borrarUsuario(us.getId());
+    }
+
+    public boolean borrarLibro(int id) {
         String sql = """
                 DELETE FROM libros
                 WHERE ID = ?
@@ -81,11 +124,76 @@ public class LibroDAOtran {
         }
     }
 
-    public LibroDTO find(LibroDTO libro) {
-        return find(libro.getId());
+    public boolean borrarUsuario(int id) {
+        String sql = """
+                DELETE FROM usuarios
+                WHERE ID = ?
+                """;
+        try {
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            sentenciaSQL.setInt(1, id);
+            return sentenciaSQL.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public LibroDTO find(int id) {
+    public List<LibroDTO> findAllLibros() {
+        List<LibroDTO> libros = null;
+
+        try (Statement sentenciaSQL = con.createStatement()){
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
+            libros = new ArrayList<>();
+            while (rs.next()) {
+                int idUsuario = rs.getInt("idUsuario");
+                if (rs.wasNull()) {
+                    idUsuario = -1;
+                }
+                libros.add(new LibroDTO(
+                        rs.getInt("id"),
+                        rs.getString("titulo"),
+                        rs.getString("autor"),
+                        rs.getDate("fecha_publicacion").toLocalDate(),
+                        rs.getDouble("valoracion"),
+                        findUsuario(idUsuario)
+                    ));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return libros;
+    }
+
+    public List<UsuarioDTO> findAllUsuarios() {
+        List<UsuarioDTO> usuarios = null;
+
+        try (Statement sentenciaSQL = con.createStatement()){
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM usuarios");
+            usuarios = new ArrayList<>();
+            while (rs.next()) {
+                usuarios.add(new UsuarioDTO(
+                        rs.getInt("id"),
+                        rs.getString("nombre")
+                    ));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
+    public LibroDTO find(LibroDTO libro) {
+        return findLibro(libro.getId());
+    }
+
+    public UsuarioDTO find(UsuarioDTO us) {
+        return findUsuario(us.getId());
+    }
+
+    public LibroDTO findLibro(int id) {
         if (id < 0) {
             return null;
         }
@@ -98,18 +206,49 @@ public class LibroDAOtran {
             sentenciaSQL.setInt(1, id);
             ResultSet rs = sentenciaSQL.executeQuery();
             if (rs.next()) {
+                int idUsuario = rs.getInt("idUsuario");
+                if (rs.wasNull()) {
+                    idUsuario = -1;
+                }
                 LibroRes = new LibroDTO(
                         rs.getInt("id"),
                         rs.getString("titulo"),
                         rs.getString("autor"),
                         rs.getDate("fecha_publicacion").toLocalDate(),
-                        rs.getDouble("valoracion"));
+                        rs.getDouble("valoracion"),
+                        findUsuario(idUsuario)
+                    );
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return LibroRes;
+    }
+
+    public UsuarioDTO findUsuario(int id) {
+        if (id < 0) {
+            return null;
+        }
+        UsuarioDTO usRes = null;
+        String sql = """
+                SELECT * FROM usuarios
+                WHERE ID = ?
+                """;
+        try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
+            sentenciaSQL.setInt(1, id);
+            ResultSet rs = sentenciaSQL.executeQuery();
+            if (rs.next()) {
+                usRes = new UsuarioDTO(
+                        rs.getInt("id"),
+                        rs.getString("nombre")
+                    );
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usRes;
     }
 
     public boolean actualizar(LibroDTO libro) {

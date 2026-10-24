@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppBiblioteca",
+            "request": "launch",
+            "mainClass": "adat.ud2.bibliotecaV1.AppBiblioteca",
+            "projectName": "DAM2-26-27-IMR_fac21486"
+        },
+        {
+            "type": "java",
             "name": "tablaProfesor",
             "request": "launch",
             "mainClass": "adat.ud2.CRUD_DAO_DTO_Profesor_Scarbmora.CRUD_DAO_DTO_Profesor_Scarbmora.tablaProfesor",
