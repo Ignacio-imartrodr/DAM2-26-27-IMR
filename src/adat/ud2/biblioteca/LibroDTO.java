@@ -2,7 +2,7 @@ package adat.ud2.biblioteca;
 
 import java.time.LocalDate;
 
-public class LibroDTO {
+public class LibroDTO extends AbstractDTO {
     private int id;
     private String titulo;
     private String autor;
@@ -11,6 +11,9 @@ public class LibroDTO {
     private UsuarioDTO usuario;
     
     public LibroDTO(int id, String titulo, String autor, LocalDate fechaNacimiento, Double valoracion, UsuarioDTO usuario) {
+        if (titulo == null || titulo.isBlank()) {
+            throw new IllegalArgumentException("El título no puede ser null o estar vacío");
+        }
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
@@ -19,6 +22,10 @@ public class LibroDTO {
         if (valoracion == null || !setValoracion(valoracion)) {
             valoracion = null;
         }
+    }
+
+    public LibroDTO(String titulo, String autor, LocalDate fechaNacimiento, Double valoracion, UsuarioDTO usuario) {
+        this(-1, titulo, autor, fechaNacimiento, valoracion, usuario);
     }
 
     public LibroDTO(int id) {

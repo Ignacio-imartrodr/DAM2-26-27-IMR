@@ -1,17 +1,23 @@
 package adat.ud2.biblioteca;
 
-public class UsuarioDTO {
+public class UsuarioDTO extends AbstractDTO {
     private int id;
     private String nombre;
+    private String correo;
     
-    public UsuarioDTO(int id, String nombre) {
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede ser null o estar vacío");
+    public UsuarioDTO(int id, String nombre, String correo) {
+        if (nombre == null || nombre.isBlank() || correo == null || correo.isBlank()) {
+            throw new IllegalArgumentException("El nombre y el correo no pueden ser null o estar vacíos");
         }
         this.id = id;
         this.nombre = nombre;
+        this.correo = correo;
     }
     
+    public UsuarioDTO(String nombre, String correo) {
+        this(-1, nombre, correo);
+    }
+
     public UsuarioDTO(int id) {
         this.id = id;
     }
@@ -26,6 +32,14 @@ public class UsuarioDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     @Override

@@ -5,91 +5,347 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.Scanner;
 
 public class AppBiblioteca {
+    public static Scanner sc = new Scanner(System.in);
+    public static Connection con = ConexionBD.conectar();
+    public static UsuarioDAOtran usuarioDAO = new UsuarioDAOtran(con);
+    public static LibroDAOtran libroDAO = new LibroDAOtran(con);
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Connection con = ConexionBD.conectar();
-        LibroDAOtran libroDAO = new LibroDAOtran(con);
         boolean continuar = true;
-        int opcion = -1;
+        Integer opcion;
         do {
             System.out.println("MENU LIBROS");
-            System.out.println("0. Crear Tabla/BD");
+            System.out.println("0. Crear Tablas/BD");
             System.out.println("1. Insertar");
             System.out.println("2. Listar");
             System.out.println("3. Buscar por ID");
             System.out.println("4. Actualizar");
             System.out.println("5. Eliminar");
-            System.out.println("6. TRANSACCION PRUEBA: Insertar Lista de alumnos");
+            System.out.println("6. TRANSACCION PRUEBA: Insertar libros y usuarios");
             System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
-            try {
-                opcion = sc.nextInt();
-            } catch (Exception e) { 
-                opcion = -1;
-            }
-            sc.nextLine();
+            opcion = pedirInt();
+            opcion = opcion == null ? -1 : opcion;
             switch (opcion) {
                 case 0:
-                    // Crear Tabla/BD
+                    // Crear Tablas/BD
 
                     if (crearTablas(con)) {
-                        System.out.println("Tabla creada con exito");
+                        System.out.println("Operación exitosa");
                     } else {
-                        System.out.println("La tabla ya existe");
+                        System.out.println("Error creando tablas");
                     }
                     break;
                 case 1:
                     // Insertar
                     
-                    if (insertar(sc, libroDAO)) {
-                        System.out.println("Inserción correcta");
-                    } else {
-                        System.out.println("Error insertando");
+                    System.out.println("Que quiere insertar?\nOPCIONES");
+                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
+                    System.out.print("Seleccione una opción: ");
+                    opcion = pedirInt();
+                    opcion = opcion == null ? -1 : opcion;
+                    switch (opcion) {
+                        case 0:
+                            //Libro
+
+                            LibroDTO libro = pedirLibro();
+                            if (libroDAO.insertar(libro)) {
+                                System.out.println("Inserción correcta");
+                            } else {
+                                System.out.println("Error insertando");
+                            }
+                            break;
+
+                        case 1:
+                            //Usuario
+
+                            UsuarioDTO us = pedirUsuario();
+                            if (usuarioDAO.insertar(us)) {
+                                System.out.println("Inserción correcta");
+                            } else {
+                                System.out.println("Error insertando");
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Operacion cancelada");
+                            break;
                     }
+                    break;
                 case 2:
                     // Listar
 
-                    listar(sc, libroDAO);
+                    System.out.println("Que quiere listar?\nOPCIONES");
+                    System.out.println("0 - Todo\n1- Libros\n2 - Usuarios\nOtro - Cancelar");
+                    System.out.print("Seleccione una opción: ");
+                    opcion = pedirInt();
+                    opcion = opcion == null ? -1 : opcion;
+                    switch (opcion) {
+                        case 0: 
+                            //Todo
+
+                            listarLibros();
+                            listarUsuarios();
+                            break;
+
+                        case 1:
+                            //Libro
+
+                            listarLibros();
+                            break;
+
+                        case 2:
+                            //Usuario
+                            
+                            listarUsuarios();
+                            break;
+
+                        default:
+                            System.out.println("Operacion cancelada");
+                            break;
+                    }
                     break;
                 case 3:
                     // Buscar por ID
 
-                    LibroDTO libro = findById(sc, libroDAO);
-                    if (libro != null) {
-                        System.out.println("LIBRO ENCONTRADO: " + libro);
-                    } else {
-                        System.out.println("Error al recuperar el libro (o no existe)");
+                    System.out.println("Que quiere buscar?\nOPCIONES");
+                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
+                    System.out.print("Seleccione una opción: ");
+                    opcion = pedirInt();
+                    opcion = opcion == null ? -1 : opcion;
+                    switch (opcion) {
+                        case 0:
+                            //Libro
+
+                            System.out.print("Id del libro a recuperar: ");
+                            Integer id = pedirInt();
+                            id = (id == null) ? -1 : id;
+                            LibroDTO libro = libroDAO.find(new LibroDTO(id));
+                            if (libro != null) {
+                                System.out.println("LIBRO ENCONTRADO: " + libro);
+                            } else {
+                                System.out.println("Error al recuperar el libro (o no existe)");
+                            }
+                            break;
+
+                        case 1:
+                            //Usuario
+
+                            System.out.print("Id del libro a recuperar: ");
+                            id = pedirInt();
+                            id = (id == null) ? -1 : id;
+                            UsuarioDTO us = usuarioDAO.find(new UsuarioDTO(id));
+                            if (us != null) {
+                                System.out.println("USUARIO ENCONTRADO: " + us);
+                            } else {
+                                System.out.println("Error al recuperar el usuario (o no existe)");
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Operacion cancelada");
+                            break;
                     }
                     break;
                 case 4:
                     // Actualizar
 
-                    if (actualizar(sc, libroDAO)) {
-                        System.out.println("Actualización correcta");
-                    } else {
-                        System.out.println("Operación cancelada");
+                    System.out.println("Que quiere insertar?\nOPCIONES");
+                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
+                    System.out.print("Seleccione una opción: ");
+                    opcion = pedirInt();
+                    opcion = opcion == null ? -1 : opcion;
+                    switch (opcion) {
+                        case 0:
+                            System.out.println("Id del libro que quiere actualizar?");
+                            Integer id = pedirInt();
+                            id = id == null ? -1 : id;
+                            LibroDTO libro = libroDAO.find(new LibroDTO(id));
+                            boolean isSuccess = libro != null;
+                            if (isSuccess) {
+                                System.out.println("Que parametro quiere modificar?\nOPCIONES");
+                                System.out.println(
+                                        "0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Poseedor\nOtro - Cancelar");
+                                opcion = pedirInt();
+                                opcion = opcion == null ? -1 : opcion;
+                                switch (opcion) {
+                                    case 0:
+                                        LibroDTO libro2 = pedirLibro();
+                                        libro = new LibroDTO(libro.getId(), libro2.getTitulo(), libro2.getAutor(),
+                                                libro2.getFechaPub(), libro2.getValoracion(), libro2.getUsuario());
+                                        break;
+
+                                    case 1:
+                                        System.out.print("Titulo del libro?: ");
+                                        libro.setTitulo(pedirStringNoVacía());
+                                        break;
+
+                                    case 2:
+                                        libro.setAutor(pedirAutor());
+                                        break;
+
+                                    case 3:
+                                        libro.setFechaPub(pedirFecha());
+                                        break;
+
+                                    case 4:
+                                        if (!libro.setValoracion(pedirValoracion())) {
+                                            System.out.println("Error asignando la Valoración");
+                                            isSuccess = false;
+                                        }
+                                        break;
+
+                                    case 5:
+                                        listarUsuarios();
+                                        System.out.println("Id del usuario que lo va a poseer?");
+                                        opcion = pedirInt();
+                                        opcion = opcion == null ? -1 : opcion;
+                                        UsuarioDTO us = usuarioDAO.find(opcion);
+                                        if (us == null) {
+                                            System.out.println("Error al recuperar el usuario (o no existe)");
+                                        } else {
+                                            libro.setUsuario(us);
+                                        }
+                                        break;
+
+                                    default:
+                                        isSuccess = false;
+                                        break;
+                                }
+                                if (!isSuccess) {
+                                    System.out.println("Operación cancelada");
+                                }
+                            }
+                            if (isSuccess) {
+                                if (!libroDAO.actualizar(libro)) {
+                                    System.out.println("Error al actualizar el libro");
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            System.out.println("Id del usuario que quiere actualizar?");
+                            id = pedirInt();
+                            id = id == null ? -1 : id;
+                            UsuarioDTO us = usuarioDAO.find(new UsuarioDTO(id));
+                            isSuccess = us != null;
+                            if (isSuccess) {
+                                boolean isAll = false;
+                                System.out.println("Que parametro quiere modificar?\nOPCIONES");
+                                System.out.println("0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
+                                opcion = pedirInt();
+                                opcion = opcion == null ? -1 : opcion;
+                                switch (opcion) {
+                                    case 0:
+                                        isAll = true;
+                                    case 1:
+                                        System.out.println("Nombre del usuario?");
+                                        us.setNombre(pedirStringNoVacía());
+                                        if (!isAll) {
+                                            break;
+                                        }
+                                    case 2:
+                                        System.out.println("Correo del usuario?");
+                                        us.setCorreo(pedirStringNoVacía());
+                                        break;
+
+                                    default:
+                                        System.out.println("Operacion cancelada");
+                                        isSuccess = false;
+                                        break;
+                                }
+                            }
+                            if (isSuccess) {
+                                if (!usuarioDAO.actualizar(us)) {
+                                    System.out.println("Error al actualizar el usuario");
+                                }
+                            }
+
+                            break;
+
+                        default:
+                            System.out.println("Operacion cancelada");
+                            break;
                     }
                     break;
                 case 5:
                     // Eliminar
                     
-                    if(eliminar(sc, libroDAO)) {
-                        System.out.println("Libro borrado correctamente");
-                    } else {
-                        System.out.println("Error al borrar el libro");
+                    System.out.println("Que quiere buscar?\nOPCIONES");
+                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
+                    System.out.print("Seleccione una opción: ");
+                    opcion = pedirInt();
+                    opcion = opcion == null ? -1 : opcion;
+                    switch (opcion) {
+                        case 0:
+                            //Libro
+
+                            System.out.print("Id del libro a borrar: ");
+                            opcion = pedirInt();
+                            opcion = opcion == null ? -1 : opcion;
+                            LibroDTO libro = libroDAO.find(opcion);
+                            if (libro != null) {
+                                if(libroDAO.borrar(new LibroDTO(opcion))) {
+                                    System.out.println("Libro borrado correctamente");
+                                } else {
+                                    System.out.println("Error al borrar el libro");
+                                }
+                            } else {
+                                System.out.println("Error al encotrar el libro (o no existe)");
+                            }
+                            break;
+
+                        case 1:
+                            //Usuario
+
+                            System.out.print("Id del usuario a borrar: ");
+                            opcion = pedirInt();
+                            opcion = opcion == null ? -1 : opcion;
+                            UsuarioDTO us = usuarioDAO.find(opcion);
+                            if (us != null) {
+                                if(usuarioDAO.borrar(new UsuarioDTO(opcion))) {
+                                    System.out.println("Usuario borrado correctamente");
+                                } else {
+                                    System.out.println("Error al borrar el usuario");
+                                }
+                            } else {
+                                System.out.println("Error al encotrar el usuario (o no existe)");
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Operacion cancelada");
+                            break;
                     }
+                    
                     break;
                 case 6:
                     // Transacción
 
-                    boolean hasSucceded = false;
-                    libroDAO.beginTransaction();
-                    //TODO añadir varios usuarios y/o libros
-                    libroDAO.endTransaction(hasSucceded);
+                    if (!usuarioDAO.beginTransaction()) {
+                        System.out.println("No se pudo iniciar la transacción");
+                        break;
+                    }
+
+                    boolean hasSucceded =
+                            usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))
+                        &&  usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))
+                        &&  usuarioDAO.insertar(new UsuarioDTO("Marta López","martalopez@example.com"))
+                        &&  libroDAO.insertar(new LibroDTO("Don Quijote de la Mancha", "Miguel de Cervantes",
+                                LocalDate.of(1605, 1, 16), 4.8, null))
+                        &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca",
+                                LocalDate.of(1936, 6, 1), 4.6, null))
+                        &&  libroDAO.insertar(new LibroDTO( "Niebla", "Miguel de Unamuno",
+                                LocalDate.of(1914, 1, 1), 4.2, null));
+
+                    if (usuarioDAO.endTransaction(hasSucceded)) {
+                        System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
+                    } else {
+                        System.out.println("Error en la transacción, se ha cancelado la inserción");
+                    }
                     break;
                 case 7:
                     // Salir
@@ -110,213 +366,49 @@ public class AppBiblioteca {
         }
     }
 
-    private static void listar(Scanner sc, LibroDAOtran libroDAO) {
-        System.out.println("Que quiere listar?\nOPCIONES");
-        System.out.println("0 - Todo\n1- Libros\n2 - Usuarios\nOtro - Cancelar");
-        System.out.print("Seleccione una opción: ");
-        int opcion;
-        try {
-            opcion = sc.nextInt();
-        } catch (Exception e) { 
-            opcion = -1;
-        }
-        sc.nextLine();
-        switch (opcion) {
-            case 0:
-                listarLibros(libroDAO);
-                listarUsuarios(libroDAO);
-                break;
-
-            case 1:
-                listarLibros(libroDAO);
-                break;
-
-            case 2:
-                listarUsuarios(libroDAO);
-                break;
-
-            default:
-                System.out.println("Operacion cancelada");
-                break;
-        }
-    }
-
-    private static void listarUsuarios(LibroDAOtran libroDAO) {
-        List<UsuarioDTO> usuarios = libroDAO.findAllUsuarios();
-        if (usuarios.size() > 0) {
+    private static void listarUsuarios() {
+        UsuarioDTO[] usuarios = usuarioDAO.findAll();
+        if (usuarios.length > 0) {
             System.out.println("\nUSUARIOS\n==========");
-            usuarios.forEach(System.out::println);
+            for (UsuarioDTO usuario : usuarios) {
+                System.out.println(usuario);
+            }
         } else {
-            System.out.println("No hay libros guardados");
+            System.out.println("No hay usuarios guardados");
         }
     }
 
-    private static void listarLibros(LibroDAOtran libroDAO) {
-        List<LibroDTO> libros = libroDAO.findAllLibros();
-        if (libros.size() > 0) {
+    private static void listarLibros() {
+        LibroDTO[] libros = libroDAO.findAll();
+        if (libros.length > 0) {
             System.out.println("\nLIBROS\n==========");
-            libros.forEach(System.out::println);
+            for (LibroDTO libro : libros) {
+                System.out.println(libro);
+            }
         } else {
             System.out.println("No hay libros guardados");
         }
-    }
-
-
-    private static boolean insertar(Scanner sc, LibroDAOtran libroDAO) {
-        boolean hasSucceded = false;
-        System.out.println("Que quiere insertar?\nOPCIONES");
-        System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
-        System.out.print("Seleccione una opción: ");
-        int opcion;
-        try {
-            opcion = sc.nextInt();
-        } catch (Exception e) { 
-            opcion = -1;
-        }
-        sc.nextLine();
-        switch (opcion) {
-            case 0:
-                LibroDTO libro = pedirLibro(sc);
-                if (libroDAO.insertar(libro)) {
-                    hasSucceded = true;
-                }
-                break;
-
-            case 1:
-                UsuarioDTO us = pedirUsuario(sc);
-                if (libroDAO.insertar(us)) {
-                    hasSucceded = true;
-                }
-                break;
-
-            default:
-                System.out.println("Operacion cancelada");
-                break;
-        }
-        return hasSucceded;
-    }
-
-    private static boolean eliminar(Scanner sc, LibroDAOtran libroDAO) {
-        System.out.print("Id del libro a borrar: ");
-        try {
-            Integer id = pedirInt(sc);
-            id = id == null ? -1 : id;
-            return libroDAO.borrar(new LibroDTO(id));
-        } catch (Exception e) {
-            sc.nextLine();
-            System.out.println("Id no válida");
-            return false;
-        }
-    }
-
-    private static boolean actualizar(Scanner sc, LibroDAOtran libroDAO) {
-        boolean hasSucceded = false;
-        System.out.println("Que quiere insertar?\nOPCIONES");
-        System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
-        System.out.print("Seleccione una opción: ");
-        int opcion;
-        try {
-            opcion = sc.nextInt();
-        } catch (Exception e) { 
-            opcion = -1;
-        }
-        sc.nextLine();
-        switch (opcion) {
-            case 0:
-                System.out.println("Id del libro que quiere actualizar?");
-                Integer id = pedirInt(sc);
-                id = id == null ? -1 : id;
-                LibroDTO libro = libroDAO.find(new LibroDTO(id));
-                boolean isSuccess = libro != null;
-                if (isSuccess) {
-                    System.out.println("Que parametro quiere modificar?\nOPCIONES");
-                    System.out.println("0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Poseedor\nOtro - Cancelar");
-                    int nParam;
-                    try {
-                        nParam = sc.nextInt();
-                    } catch (Exception e) {
-                        nParam = -1;
-                    }
-                    sc.nextLine();
-                    switch (nParam) {
-                        case 0:
-                            LibroDTO libro2 = pedirLibro(sc);
-                            libro = new LibroDTO(libro.getId(), libro2.getTitulo(), libro2.getAutor(), libro2.getFechaPub(), libro2.getValoracion(), libro2.getUsuario());
-                            break;
-
-                        case 1:
-                            libro.setTitulo(sc.nextLine());
-                            break;
-
-                        case 2:
-                            libro.setAutor(pedirAutor(sc));
-                            break;
-
-                        case 3:
-                            libro.setFechaPub(pedirFecha(sc));
-                            break;
-
-                        case 4:
-                            if (!libro.setValoracion(pedirValoracion(sc))) {
-                                System.out.println("Error asignando la Valoración");
-                                isSuccess = false;
-                            }
-                            break;
-
-                        case 5:
-                            //TODO elegirPoseedor
-                            break;
-
-                        default:
-                            isSuccess = false;
-                            break;
-                    }
-                }
-                if (isSuccess) {
-                    if (!libroDAO.actualizar(libro)) {
-                        isSuccess = false;
-                        System.out.println("Error al actualizar el libro");
-                    }
-                    hasSucceded = isSuccess;
-                }
-                break;
-
-            case 1:
-                //TODO acutaulizar usuario
-                break;
-
-            default:
-                System.out.println("Operacion cancelada");
-                break;
-        }
-        
-        return hasSucceded;
-    }
-    private static LibroDTO findById(Scanner sc, LibroDAOtran libroDAO) {
-        System.out.print("Id del libro a recuperar: ");
-        Integer id = pedirInt(sc);
-        id = (id == null) ? -1 : id;
-        return libroDAO.find(new LibroDTO(id));
     }
 
     private static boolean crearTablas(Connection con) {
         try (Statement statement = con.createStatement();) {
             String sqlCreateUsuarios = """
-                    CREATE TABLE usuarios (
-                      id INT PRIMARY KEY AUTO_INCREMENT,
-                      nombre VARCHAR (100),
+                    CREATE TABLE IF NOT EXISTS usuarios (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        nombre VARCHAR (100),
+                        correo VARCHAR (100) NOT NULL
                     );
                     """;
             statement.executeUpdate(sqlCreateUsuarios);
             String sqlCreateLibros = """
-                    CREATE TABLE libros (
-                      id INT PRIMARY KEY AUTO_INCREMENT,
-                      titulo VARCHAR (100),
-                      autor VARCHAR (50),
-                      fecha_publicacion DATE,
-                      valoracion DECIMAL (4,2),
-                      idUsuario INT DEFAULT NULL,
-                    FOREIGN KEY(idUsuario) REFERENCES usuarios(id)
+                    CREATE TABLE IF NOT EXISTS libros (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        titulo VARCHAR (100) NOT NULL,
+                        autor VARCHAR (50),
+                        fecha_publicacion DATE,
+                        valoracion DECIMAL (4,2),
+                        idUsuario INT DEFAULT NULL,
+                        FOREIGN KEY(idUsuario) REFERENCES usuarios(id)
                     );
                     """;
             statement.executeUpdate(sqlCreateLibros);
@@ -326,27 +418,39 @@ public class AppBiblioteca {
         }
     }
 
-    private static LibroDTO pedirLibro(Scanner sc) {
-        System.out.println("Titulo del libro?");
-        String titulo = sc.nextLine();
+    private static LibroDTO pedirLibro() {
+        System.out.print("Titulo del libro?: ");
+        String titulo = pedirStringNoVacía();
 
-        String autor = pedirAutor(sc);
+        String autor = pedirAutor();
 
-        LocalDate fechaPub = pedirFecha(sc);
+        LocalDate fechaPub = pedirFecha();
 
-        Double valoracion = pedirValoracion(sc);
+        Double valoracion = pedirValoracion();
 
         return new LibroDTO(-1, titulo, autor, fechaPub, valoracion, null);
     }
 
-    private static UsuarioDTO pedirUsuario(Scanner sc) {
-        System.out.println("Nombre del usuario?");
-        String nombre = sc.nextLine();
+    private static UsuarioDTO pedirUsuario() {
+        System.out.print("Nombre del usuario?: ");
+        String nombre = pedirStringNoVacía();
 
-        return new UsuarioDTO(-1, nombre);
+        System.out.print("Correo del usuario?: ");
+        String correo = pedirStringNoVacía();
+
+        return new UsuarioDTO(-1, nombre, correo);
     }
 
-    private static Integer pedirInt(Scanner sc){
+    private static String pedirStringNoVacía(){
+        String txt = sc.nextLine();
+        while (txt.isBlank()) {
+            System.out.println("Debe escribir algo");
+            txt = sc.nextLine();
+        }
+        return txt;
+    }
+
+    private static Integer pedirInt(){
         Integer id = null;
         try {
             id = sc.nextInt();
@@ -357,8 +461,8 @@ public class AppBiblioteca {
         return id;
     }
 
-    private static String pedirAutor(Scanner sc){
-        System.out.println("Autor del libro? (-1 para desconocido)");
+    private static String pedirAutor(){
+        System.out.print("Autor del libro? (-1 para desconocido): ");
         String autor = sc.nextLine();
         if (autor.equals("-1") || autor.isEmpty()) {
             autor = null;
@@ -366,11 +470,11 @@ public class AppBiblioteca {
         return autor;
     }
 
-    private static LocalDate pedirFecha(Scanner sc) {
+    private static LocalDate pedirFecha() {
         LocalDate fechaPub = null;
         String fechaString;
         while (fechaPub == null) {
-            System.out.println("Fecha de publicación? [yyyy-MM-dd]");
+            System.out.print("Fecha de publicación? [yyyy-MM-dd]: ");
             fechaString = sc.nextLine();
             try {
                 fechaPub = LocalDate.parse(fechaString);
@@ -382,13 +486,13 @@ public class AppBiblioteca {
         return fechaPub;
     }
 
-    private static Double pedirValoracion(Scanner sc) {
+    private static Double pedirValoracion() {
         Double valoracion = null;
         String opciones = "[0 - 5.0] (0 para dejar sin puntuación)";
         String msjErr = "Valoración no válida, " + opciones;
         while (valoracion == null) {
             try {
-                System.out.println("Valoración media del libro? " + opciones);
+                System.out.print("Valoración media del libro? " + opciones + ": ");
                 try {
                     valoracion = sc.nextDouble();
                 } catch (Exception e) {
@@ -402,7 +506,6 @@ public class AppBiblioteca {
                     valoracion = null;
                 }
             } catch (Exception e) {
-
                 System.out.println(msjErr);
             }
         }
