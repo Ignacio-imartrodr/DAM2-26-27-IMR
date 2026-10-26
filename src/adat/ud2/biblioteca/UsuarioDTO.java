@@ -18,10 +18,6 @@ public class UsuarioDTO extends AbstractDTO {
         this(-1, nombre, correo);
     }
 
-    public UsuarioDTO(int id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
     }

@@ -53,13 +53,16 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         if (libro == null) {
             return false;
         }
-        return borrar(libro.getId());
+        return borrarById(libro.getId());
     }
 
-    public boolean borrar(int id) {
+    public boolean borrarById(int id) {
+        if (id < 0) {
+            return false;
+        }
         String sql = """
                 DELETE FROM libros
-                WHERE ID = ?
+                WHERE id = ?
                 """;
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -89,14 +92,14 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
                         rs.getString("autor"),
                         rs.getDate("fecha_publicacion").toLocalDate(),
                         rs.getDouble("valoracion"),
-                        new UsuarioDAOtran(con).find(idUsuario)
+                        new UsuarioDAOtran(con).findById(idUsuario)
                     ));
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return libros.toArray(new LibroDTO[0]);
+        return libros == null ? null : libros.toArray(new LibroDTO[0]);
     }
 
     @Override
@@ -104,17 +107,17 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         if (libro == null) {
             return null;
         }
-        return find(libro.getId());
+        return findById(libro.getId());
     }
 
-    public LibroDTO find(int id) {
+    public LibroDTO findById(int id) {
         if (id < 0) {
             return null;
         }
-        LibroDTO LibroRes = null;
+        LibroDTO libroRes = null;
         String sql = """
                 SELECT * FROM libros
-                WHERE ID = ?
+                WHERE id = ?
                 """;
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             sentenciaSQL.setInt(1, id);
@@ -124,24 +127,59 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
                 if (rs.wasNull()) {
                     idUsuario = -1;
                 }
-                LibroRes = new LibroDTO(
+                libroRes = new LibroDTO(
                         rs.getInt("id"),
                         rs.getString("titulo"),
                         rs.getString("autor"),
                         rs.getDate("fecha_publicacion").toLocalDate(),
                         rs.getDouble("valoracion"),
-                        new UsuarioDAOtran(con).find(idUsuario)
+                        new UsuarioDAOtran(con).findById(idUsuario)
                     );
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return LibroRes;
+        return libroRes;
+    }
+    
+    public LibroDTO[] findByPoseedor(UsuarioDTO us) {
+        if (us == null || us.getId() < 0) {
+            return null;
+        }
+        List<LibroDTO> listRes = null;
+        String sql = """
+                SELECT * FROM libros
+                WHERE idUsuario = ?
+                """;
+        try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
+            sentenciaSQL.setInt(1, us.getId());
+            ResultSet rs = sentenciaSQL.executeQuery();
+            if (rs.next()) {
+                listRes = new ArrayList<>(rs.getFetchSize());
+                do {
+                    listRes.add(new LibroDTO(
+                            rs.getInt("id"),
+                            rs.getString("titulo"),
+                            rs.getString("autor"),
+                            rs.getDate("fecha_publicacion").toLocalDate(),
+                            rs.getDouble("valoracion"),
+                            us
+                    ));
+                } while (rs.next());
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listRes == null ? null : listRes.toArray(new LibroDTO[0]);
     }
 
     @Override
     public boolean actualizar(LibroDTO libro) {
+        if (libro == null || libro.getId() < 0) {
+            return false;
+        }
         String sql = """
                 UPDATE libros
                 SET titulo = ?,
@@ -149,7 +187,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
                     fecha_publicacion = ?,
                     valoracion = ?,
                     idUsuario = ?
-                WHERE ID = ?
+                WHERE id = ?
                 """;
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -158,6 +196,32 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             sentenciaSQL.setString(++parIndx, libro.getAutor());
             sentenciaSQL.setDate(++parIndx, Date.valueOf(libro.getFechaPub()));
             sentenciaSQL.setDouble(++parIndx, libro.getValoracion());
+            UsuarioDTO us = libro.getUsuario();
+            if (us != null) {
+                sentenciaSQL.setInt(++parIndx, us.getId());  
+            } else {
+                sentenciaSQL.setNull(++parIndx, java.sql.Types.NULL);     
+            }
+            sentenciaSQL.setInt(++parIndx, libro.getId());
+            return sentenciaSQL.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean actualizarUsuario(LibroDTO libro) {
+        if (libro == null || libro.getId() < 0) {
+            return false;
+        }
+        String sql = """
+                UPDATE libros
+                SET idUsuario = ?
+                WHERE id = ?
+                """;
+        try {
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            int parIndx = 0;
             UsuarioDTO us = libro.getUsuario();
             if (us != null) {
                 sentenciaSQL.setInt(++parIndx, us.getId());  

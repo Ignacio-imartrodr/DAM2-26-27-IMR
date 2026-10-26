@@ -10,14 +10,14 @@ public class LibroDTO extends AbstractDTO {
     private Double valoracion;
     private UsuarioDTO usuario;
     
-    public LibroDTO(int id, String titulo, String autor, LocalDate fechaNacimiento, Double valoracion, UsuarioDTO usuario) {
-        if (titulo == null || titulo.isBlank()) {
-            throw new IllegalArgumentException("El título no puede ser null o estar vacío");
+    public LibroDTO(int id, String titulo, String autor, LocalDate fechaPub, Double valoracion, UsuarioDTO usuario) {
+        if (titulo == null || titulo.isBlank() || fechaPub == null || fechaPub.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("El título y la fecha de publicación no pueden ser null o estar vacíos");
         }
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
-        this.fechaPub = fechaNacimiento;
+        this.fechaPub = fechaPub;
         this.usuario = usuario;
         if (valoracion == null || !setValoracion(valoracion)) {
             valoracion = null;
@@ -28,8 +28,8 @@ public class LibroDTO extends AbstractDTO {
         this(-1, titulo, autor, fechaNacimiento, valoracion, usuario);
     }
 
-    public LibroDTO(int id) {
-        this.id = id;
+    public LibroDTO(int id, String titulo, LocalDate fechaPub) {
+        this(id, titulo,null, fechaPub, null, null);
     }
 
     public int getId() {
@@ -76,8 +76,14 @@ public class LibroDTO extends AbstractDTO {
         return usuario;
     }
 
-    public void setUsuario(UsuarioDTO usuario) {
+    public boolean setUsuario(UsuarioDTO usuario) {
+        if (usuario != null) {
+            if (usuario.getId() < 0) {
+                return false;
+            }
+        }
         this.usuario = usuario;
+        return true;
     }
 
     @Override

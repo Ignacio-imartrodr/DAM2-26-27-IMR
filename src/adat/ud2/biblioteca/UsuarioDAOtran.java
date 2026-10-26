@@ -84,11 +84,14 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         if (us == null) {
             return false;
         }
-        return borrar(us.getId());
+        return borrarById(us.getId());
     }
 
-    public boolean borrar(int id) {
-        //TODO revisar si tiene libros asociados
+    public boolean borrarById(int id) {
+        UsuarioDTO us = findById(id);
+        if (us == null || new LibroDAOtran(con).findByPoseedor(us) != null) {
+            return false;
+        }
         String sql = """
                 DELETE FROM usuarios
                 WHERE ID = ?
@@ -121,7 +124,7 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return usuarios.toArray(new UsuarioDTO[0]);
+        return usuarios == null ? null : usuarios.toArray(new UsuarioDTO[0]);
     }
 
     @Override
@@ -129,10 +132,10 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         if (us == null) {
             return null;
         }
-        return find(us.getId());
+        return findById(us.getId());
     }
 
-    public UsuarioDTO find(int id) {
+    public UsuarioDTO findById(int id) {
         if (id < 0) {
             return null;
         }
