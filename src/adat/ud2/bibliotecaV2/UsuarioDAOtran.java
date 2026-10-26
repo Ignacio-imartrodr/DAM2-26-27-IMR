@@ -71,13 +71,15 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
 
         try (Statement sentenciaSQL = con.createStatement()){
             ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM usuarios");
-            usuarios = new ArrayList<>();
-            while (rs.next()) {
-                usuarios.add(new UsuarioDTO(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("correo")
-                    ));
+            if (rs.next()) {
+                usuarios = new ArrayList<>();
+                do {
+                    usuarios.add(new UsuarioDTO(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("correo")
+                        ));
+                } while (rs.next());
             }
             rs.close();
         } catch (SQLException e) {

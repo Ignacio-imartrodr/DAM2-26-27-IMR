@@ -3,14 +3,20 @@ package adat.ud2.biblioteca.daoYdto.prestamos;
 import adat.ud2.biblioteca.daoYdto.AbstractDTO;
 
 public class PrestamoDTO extends AbstractDTO {
-    private int id;
     private int idUsuario;
     private int idLibro;
     
     public PrestamoDTO(int id, int idUsuario, int idLibro) {
-        this.id = id;
+        super(id);
+        if (!setIdUsuario(idUsuario) || !setIdLibro(idLibro)) {
+            throw new IllegalArgumentException("Los id de usuario y libro deben ser mayores o iguales a 0");
+        }
         this.idUsuario = idUsuario;
         this.idLibro = idLibro;
+    }
+
+    public PrestamoDTO(int idUsuario, int idLibro) {
+        this(-1, idUsuario, idLibro);
     }
 
     public int getIdUsuario() {

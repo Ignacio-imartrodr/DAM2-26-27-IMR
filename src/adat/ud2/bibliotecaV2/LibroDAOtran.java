@@ -80,20 +80,22 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
 
         try (Statement sentenciaSQL = con.createStatement()){
             ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
-            libros = new ArrayList<>();
-            while (rs.next()) {
-                int idUsuario = rs.getInt("id_usuario");
-                if (rs.wasNull()) {
-                    idUsuario = -1;
-                }
-                libros.add(new LibroDTO(
-                        rs.getInt("id"),
-                        rs.getString("titulo"),
-                        rs.getString("autor"),
-                        rs.getDate("fecha_publicacion").toLocalDate(),
-                        rs.getDouble("valoracion"),
-                        new UsuarioDAOtran(con).findById(idUsuario)
-                    ));
+            if (rs.next()) {
+                libros = new ArrayList<>();
+                do {
+                    int idUsuario = rs.getInt("id_usuario");
+                    if (rs.wasNull()) {
+                        idUsuario = -1;
+                    }
+                    libros.add(new LibroDTO(
+                            rs.getInt("id"),
+                            rs.getString("titulo"),
+                            rs.getString("autor"),
+                            rs.getDate("fecha_publicacion").toLocalDate(),
+                            rs.getDouble("valoracion"),
+                            new UsuarioDAOtran(con).findById(idUsuario)
+                        ));
+                } while (rs.next());
             }
             rs.close();
         } catch (SQLException e) {

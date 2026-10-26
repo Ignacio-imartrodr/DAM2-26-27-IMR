@@ -3,12 +3,12 @@ package adat.ud2.biblioteca.daoYdto;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public abstract class AbstractDAOtran<T extends AbstractDTO> {
+public abstract class AbstractDAOtran<T extends AbstractDTO>{
     protected Connection con;
 
     protected AbstractDAOtran(Connection con){
         if (con == null) {
-            throw new IllegalArgumentException("La conexion no debe ser nula");
+            throw new IllegalArgumentException("La conexion no debe ser null");
         }
         this.con = con;
     }
@@ -54,14 +54,25 @@ public abstract class AbstractDAOtran<T extends AbstractDTO> {
         }
         return isSuccess;
     }
-    
-    public abstract boolean borrar(T dto);
+
+    public boolean borrar(T dto) {
+        if (dto == null) {
+            return false;
+        }
+        return borrarById(dto.getId());
+    }
+    public abstract boolean borrarById(int id);
 
     public abstract boolean insertar(T dto);
 
     public abstract boolean actualizar(T dto);
 
-    public abstract T find(T dto);
-
+    public T find(T dto) {
+        if (dto == null) {
+            return null;
+        }
+        return findById(dto.getId());
+    }
+    public abstract T findById(int id);
     public abstract T[] findAll();
 }

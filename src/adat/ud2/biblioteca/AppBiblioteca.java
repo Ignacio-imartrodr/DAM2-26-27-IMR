@@ -8,9 +8,11 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import adat.ud2.biblioteca.daoYdto.genero.GeneroDAOtran;
+import adat.ud2.biblioteca.daoYdto.genero.GeneroDTO;
 import adat.ud2.biblioteca.daoYdto.libro.LibroDAOtran;
 import adat.ud2.biblioteca.daoYdto.libro.LibroDTO;
 import adat.ud2.biblioteca.daoYdto.prestamos.PrestamoDAOtran;
+import adat.ud2.biblioteca.daoYdto.prestamos.PrestamoDTO;
 import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDAOtran;
 import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDTO;
 
@@ -44,7 +46,7 @@ public class AppBiblioteca {
             System.out.println("3. Buscar por ID");
             System.out.println("4. Actualizar");
             System.out.println("5. Eliminar");
-            System.out.println("6. TRANSACCION PRUEBA: Insertar libros y usuarios");
+            System.out.println("6. TRANSACCION PRUEBA: Insertar usuarios, generos, libros y prestamos");
             System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
             opcion = pedirInt();
@@ -62,6 +64,7 @@ public class AppBiblioteca {
                 case 1:
                     // Insertar
                     
+                    //TODO añadir resto de casos
                     System.out.println("Que quiere insertar?\nOPCIONES");
                     System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
@@ -98,6 +101,7 @@ public class AppBiblioteca {
                 case 2:
                     // Listar
 
+                    boolean isAll = false;
                     System.out.println("Que quiere listar?\nOPCIONES");
                     System.out.println("0 - Todo\n1- Libros\n2 - Usuarios\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
@@ -107,23 +111,43 @@ public class AppBiblioteca {
                         case 0: 
                             //Todo
 
-                            listarLibros();
-                            listarUsuarios();
-                            break;
+                            isAll = true;
 
                         case 1:
-                            //Libro
+                            //Libros
 
                             listarLibros();
-                            break;
+                            if (!isAll) {
+                                break;
+                            }
 
                         case 2:
-                            //Usuario
+                            //Usuarios
                             
                             listarUsuarios();
-                            break;
+                            if (!isAll) {
+                                break;
+                            }
+                        
+                        case 3:
+                            //Generos
 
+                            listarGeneros();
+                            if (!isAll) {
+                                break;
+                            }
+
+                        case 4:
+                            //Prestamos
+                            
+                            listarPrestamos();
+                            if (!isAll) {
+                                break;
+                            }
                         default:
+                            if (isAll) {
+                                break;
+                            }
                             System.out.println("Operacion cancelada");
                             break;
                     }
@@ -131,6 +155,7 @@ public class AppBiblioteca {
                 case 3:
                     // Buscar por ID
 
+                    //TODO añadir resto de casos
                     System.out.println("Que quiere buscar?\nOPCIONES");
                     System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
@@ -173,6 +198,7 @@ public class AppBiblioteca {
                 case 4:
                     // Actualizar
 
+                    //TODO añadir resto de casos
                     System.out.println("Que quiere insertar?\nOPCIONES");
                     System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
@@ -195,7 +221,7 @@ public class AppBiblioteca {
                                     case 0:
                                         LibroDTO libro2 = pedirLibro();
                                         libro = new LibroDTO(libro.getId(), libro2.getTitulo(), libro2.getAutor(),
-                                                libro2.getFechaPub(), libro2.getValoracion());
+                                                libro2.getFechaPub(), libro2.getValoracion(), libro2.getGenero(), libro2.getCopiasTotales(), libro2.getCopiasDisponibles());
                                         break;
 
                                     case 1:
@@ -248,7 +274,7 @@ public class AppBiblioteca {
                             UsuarioDTO us = usuarioDAO.findById(id);
                             isSuccess = us != null;
                             if (isSuccess) {
-                                boolean isAll = false;
+                                isAll = false;
                                 System.out.println("Que parametro quiere modificar?\nOPCIONES");
                                 System.out.println("0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
                                 opcion = pedirInt();
@@ -289,6 +315,7 @@ public class AppBiblioteca {
                 case 5:
                     // Eliminar
                     
+                    //TODO añadir resto de casos
                     System.out.println("Que quiere buscar?\nOPCIONES");
                     System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
@@ -349,9 +376,13 @@ public class AppBiblioteca {
                             usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))
                         &&  usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))
                         &&  usuarioDAO.insertar(new UsuarioDTO("Marta López","martalopez@example.com"))
-                        &&  libroDAO.insertar(new LibroDTO("Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8))
+                        &&  generoDAO.insertar(new GeneroDTO("fantasía"))
+                        &&  generoDAO.insertar(new GeneroDTO("acción"))
+                        &&  generoDAO.insertar(new GeneroDTO("ciencia ficción"))
+                        &&  libroDAO.insertar(new LibroDTO(-1, "Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8,generoDAO.findById(1), 3, null))
                         &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca", LocalDate.of(1936, 6, 1), 4.6))
                         &&  libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2));
+                    //TODO añadir prestamos
                     usuarioDAO.endTransaction(hasSucceded);
                     if (hasSucceded) {
                         System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
@@ -376,6 +407,45 @@ public class AppBiblioteca {
             }
         } while (continuar);
         System.out.println("Gracias por usar la biblioteca");
+    }
+
+    /* Idea interesante que se me ocurío para generalizar, falta testeo
+    private static <T extends AbstractDTO, I extends AbstractDAOtran<T>> void listarDto(I dao) {
+        T[] dtos = dao.findAll();
+        T a = dtos[0];
+        if (dtos != null && dtos.length > 0) {
+            System.out.println("\n" + a.getClass().getSimpleName() + "\n==========");
+            for (T dtoIt : dtos) {
+                System.out.println(dtoIt);
+            }
+        } else {
+            System.out.println("No hay libros guardados");
+        }
+    } 
+    */
+
+    private static void listarGeneros() {
+        GeneroDTO[] generos = generoDAO.findAll();
+        if (generos != null && generos.length > 0) {
+            System.out.println("\nGENEROS\n==========");
+            for (GeneroDTO genero : generos) {
+                System.out.println(genero);
+            }
+        } else {
+            System.out.println("No hay generos guardados");
+        }
+    }
+
+    private static void listarPrestamos() {
+        PrestamoDTO[] prestamos = prestamoDAO.findAll();
+        if (prestamos != null && prestamos.length > 0) {
+            System.out.println("\nPRESTAMOS\n==========");
+            for (PrestamoDTO prestamo : prestamos) {
+                System.out.println(prestamo);
+            }
+        } else {
+            System.out.println("No hay prestamos guardados");
+        }
     }
 
     private static void listarUsuarios() {
@@ -416,7 +486,7 @@ public class AppBiblioteca {
             String sqlCreateGeneros = """
                     CREATE TABLE IF NOT EXISTS generos (
                         id INT PRIMARY KEY AUTO_INCREMENT,
-                        nombre VARCHAR (100) NOT NULL
+                        nombre VARCHAR (100) NOT NULL UNIQUE
                     );
                     """;
             statement.executeUpdate(sqlCreateGeneros);
@@ -452,7 +522,17 @@ public class AppBiblioteca {
         }
     }
 
-    private static LibroDTO pedirLibro() {//TODO añadir parámetros
+    private static UsuarioDTO pedirUsuario() {
+        System.out.print("Nombre del usuario?: ");
+        String nombre = pedirStringNoVacía();
+
+        System.out.print("Correo del usuario?: ");
+        String correo = pedirStringNoVacía();
+
+        return new UsuarioDTO(-1, nombre, correo);
+    }
+
+    private static LibroDTO pedirLibro() {
         System.out.print("Titulo del libro?: ");
         String titulo = pedirStringNoVacía();
 
@@ -462,17 +542,20 @@ public class AppBiblioteca {
 
         Double valoracion = pedirValoracion();
 
-        return new LibroDTO(titulo, autor, fechaPub, valoracion);
-    }
+        GeneroDTO gen = pedirGenero();
 
-    private static UsuarioDTO pedirUsuario() {
-        System.out.print("Nombre del usuario?: ");
+        System.out.println("Número de copias totales? [menor a 1 u Otro símbolo para Default(1)]");
+        Integer copiasTotales = pedirInt();
+        copiasTotales = copiasTotales < 1 ? null : copiasTotales;
+        
+        return new LibroDTO(titulo, autor, fechaPub, valoracion, gen, copiasTotales, null);
+    }
+    
+    private static GeneroDTO pedirGenero(){
+        System.out.print("Nombre del genero?: ");
         String nombre = pedirStringNoVacía();
 
-        System.out.print("Correo del usuario?: ");
-        String correo = pedirStringNoVacía();
-
-        return new UsuarioDTO(-1, nombre, correo);
+        return new GeneroDTO(nombre);
     }
 
     private static String pedirStringNoVacía(){

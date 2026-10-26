@@ -29,7 +29,6 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         try {
             int parIndx = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
-            //sentenciaSQL.setInt(++parIndx, us.getId());
             sentenciaSQL.setString(++parIndx, us.getNombre());
             sentenciaSQL.setString(++parIndx, us.getCorreo());
             return sentenciaSQL.executeUpdate() > 0;
@@ -39,14 +38,7 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         }
     }
 
-    @Override
-    public boolean borrar(UsuarioDTO us) {
-        if (us == null) {
-            return false;
-        }
-        return borrarById(us.getId());
-    }
-
+    @Override 
     public boolean borrarById(int id) {
         UsuarioDTO us = findById(id);
         if (us == null || new PrestamoDAOtran(con).findByUsuario(us) != null) {
@@ -72,13 +64,15 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
 
         try (Statement sentenciaSQL = con.createStatement()){
             ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM usuarios");
-            usuarios = new ArrayList<>();
-            while (rs.next()) {
-                usuarios.add(new UsuarioDTO(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("correo")
-                    ));
+            if (rs.next()) {
+                usuarios = new ArrayList<>();
+                do {
+                    usuarios.add(new UsuarioDTO(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("correo")
+                        ));
+                } while (rs.next());
             }
             rs.close();
         } catch (SQLException e) {
@@ -87,14 +81,7 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
         return usuarios == null ? null : usuarios.toArray(new UsuarioDTO[0]);
     }
 
-    @Override
-    public UsuarioDTO find(UsuarioDTO us) {
-        if (us == null) {
-            return null;
-        }
-        return findById(us.getId());
-    }
-
+    @Override 
     public UsuarioDTO findById(int id) {
         if (id < 0) {
             return null;
