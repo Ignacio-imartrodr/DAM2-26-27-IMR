@@ -7,11 +7,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+import adat.ud2.biblioteca.daoYdto.genero.GeneroDAOtran;
+import adat.ud2.biblioteca.daoYdto.libro.LibroDAOtran;
+import adat.ud2.biblioteca.daoYdto.libro.LibroDTO;
+import adat.ud2.biblioteca.daoYdto.prestamos.PrestamoDAOtran;
+import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDAOtran;
+import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDTO;
+
 public class AppBiblioteca {
     public static Scanner sc;
     public static Connection con;
     public static UsuarioDAOtran usuarioDAO;
+    public static GeneroDAOtran generoDAO;
     public static LibroDAOtran libroDAO;
+    public static PrestamoDAOtran prestamoDAO;
 
     public static void main(String[] args) {
         con = ConexionBD.conectar();
@@ -21,7 +30,9 @@ public class AppBiblioteca {
             return;
         }
         usuarioDAO = new UsuarioDAOtran(con);
+        generoDAO = new GeneroDAOtran(con);
         libroDAO = new LibroDAOtran(con);
+        prestamoDAO = new PrestamoDAOtran(con);
         sc = new Scanner(System.in);
         boolean continuar = true;
         Integer opcion;
@@ -177,14 +188,14 @@ public class AppBiblioteca {
                             if (isSuccess) {
                                 System.out.println("Que parametro quiere modificar?\nOPCIONES");
                                 System.out.println(
-                                        "0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Poseedor\nOtro - Cancelar");
+                                        "0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Genero\n6 - Copias\nOtro - Cancelar");
                                 opcion = pedirInt();
                                 opcion = opcion == null ? -1 : opcion;
                                 switch (opcion) {
                                     case 0:
                                         LibroDTO libro2 = pedirLibro();
                                         libro = new LibroDTO(libro.getId(), libro2.getTitulo(), libro2.getAutor(),
-                                                libro2.getFechaPub(), libro2.getValoracion(), libro2.getUsuario());
+                                                libro2.getFechaPub(), libro2.getValoracion());
                                         break;
 
                                     case 1:
@@ -208,16 +219,11 @@ public class AppBiblioteca {
                                         break;
 
                                     case 5:
-                                        listarUsuarios();
-                                        System.out.println("Id del usuario que lo va a poseer?");
-                                        opcion = pedirInt();
-                                        opcion = opcion == null ? -1 : opcion;
-                                        UsuarioDTO us = usuarioDAO.findById(opcion);
-                                        if (us == null) {
-                                            System.out.println("Error al recuperar el usuario (o no existe)");
-                                        } else {
-                                            libro.setUsuario(us);
-                                        }
+                                        //TODO modificar genero
+                                        break;
+
+                                    case 6:
+                                        //TODO modificar copias
                                         break;
 
                                     default:
@@ -343,12 +349,9 @@ public class AppBiblioteca {
                             usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))
                         &&  usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))
                         &&  usuarioDAO.insertar(new UsuarioDTO("Marta López","martalopez@example.com"))
-                        &&  libroDAO.insertar(new LibroDTO("Don Quijote de la Mancha", "Miguel de Cervantes",
-                                LocalDate.of(1605, 1, 16), 4.8, null))
-                        &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca",
-                                LocalDate.of(1936, 6, 1), 4.6, null))
-                        &&  libroDAO.insertar(new LibroDTO( "Niebla", "Miguel de Unamuno",
-                                LocalDate.of(1914, 1, 1), 4.2, null));
+                        &&  libroDAO.insertar(new LibroDTO("Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8))
+                        &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca", LocalDate.of(1936, 6, 1), 4.6))
+                        &&  libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2));
                     usuarioDAO.endTransaction(hasSucceded);
                     if (hasSucceded) {
                         System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
@@ -409,6 +412,15 @@ public class AppBiblioteca {
                     );
                     """;
             statement.executeUpdate(sqlCreateUsuarios);
+
+            String sqlCreateGeneros = """
+                    CREATE TABLE IF NOT EXISTS generos (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        nombre VARCHAR (100) NOT NULL
+                    );
+                    """;
+            statement.executeUpdate(sqlCreateGeneros);
+
             String sqlCreateLibros = """
                     CREATE TABLE IF NOT EXISTS libros (
                         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -416,18 +428,31 @@ public class AppBiblioteca {
                         autor VARCHAR (50),
                         fecha_publicacion DATE NOT NULL,
                         valoracion DECIMAL (4,2),
-                        idUsuario INT DEFAULT NULL,
-                        FOREIGN KEY(idUsuario) REFERENCES usuarios(id)
+                        id_genero INT,
+                        copias_totales INT DEFAULT 1 NOT NULL,
+                        copias_disponibles INT DEFAULT 1 NOT NULL,
+                        FOREIGN KEY(id_genero) REFERENCES genero(id)
                     );
                     """;
             statement.executeUpdate(sqlCreateLibros);
+            
+            String sqlCreatePrestamos = """
+                    CREATE TABLE IF NOT EXISTS prestamos (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        id_usuario INT NOT NULL,
+                        id_libro INT NOT NULL,
+                        FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
+                        FOREIGN KEY(id_libro) REFERENCES libros(id)
+                    );
+                    """;
+            statement.executeUpdate(sqlCreatePrestamos);
             return true;
         } catch (SQLException e) {
             return false;
         }
     }
 
-    private static LibroDTO pedirLibro() {
+    private static LibroDTO pedirLibro() {//TODO añadir parámetros
         System.out.print("Titulo del libro?: ");
         String titulo = pedirStringNoVacía();
 
@@ -437,7 +462,7 @@ public class AppBiblioteca {
 
         Double valoracion = pedirValoracion();
 
-        return new LibroDTO(-1, titulo, autor, fechaPub, valoracion, null);
+        return new LibroDTO(titulo, autor, fechaPub, valoracion);
     }
 
     private static UsuarioDTO pedirUsuario() {

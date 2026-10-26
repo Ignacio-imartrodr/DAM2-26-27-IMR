@@ -8,6 +8,13 @@
             "type": "java",
             "name": "AppBiblioteca",
             "request": "launch",
+            "mainClass": "adat.ud2.bibliotecaV2.AppBiblioteca",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "AppBiblioteca",
+            "request": "launch",
             "mainClass": "adat.ud2.bibliotecaV1.AppBiblioteca",
             "projectName": "DAM2-26-27-IMR_fac21486"
         },

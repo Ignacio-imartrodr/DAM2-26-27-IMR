@@ -1,4 +1,4 @@
-package adat.ud2.biblioteca;
+package adat.ud2.bibliotecaV2;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         
         String sql = """
                 INSERT INTO libros
-                (titulo, autor, fecha_publicacion, valoracion, idUsuario)
+                (titulo, autor, fecha_publicacion, valoracion, id_usuario)
                 VALUES
                 (?, ?, ?, ?, ?)
                 """;
@@ -82,7 +82,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
             libros = new ArrayList<>();
             while (rs.next()) {
-                int idUsuario = rs.getInt("idUsuario");
+                int idUsuario = rs.getInt("id_usuario");
                 if (rs.wasNull()) {
                     idUsuario = -1;
                 }
@@ -123,7 +123,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             sentenciaSQL.setInt(1, id);
             ResultSet rs = sentenciaSQL.executeQuery();
             if (rs.next()) {
-                int idUsuario = rs.getInt("idUsuario");
+                int idUsuario = rs.getInt("id_usuario");
                 if (rs.wasNull()) {
                     idUsuario = -1;
                 }
@@ -150,7 +150,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         List<LibroDTO> listRes = null;
         String sql = """
                 SELECT * FROM libros
-                WHERE idUsuario = ?
+                WHERE id_usuario = ?
                 """;
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             sentenciaSQL.setInt(1, us.getId());
@@ -186,7 +186,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
                     autor = ?,
                     fecha_publicacion = ?,
                     valoracion = ?,
-                    idUsuario = ?
+                    id_usuario = ?
                 WHERE id = ?
                 """;
         try {
@@ -216,7 +216,7 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         }
         String sql = """
                 UPDATE libros
-                SET idUsuario = ?
+                SET id_usuario = ?
                 WHERE id = ?
                 """;
         try {

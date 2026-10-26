@@ -1,4 +1,4 @@
-package adat.ud2.biblioteca;
+package adat.ud2.bibliotecaV2;
 
 import java.sql.Connection;
 import java.sql.SQLException;

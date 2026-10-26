@@ -1,8 +1,12 @@
-package adat.ud2.biblioteca;
+package adat.ud2.biblioteca.daoYdto.usuario;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import adat.ud2.biblioteca.daoYdto.AbstractDAOtran;
+import adat.ud2.biblioteca.daoYdto.prestamos.PrestamoDAOtran;
+
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,52 +14,8 @@ import java.sql.SQLException;
 
 public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
 
-    UsuarioDAOtran(Connection con){
-        if (con == null) {
-            throw new IllegalArgumentException("La conexion no debe ser nula");
-        }
-        this.con = con;
-    }
-
-    public boolean beginTransaction(){
-        boolean isSuccess = false;
-        try {
-            if (!con.getAutoCommit()) {
-                System.err.println("Transacción ya en curso");
-            } else {
-                con.setAutoCommit(false);
-                isSuccess = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return isSuccess;
-    }
-    public boolean endTransaction(boolean hasSucceded){
-        boolean isSuccess = false;
-        
-        try {
-            if (con.getAutoCommit()) {
-                System.err.println("No hay ninguna transacción ya en curso");
-                return isSuccess;
-            }
-            if (hasSucceded) {
-                con.commit();
-            } else {
-                con.rollback();
-            }
-            isSuccess = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-
-        } finally {
-            try {
-                con.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return isSuccess;
+    public UsuarioDAOtran(Connection con){
+        super(con);
     }
 
     @Override 
@@ -89,7 +49,7 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
 
     public boolean borrarById(int id) {
         UsuarioDTO us = findById(id);
-        if (us == null || new LibroDAOtran(con).findByPoseedor(us) != null) {
+        if (us == null || new PrestamoDAOtran(con).findByUsuario(us) != null) {
             return false;
         }
         String sql = """

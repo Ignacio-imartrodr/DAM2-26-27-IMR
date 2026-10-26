@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import adat.ud2.biblioteca.ConexionBD;
+import adat.ud2.bibliotecaV2.ConexionBD;
 
 import java.sql.Connection;
 import java.sql.Date;

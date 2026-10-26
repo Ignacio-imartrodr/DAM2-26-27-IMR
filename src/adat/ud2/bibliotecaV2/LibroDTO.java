@@ -1,4 +1,4 @@
-package adat.ud2.biblioteca;
+package adat.ud2.bibliotecaV2;
 
 import java.time.LocalDate;
 
@@ -88,7 +88,6 @@ public class LibroDTO extends AbstractDTO {
 
     @Override
     public String toString() {
-        return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + (autor == null ? "Autor desconocido" : autor) + ", fecha publicación= " + fechaPub + ", valoración= "
-                + (valoracion == 0. ? "Sin valoración" : valoracion ) + "Poseedor actual: "+ (usuario == null ? "Ninguno" : usuario.toString()) + "]";
+        return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + (autor == null ? "Autor desconocido" : autor) + ", fecha publicación= " + fechaPub + ", valoración= " + (valoracion == 0. ? "Sin valoración" : valoracion ) + "Poseedor actual= "+ (usuario == null ? "Ninguno" : usuario.getNombre()) + "]";
     }
 }

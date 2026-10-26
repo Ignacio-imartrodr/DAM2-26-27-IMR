@@ -1,4 +1,4 @@
-package adat.ud2.biblioteca;
+package adat.ud2.bibliotecaV2;
 
 public class UsuarioDTO extends AbstractDTO {
     private int id;
@@ -40,7 +40,6 @@ public class UsuarioDTO extends AbstractDTO {
 
     @Override
     public String toString() {
-        return nombre;
+        return "UsuarioDTO [id= " + id + ", nombre= " + nombre + ", correo= " + correo + "]";
     }
-    
 }
