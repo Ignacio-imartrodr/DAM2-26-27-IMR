@@ -26,12 +26,12 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             return false;
         }
 
-        String sql = """
-                INSERT INTO libros
-                (titulo, autor, fecha_publicacion, valoracion, id_genero, copias_totales, copias_disponibles)
+        String sql = "INSERT INTO " + getTablaName();
+        sql.concat("""
+                 (titulo, autor, fecha_publicacion, valoracion, id_genero, copias_totales, copias_disponibles)
                 VALUES
                 (?, ?, ?, ?, ?, ?, ?)
-                """;
+            """);
         try {
             int parIndx = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -271,5 +271,40 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public String getTablaName() {
+        return "libros";
+    }
+
+    @Override
+    public LibroDTO[] parseRs(ResultSet rs) {
+        List<LibroDTO> libros = null;
+        try {
+            if (rs.next()) {
+                libros = new ArrayList<>();
+                do {
+                    int idGenero = rs.getInt("id_genero");
+                    if (rs.wasNull()) {
+                        idGenero = -1;
+                    }
+                    libros.add(new LibroDTO(
+                            rs.getInt("id"),
+                            rs.getString("titulo"),
+                            rs.getString("autor"),
+                            rs.getDate("fecha_publicacion").toLocalDate(),
+                            rs.getDouble("valoracion"),
+                            new GeneroDAOtran(con).findById(idGenero),
+                            rs.getInt("copias_totales"),
+                            rs.getInt("copias_disponbles")
+                        ));
+                } while (rs.next());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("No se pudo acceder a la BD");
+        }
+        return libros == null ? null : libros.toArray(new LibroDTO[0]);
     }
 }

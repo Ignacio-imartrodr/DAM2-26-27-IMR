@@ -47,4 +47,21 @@ public class PrestamoDTO extends AbstractDTO {
     public String toString() {
         return "PrestamoDTO [id=" + id + ", idUsuario=" + idUsuario + ", idLibro=" + idLibro + "]";
     }
+
+    @Override
+    public int compareTo(AbstractDTO o) {
+        if (o instanceof PrestamoDTO) {
+            PrestamoDTO p = (PrestamoDTO) o;
+            int compUsuario = Integer.compare(this.getIdUsuario(), p.getIdUsuario());
+            if (compUsuario != 0) {
+                return compUsuario;
+            }
+
+            int compLibro = Integer.compare(this.getIdLibro(), p.getIdLibro());
+            if (compLibro != 0) {
+                return compLibro;
+            }
+        }
+        return Integer.compare(this.getId(), o.getId());
+    }
 }

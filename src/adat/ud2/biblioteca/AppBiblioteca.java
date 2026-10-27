@@ -66,7 +66,7 @@ public class AppBiblioteca {
                     
                     //TODO añadir resto de casos
                     System.out.println("Que quiere insertar?\nOPCIONES");
-                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
+                    System.out.println("0- Libro\n1 - Usuario\n2 - Genero\n3 - Prestamo\nOtro - Cancelar");
                     System.out.print("Seleccione una opción: ");
                     opcion = pedirInt();
                     opcion = opcion == null ? -1 : opcion;
@@ -78,7 +78,7 @@ public class AppBiblioteca {
                             if (libroDAO.insertar(libro)) {
                                 System.out.println("Inserción correcta");
                             } else {
-                                System.out.println("Error insertando");
+                                System.out.println("Error insertando libro");
                             }
                             break;
 
@@ -89,10 +89,31 @@ public class AppBiblioteca {
                             if (usuarioDAO.insertar(us)) {
                                 System.out.println("Inserción correcta");
                             } else {
-                                System.out.println("Error insertando");
+                                System.out.println("Error insertando usuario");
                             }
                             break;
 
+                        case 2:
+                            //Genero
+
+                            GeneroDTO genero = pedirGenero();
+                            if (generoDAO.insertar(genero)) {
+                                System.out.println("Inserción correcta");
+                            } else {
+                                System.out.println("Error insertando género");
+                            }
+                            break;
+
+                        case 3:
+                            //Prestamo
+
+                            PrestamoDTO prest = pedirPrestamo();
+                            if (prestamoDAO.insertar(prest)) {
+                                System.out.println("Inserción correcta");
+                            } else {
+                                System.out.println("Error insertando prestamo");
+                            }
+                            break;
                         default:
                             System.out.println("Operacion cancelada");
                             break;
@@ -179,7 +200,7 @@ public class AppBiblioteca {
                         case 1:
                             //Usuario
 
-                            System.out.print("Id del libro a recuperar: ");
+                            System.out.print("Id del usuario a recuperar: ");
                             id = pedirInt();
                             id = (id == null) ? -1 : id;
                             UsuarioDTO us = usuarioDAO.findById(id);
@@ -530,6 +551,30 @@ public class AppBiblioteca {
         String correo = pedirStringNoVacía();
 
         return new UsuarioDTO(-1, nombre, correo);
+    }
+
+    private static PrestamoDTO pedirPrestamo() {
+        listarLibros();
+        System.out.print("Id del libro a recuperar: ");
+        Integer id = pedirInt();
+        id = (id == null) ? -1 : id;
+        LibroDTO libro = new LibroDTO(id);
+        if (!libroDAO.exists(libro)) {
+            System.out.println("Error al recuperar el libro (o no existe)");
+            return null;
+        }
+
+        listarUsuarios();
+        System.out.print("Id del usuario a recuperar: ");
+        id = pedirInt();
+        id = (id == null) ? -1 : id;
+        UsuarioDTO us = usuarioDAO.findById(id);
+        if (us == null) {
+            System.out.println("Error al recuperar el usuario (o no existe)");
+            return null;
+        }
+
+        return new PrestamoDTO(us.getId(), libro.getId());
     }
 
     private static LibroDTO pedirLibro() {

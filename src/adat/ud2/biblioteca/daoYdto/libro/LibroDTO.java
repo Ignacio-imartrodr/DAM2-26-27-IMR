@@ -53,14 +53,14 @@ public class LibroDTO extends AbstractDTO {
     }
 
     public String getTitulo() {
-        return titulo;
+        return titulo.charAt(0) + ti;
     }
 
     public boolean setTitulo(String titulo) {
         if (titulo == null || titulo.isBlank()) {
             return false;
         }
-        this.titulo = titulo;
+        this.titulo = titulo.toUpperCase();
         return true;
     }
 
@@ -144,5 +144,26 @@ public class LibroDTO extends AbstractDTO {
     @Override
     public String toString() {
         return "LibroDTO [id= " + id + ", título= " + titulo + ", autor= " + (autor == null ? "Autor desconocido" : autor) + ", fecha publicación= " + fechaPub + ", valoración= " + (valoracion == null ? "Sin valoración" : valoracion) + ", genero= " + (genero == null ? "Sin género" : genero.getNombre()) + ", Copias totales: " + copiasTotales + ", Copias disponibles: " + copiasDisponibles + "]";
+    }
+    
+    @Override
+    public int compareTo(AbstractDTO o) {
+        if (o instanceof LibroDTO) {
+            LibroDTO l = (LibroDTO) o;
+            
+            String titulo;
+            String autor;
+            LocalDate fechaPub;
+            int titulo = Integer.compare(this.getIdUsuario(), l.getIdUsuario());
+            if (titulo != 0) {
+                return titulo;
+            }
+
+            int compLibro = Integer.compare(this.getIdLibro(), l.getIdLibro());
+            if (compLibro != 0) {
+                return compLibro;
+            }
+        }
+        return Integer.compare(this.getId(), o.getId());
     }
 }

@@ -129,4 +129,8 @@ public class GeneroDAOtran extends AbstractDAOtran<GeneroDTO> {
         return generos == null ? null : generos.toArray(new GeneroDTO[0]);
     }
 
+    @Override
+    public String getTablaName() {
+        return "generos";
+    }
 }

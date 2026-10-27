@@ -128,4 +128,9 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
             return false;
         }
     }
+    
+    @Override
+    public String getTablaName() {
+        return "usuarios";
+    }
 }

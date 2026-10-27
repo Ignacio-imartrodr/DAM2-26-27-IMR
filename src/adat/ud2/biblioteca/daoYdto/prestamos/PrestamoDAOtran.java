@@ -109,7 +109,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         List<PrestamoDTO> prestamos = null;
 
         try (Statement sentenciaSQL = con.createStatement()){
-            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM prestamos");
             if (rs.next()) {
                 prestamos = new ArrayList<>();
                 do {
@@ -135,5 +135,10 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
     public UsuarioDTO[] findByLibro(LibroDTO us) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findByUsuario'");
+    }
+
+    @Override
+    public String getTablaName() {
+        return "prestamos";
     }
 }
