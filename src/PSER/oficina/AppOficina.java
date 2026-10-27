@@ -7,7 +7,7 @@ public class AppOficina {
 
     public static void main(String[] args) {
         Oficina oficina = new Oficina();
-        Thread[] hilos = new Thread[N_PERSONAS];
+        Personal[] hilos = new Personal[N_PERSONAS];
         Random rd = new Random();
         int nJefe = rd.nextInt(3, N_PERSONAS);
 
