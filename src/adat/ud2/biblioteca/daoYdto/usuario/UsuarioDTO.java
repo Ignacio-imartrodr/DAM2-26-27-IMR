@@ -49,4 +49,29 @@ public class UsuarioDTO extends AbstractDTO {
     public String toString() {
         return "UsuarioDTO [id= " + id + ", nombre= " + nombre + ", correo= " + correo + "]";
     }
+
+    @Override
+    public int compareTo(AbstractDTO o) {
+        if (this == o)
+            return 0;
+        if (o == null)
+            return -1;
+        int compId = Integer.compare(id, o.getId()); 
+        UsuarioDTO other;
+        if (getClass() == o.getClass()){
+            other = (UsuarioDTO) o;
+        } else {
+            return compId;
+        }
+        if (compId != 0) {
+            return compId;
+        }
+        int compNombre = nombre.compareTo(other.nombre);
+        if (compNombre != 0) {
+                return compNombre;
+        }
+        int compCorreo = correo.compareTo(other.correo);
+        return compCorreo;
+        
+    }
 }

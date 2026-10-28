@@ -14,12 +14,14 @@ public abstract class AbstractDTO implements Comparable<AbstractDTO>{
 
     @Override
     public boolean equals(Object obj) {
-        AbstractDTO o;
-        if (obj instanceof AbstractDTO) {
-            o = (AbstractDTO) obj;
-        } else {
-            return super.equals(obj);
-        }
-        return this.compareTo(o) == 0;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AbstractDTO other = (AbstractDTO) obj;
+        return compareTo(other) == 0;
     }
+
 }

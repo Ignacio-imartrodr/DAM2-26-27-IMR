@@ -50,18 +50,20 @@ public class PrestamoDTO extends AbstractDTO {
 
     @Override
     public int compareTo(AbstractDTO o) {
-        if (o instanceof PrestamoDTO) {
-            PrestamoDTO p = (PrestamoDTO) o;
-            int compUsuario = Integer.compare(this.getIdUsuario(), p.getIdUsuario());
-            if (compUsuario != 0) {
-                return compUsuario;
-            }
-
-            int compLibro = Integer.compare(this.getIdLibro(), p.getIdLibro());
-            if (compLibro != 0) {
-                return compLibro;
-            }
+        if (this == o)
+            return 0;
+        if (o == null)
+            return -1;
+        int compId = Integer.compare(id, o.getId());
+        PrestamoDTO p;
+        if (getClass() == o.getClass()){
+            p = (PrestamoDTO) o;
+        } else {
+            return compId;
         }
-        return Integer.compare(this.getId(), o.getId());
+        int compUsuario = Integer.compare(this.getIdUsuario(), p.getIdUsuario());
+        if (compUsuario != 0)
+            return compUsuario;
+        return Integer.compare(this.getIdLibro(), p.getIdLibro());
     }
 }

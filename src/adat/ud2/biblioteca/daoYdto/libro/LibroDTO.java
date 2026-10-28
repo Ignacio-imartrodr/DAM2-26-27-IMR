@@ -32,7 +32,7 @@ public class LibroDTO extends AbstractDTO {
         if (!setValoracion(valoracion)) {
             throw new IllegalArgumentException("La valoración debe ser null o decimal entre 0 y 5");
         }
-        this.autor = autor;
+        setAutor(autor);
         this.genero = genero;
     }
 
@@ -53,7 +53,7 @@ public class LibroDTO extends AbstractDTO {
     }
 
     public String getTitulo() {
-        return titulo.charAt(0) + ti;
+        return titulo.charAt(0) + titulo.substring(1).toLowerCase();
     }
 
     public boolean setTitulo(String titulo) {
@@ -65,11 +65,11 @@ public class LibroDTO extends AbstractDTO {
     }
 
     public String getAutor() {
-        return autor;
+        return autor.charAt(0) + autor.substring(1).toLowerCase();
     }
 
     public void setAutor(String autor) {
-        this.autor = autor;
+        this.autor = autor == null ? null : autor.toUpperCase();
     }
 
     public LocalDate getFechaPub() {
@@ -148,22 +148,38 @@ public class LibroDTO extends AbstractDTO {
     
     @Override
     public int compareTo(AbstractDTO o) {
-        if (o instanceof LibroDTO) {
-            LibroDTO l = (LibroDTO) o;
-            
-            String titulo;
-            String autor;
-            LocalDate fechaPub;
-            int titulo = Integer.compare(this.getIdUsuario(), l.getIdUsuario());
-            if (titulo != 0) {
-                return titulo;
-            }
-
-            int compLibro = Integer.compare(this.getIdLibro(), l.getIdLibro());
-            if (compLibro != 0) {
-                return compLibro;
-            }
+        if (this == o)
+            return 0;
+        if (o == null)
+            return -1;
+        int compId = Integer.compare(id, o.getId());
+        LibroDTO l;
+        if (getClass() == o.getClass()){
+            l = (LibroDTO) o;
+        } else {
+            return compId;
         }
-        return Integer.compare(this.getId(), o.getId());
+        int compTitulo = this.titulo.compareTo(l.titulo);
+        if (compTitulo != 0) {
+            return compTitulo;
+        }
+
+        int compFecha = fechaPub.compareTo(l.fechaPub);
+        if (compFecha != 0) {
+            return compFecha;
+        }
+
+        int compAutor;
+        if (autor != null && l.autor == null) {
+            compAutor = -1;
+        } else if (autor == null && l.autor != null) {
+            compAutor = 1;   
+        } else {
+            compAutor = this.autor.compareTo(l.autor);
+        }
+        if (compAutor != 0) {
+            return compAutor;
+        }
+
     }
 }
