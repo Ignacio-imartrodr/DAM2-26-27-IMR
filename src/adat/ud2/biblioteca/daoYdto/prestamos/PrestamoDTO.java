@@ -61,9 +61,13 @@ public class PrestamoDTO extends AbstractDTO {
         } else {
             return compId;
         }
+        if (compId != 0) {
+            return compId;
+        }
         int compUsuario = Integer.compare(this.getIdUsuario(), p.getIdUsuario());
         if (compUsuario != 0)
             return compUsuario;
-        return Integer.compare(this.getIdLibro(), p.getIdLibro());
+        int compLibro =  Integer.compare(this.getIdLibro(), p.getIdLibro());
+        return compLibro;
     }
 }

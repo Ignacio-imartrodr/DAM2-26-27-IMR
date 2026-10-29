@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adat.ud2.biblioteca.daoYdto.AbstractDAOtran;
+import adat.ud2.biblioteca.daoYdto.libro.LibroDAOtran;
 import adat.ud2.biblioteca.daoYdto.libro.LibroDTO;
+import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDAOtran;
 import adat.ud2.biblioteca.daoYdto.usuario.UsuarioDTO;
 
 public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
@@ -19,32 +21,12 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
     }
 
     @Override
-    public boolean borrarById(int id) {
-        if (id < 0) {
-            return false;
-        }
-        String sql = """
-                DELETE FROM prestamos
-                WHERE id = ?
-                """;
-        try {
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
-            sentenciaSQL.setInt(1, id);
-            return sentenciaSQL.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
     public boolean insertar(PrestamoDTO prest) {
-        String sql = """
-                INSERT INTO prestamos
-                (id_usuario, id_libro)
+        String sql = "INSERT INTO " + getTablaName();
+        sql.concat("""
+                 (id_usuario, id_libro)
                 VALUES
-                (?, ?)
-                """;
+                (?, ?)""");
         try {
             int parIndx = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -59,12 +41,12 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
 
     @Override
     public boolean actualizar(PrestamoDTO prest) {
-        String sql = """
-                UPDATE prestamos
-                SET id_usuario = ?,
+        String sql = "UPDATE " + getTablaName();
+        sql.concat("""
+                 SET id_usuario = ?,
                     id_libro = ?
                 WHERE ID = ?
-                """;
+                """);
         try {
             int parIndex = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -77,68 +59,100 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         }
     }
 
-    @Override
-    public PrestamoDTO findById(int id) {
-        if (id < 0) {
+    public PrestamoDTO[] findByUsuario(UsuarioDTO us) {
+        if (us.getId() < 0) {
             return null;
         }
-        PrestamoDTO prestRes = null;
-        String sql = """
-                SELECT * FROM prestamos
-                WHERE ID = ?
-                """;
-        try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
-            sentenciaSQL.setInt(1, id);
-            ResultSet rs = sentenciaSQL.executeQuery();
-            if (rs.next()) {
-                prestRes = new PrestamoDTO(
-                        rs.getInt("id"),
-                        rs.getInt("id_usuario"),
-                        rs.getInt("id_libro")
-                    );
-            }
+        PrestamoDTO[] prestamos = null;
+        try (Statement sentenciaSQL = con.createStatement()){
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM " + getTablaName() + " WHERE id_usuario = " + us.getId());
+            prestamos = parseRs(rs);
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return prestRes;
+        return prestamos;
     }
 
-    @Override
-    public PrestamoDTO[] findAll() {
-        List<PrestamoDTO> prestamos = null;
-
+    public Integer[] getIdsByUsuario(UsuarioDTO us) {
+        if (!(new UsuarioDAOtran(con).exists(us))) {
+            return null;
+        }
+        List<Integer> prestamos = null;
         try (Statement sentenciaSQL = con.createStatement()){
-            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM prestamos");
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT id FROM " + getTablaName() + " WHERE id_usuario = " + us.getId());
             if (rs.next()) {
                 prestamos = new ArrayList<>();
                 do {
-                    prestamos.add(new PrestamoDTO(
-                            rs.getInt("id"),
-                            rs.getInt("id_libro"),
-                            rs.getInt("id_usuario")
-                        ));
+                    prestamos.add(rs.getInt("id"));
                 } while (rs.next());
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return prestamos == null ? null : prestamos.toArray(new PrestamoDTO[0]);
+        return prestamos == null || prestamos.size() == 0 ? null : prestamos.toArray(new Integer[0]);
     }
 
-    public LibroDTO[] findByUsuario(UsuarioDTO us) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByUsuario'");
+    public PrestamoDTO[] findByLibro(LibroDTO libro) {
+        if (libro.getId() < 0) {
+            return null;
+        }
+        PrestamoDTO[] prestamos = null;
+        try (Statement sentenciaSQL = con.createStatement()){
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM " + getTablaName() + " WHERE id_libro = " + libro.getId());
+            prestamos = parseRs(rs);
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return prestamos;
     }
 
-    public UsuarioDTO[] findByLibro(LibroDTO us) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByUsuario'");
+    public Integer[] getIdsByLibro(LibroDTO libro) {
+        if (!(new LibroDAOtran(con).exists(libro))) {
+            return null;
+        }
+        List<Integer> prestamos = null;
+        try (Statement sentenciaSQL = con.createStatement()) {
+            ResultSet rs = sentenciaSQL.executeQuery("SELECT id FROM " + getTablaName() + " WHERE id_libro = " + libro.getId());
+            if (rs.next()) {
+                prestamos = new ArrayList<>();
+                do {
+                    prestamos.add(rs.getInt("id"));
+                } while (rs.next());
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return prestamos == null || prestamos.size() == 0 ? null : prestamos.toArray(new Integer[0]);
     }
 
     @Override
     public String getTablaName() {
         return "prestamos";
+    }
+
+    @Override
+    public PrestamoDTO[] parseRs(ResultSet rs) throws SQLException {
+        List<PrestamoDTO> prestamos = null;
+        if (rs.next()) {
+            prestamos = new ArrayList<>();
+            do {
+                prestamos.add(new PrestamoDTO(
+                        rs.getInt("id"),
+                        rs.getInt("id_libro"),
+                        rs.getInt("id_usuario")
+                    ));
+            } while (rs.next());
+        }
+        rs.close();
+        return prestamos == null ? null : prestamos.toArray(new PrestamoDTO[0]);
+    }
+
+    @Override
+    public boolean isBorradoPosible(PrestamoDTO presamo) {
+        return presamo != null;
     }
 }

@@ -387,12 +387,12 @@ public class AppBiblioteca {
                     break;
                 case 6:
                     // Transacción
-
-                    if (!usuarioDAO.beginTransaction()) {
+                    try {
+                        con.setAutoCommit(false);
+                    } catch (SQLException e) {
                         System.out.println("No se pudo iniciar la transacción");
                         break;
                     }
-
                     boolean hasSucceded =
                             usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))
                         &&  usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))
@@ -400,15 +400,22 @@ public class AppBiblioteca {
                         &&  generoDAO.insertar(new GeneroDTO("fantasía"))
                         &&  generoDAO.insertar(new GeneroDTO("acción"))
                         &&  generoDAO.insertar(new GeneroDTO("ciencia ficción"))
-                        &&  libroDAO.insertar(new LibroDTO(-1, "Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8,generoDAO.findById(1), 3, null))
+                        &&  libroDAO.insertar(new LibroDTO(-1, "Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8, generoDAO.findById(1), 3, null))
                         &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca", LocalDate.of(1936, 6, 1), 4.6))
-                        &&  libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2));
-                    //TODO añadir prestamos
-                    usuarioDAO.endTransaction(hasSucceded);
-                    if (hasSucceded) {
-                        System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
-                    } else {
-                        System.out.println("Error en la transacción, se ha cancelado la inserción");
+                        &&  libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2))
+                        &&  prestamoDAO.insertar(new PrestamoDTO(1, 2))
+                        &&  prestamoDAO.insertar(new PrestamoDTO(1, 3))
+                        &&  prestamoDAO.insertar(new PrestamoDTO(3, 1));
+                    try {
+                        if (hasSucceded) {
+                            con.commit();
+                            System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
+                        } else {
+                            con.rollback();
+                            System.out.println("Error en la transacción, se ha cancelado la inserción");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                     break;
                 case 7:
@@ -433,14 +440,13 @@ public class AppBiblioteca {
     /* Idea interesante que se me ocurío para generalizar, falta testeo
     private static <T extends AbstractDTO, I extends AbstractDAOtran<T>> void listarDto(I dao) {
         T[] dtos = dao.findAll();
-        T a = dtos[0];
         if (dtos != null && dtos.length > 0) {
-            System.out.println("\n" + a.getClass().getSimpleName() + "\n==========");
+            System.out.println("\n" + dao.getTableName().toUppercase + "\n==========");
             for (T dtoIt : dtos) {
                 System.out.println(dtoIt);
             }
         } else {
-            System.out.println("No hay libros guardados");
+            System.out.println("No hay " + dao.getTableName() + " guardados");
         }
     } 
     */
@@ -500,16 +506,14 @@ public class AppBiblioteca {
                         id INT PRIMARY KEY AUTO_INCREMENT,
                         nombre VARCHAR (100) NOT NULL,
                         correo VARCHAR (100) NOT NULL
-                    );
-                    """;
+                    );""";
             statement.executeUpdate(sqlCreateUsuarios);
 
             String sqlCreateGeneros = """
                     CREATE TABLE IF NOT EXISTS generos (
                         id INT PRIMARY KEY AUTO_INCREMENT,
                         nombre VARCHAR (100) NOT NULL UNIQUE
-                    );
-                    """;
+                    );""";
             statement.executeUpdate(sqlCreateGeneros);
 
             String sqlCreateLibros = """
@@ -523,8 +527,7 @@ public class AppBiblioteca {
                         copias_totales INT DEFAULT 1 NOT NULL,
                         copias_disponibles INT DEFAULT 1 NOT NULL,
                         FOREIGN KEY(id_genero) REFERENCES genero(id)
-                    );
-                    """;
+                    );""";
             statement.executeUpdate(sqlCreateLibros);
             
             String sqlCreatePrestamos = """
@@ -534,8 +537,7 @@ public class AppBiblioteca {
                         id_libro INT NOT NULL,
                         FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
                         FOREIGN KEY(id_libro) REFERENCES libros(id)
-                    );
-                    """;
+                    );""";
             statement.executeUpdate(sqlCreatePrestamos);
             return true;
         } catch (SQLException e) {
@@ -558,8 +560,8 @@ public class AppBiblioteca {
         System.out.print("Id del libro a recuperar: ");
         Integer id = pedirInt();
         id = (id == null) ? -1 : id;
-        LibroDTO libro = new LibroDTO(id);
-        if (!libroDAO.exists(libro)) {
+        LibroDTO libro = libroDAO.findById(id);
+        if (libro == null) {
             System.out.println("Error al recuperar el libro (o no existe)");
             return null;
         }

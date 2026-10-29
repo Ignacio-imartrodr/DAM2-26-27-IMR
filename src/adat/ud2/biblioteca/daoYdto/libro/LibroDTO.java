@@ -65,7 +65,7 @@ public class LibroDTO extends AbstractDTO {
     }
 
     public String getAutor() {
-        return autor.charAt(0) + autor.substring(1).toLowerCase();
+        return autor == null ? null : autor.charAt(0) + autor.substring(1).toLowerCase();
     }
 
     public void setAutor(String autor) {
@@ -159,6 +159,9 @@ public class LibroDTO extends AbstractDTO {
         } else {
             return compId;
         }
+        if (compId != 0) {
+            return compId;
+        }
         int compTitulo = this.titulo.compareTo(l.titulo);
         if (compTitulo != 0) {
             return compTitulo;
@@ -174,6 +177,8 @@ public class LibroDTO extends AbstractDTO {
             compAutor = -1;
         } else if (autor == null && l.autor != null) {
             compAutor = 1;   
+        } else if (autor == l.autor) {
+            compAutor = 0;
         } else {
             compAutor = this.autor.compareTo(l.autor);
         }
@@ -181,5 +186,32 @@ public class LibroDTO extends AbstractDTO {
             return compAutor;
         }
 
+
+        int compValoracion;
+        if (autor != null && l.autor == null) {
+            compValoracion = -1;
+        } else if (autor == null && l.autor != null) {
+            compValoracion = 1;   
+        } else if (autor == l.autor) {
+            compValoracion = 0;
+        } else {
+            compValoracion = Double.compare(valoracion, l.valoracion);
+        }
+        if (compValoracion != 0) {
+            return compValoracion;
+        }
+        
+        int compGenero = this.genero.compareTo(l.genero);
+        if (compGenero != 0) {
+            return compGenero;
+        }
+        
+        int compCopTot = Integer.compare(copiasTotales, l.copiasTotales);
+        if (compCopTot != 0) {
+            return compCopTot;
+        }
+
+        int compCopDisp = Integer.compare(copiasDisponibles, l.copiasDisponibles);
+        return compCopDisp;
     }
 }

@@ -34,4 +34,24 @@ public class GeneroDTO extends AbstractDTO {
     public String toString() {
         return "GeneroDTO [id= " + id + ", nombre= " + nombre + "]";
     }
+
+    @Override
+    public int compareTo(AbstractDTO o) {
+        if (this == o)
+            return 0;
+        if (o == null)
+            return -1;
+        int compId = Integer.compare(id, o.getId());
+        GeneroDTO g;
+        if (getClass() == o.getClass()){
+            g = (GeneroDTO) o;
+        } else {
+            return compId;
+        }
+        if (compId != 0) {
+            return compId;
+        }
+        int compNombre = this.nombre.compareTo(g.nombre);
+        return compNombre;
+    }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adat.ud2.biblioteca.daoYdto.AbstractDAOtran;
+import adat.ud2.biblioteca.daoYdto.libro.LibroDAOtran;
 
 public class GeneroDAOtran extends AbstractDAOtran<GeneroDTO> {
 
@@ -132,5 +133,28 @@ public class GeneroDAOtran extends AbstractDAOtran<GeneroDTO> {
     @Override
     public String getTablaName() {
         return "generos";
+    }
+
+    @Override
+    public boolean isBorradoPosible(GeneroDTO dto) {
+        if (dto == null || new LibroDAOtran(con).findByGenero(dto) != null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public GeneroDTO[] parseRs(ResultSet rs) throws SQLException {
+        List<GeneroDTO> generos = null;
+        if (rs.next()) {
+            generos = new ArrayList<>();
+            do {
+                generos.add(new GeneroDTO(
+                        rs.getInt("id"),
+                        rs.getString("nombre")
+                    ));
+            } while (rs.next());
+        }
+        return generos == null || generos.size() == 0 ? null : generos.toArray(new GeneroDTO[0]);
     }
 }

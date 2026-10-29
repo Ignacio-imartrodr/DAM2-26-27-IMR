@@ -3,7 +3,7 @@ package adat.ud2.biblioteca.daoYdto;
 public abstract class AbstractDTO implements Comparable<AbstractDTO>{
     protected int id;
     
-    protected AbstractDTO(Integer id) {
+    public AbstractDTO(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Id no puede ser null");
         }

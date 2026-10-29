@@ -58,57 +58,69 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
     }
 
     public boolean borrar(T dto) {
-        if (dto == null) {
+        if (dto == null || !exists(dto) || !isBorradoPosible(dto)) {
             return false;
         }
-        return borrarById(dto.getId());
+        return delete(dto);
     }
-    public abstract boolean borrarById(int id);
+    public boolean borrarById(int id){
+        T dto = findById(id);
+        if (dto == null || !isBorradoPosible(dto)) {
+           return false; 
+        }
+        return delete(dto);
+    }
+    private boolean delete(T dto){
+        String sql = "DELETE FROM " + getTablaName().strip() + " WHERE ID = ?";
+        try {
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            sentenciaSQL.setInt(1, dto.getId());
+            return sentenciaSQL.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public abstract boolean isBorradoPosible(T dto);
 
     public abstract boolean insertar(T dto);
 
     public abstract boolean actualizar(T dto);
 
-    public T find(T dto) {
-        if (dto == null) {
-            return null;
-        }
-        return findById(dto.getId());
-    }
-
     public T findById(int id){
         if (id < 0) {
             return null;
         }
-        T libroRes = null;
+        T dtoRes = null;
         String sql = "SELECT * FROM " + getTablaName().strip() + " WHERE id = ?";
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             sentenciaSQL.setInt(1, id);
             ResultSet rs = sentenciaSQL.executeQuery();
-            T[] libros = parseRs(rs);
-            if (libros.length > 0) {
-                libroRes = libros[0];
+            T[] dtos = parseRs(rs);
+            if (dtos != null && dtos.length > 0) {
+                dtoRes = dtos[0];
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return libroRes;
+        return dtoRes;
     }
 
     public T[] findAll() {
-        T[] prestamos = null;
-        String sql = "SELECT * FROM prestamos";
+        T[] dtos = null;
+        String sql = "SELECT * FROM " + getTablaName().strip();
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             ResultSet rs = sentenciaSQL.executeQuery();
-            prestamos = parseRs(rs);
+            dtos = parseRs(rs);
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return (prestamos == null || prestamos.length == 0) ? null : prestamos;
+        return (dtos == null || dtos.length == 0) ? null : dtos;
     }
-
+/* 
     public boolean exists(int id){
         if (id < 0) {
             return false;
@@ -126,26 +138,29 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
             e.printStackTrace();
         }
         return exists;
-    }
+    } */
 
-    public boolean validate(T dto){
-        if (dto.getId() < 0) {
+    public boolean exists(T dto){
+        if (dto == null || dto.getId() < 0) {
             return false;
         }
-        boolean exists = false;
+        boolean valid = false;
         String sql = "SELECT * FROM " + getTablaName().strip() + " WHERE id = ?";
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             sentenciaSQL.setInt(1, dto.getId());
             ResultSet rs = sentenciaSQL.executeQuery();
-            parseRs(rs);
+            T[] dtos = parseRs(rs);
+            if (dtos != null) {
+                valid = dto.equals(dtos[0]);//TODO comprobar si funciona
+            }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return exists;
+        return valid;
     }
     
-    public abstract T[] parseRs(ResultSet rs);
+    public abstract T[] parseRs(ResultSet rs) throws SQLException;
 
     public abstract String getTablaName();
 }

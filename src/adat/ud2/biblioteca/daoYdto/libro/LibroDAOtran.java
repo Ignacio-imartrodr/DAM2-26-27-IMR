@@ -1,12 +1,12 @@
 package adat.ud2.biblioteca.daoYdto.libro;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import adat.ud2.biblioteca.daoYdto.AbstractDAOtran;
 import adat.ud2.biblioteca.daoYdto.genero.GeneroDAOtran;
 import adat.ud2.biblioteca.daoYdto.genero.GeneroDTO;
+import adat.ud2.biblioteca.daoYdto.prestamos.PrestamoDAOtran;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -59,107 +59,17 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         }
     }
 
-    @Override 
-    public boolean borrarById(int id) {
-        if (id < 0) {
-            return false;
-        }
-        String sql = """
-                DELETE FROM libros
-                WHERE id = ?
-                """;
-        try {
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
-            sentenciaSQL.setInt(1, id);
-            return sentenciaSQL.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override 
-    public LibroDTO[] findAll() {
-        List<LibroDTO> libros = null;
-
-        try (Statement sentenciaSQL = con.createStatement()){
-            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM libros");
-            if (rs.next()) {
-                libros = new ArrayList<>();
-                do {
-                    int idGenero = rs.getInt("id_genero");
-                    if (rs.wasNull()) {
-                        idGenero = -1;
-                    }
-                    libros.add(new LibroDTO(
-                            rs.getInt("id"),
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getDate("fecha_publicacion").toLocalDate(),
-                            rs.getDouble("valoracion"),
-                            new GeneroDAOtran(con).findById(idGenero),
-                            rs.getInt("copias_totales"),
-                            rs.getInt("copias_disponbles")
-                        ));
-                } while (rs.next());
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return libros == null ? null : libros.toArray(new LibroDTO[0]);
-    }
-
-    @Override
-    public LibroDTO findById(int id) {
-        if (id < 0) {
-            return null;
-        }
-        LibroDTO libroRes = null;
-        String sql = """
-                SELECT * FROM libros
-                WHERE id = ?
-                """;
-        try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
-            sentenciaSQL.setInt(1, id);
-            ResultSet rs = sentenciaSQL.executeQuery();
-            if (rs.next()) {
-                int idGenero = rs.getInt("id_genero");
-                if (rs.wasNull()) {
-                    idGenero = -1;
-                }
-                libroRes = new LibroDTO(
-                        rs.getInt("id"),
-                        rs.getString("titulo"),
-                        rs.getString("autor"),
-                        rs.getDate("fecha_publicacion").toLocalDate(),
-                        rs.getDouble("valoracion"),
-                        new GeneroDAOtran(con).findById(idGenero),
-                        rs.getInt("copias_totales"),
-                        rs.getInt("copias_disponbles")
-                    );
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return libroRes;
-    }
-    
     public LibroDTO[] findByGenero(GeneroDTO gen) {
         if (gen == null || gen.getId() < 0) {
             return null;
         }
         List<LibroDTO> listRes = null;
-        String sql = """
-                SELECT * FROM libros
-                WHERE id_genero = ?
-                """;
+        String sql = "SELECT * FROM " + getTablaName() + " WHERE id_genero = ?";
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             sentenciaSQL.setInt(1, gen.getId());
             ResultSet rs = sentenciaSQL.executeQuery();
             if (rs.next()) {
-                listRes = new ArrayList<>(rs.getFetchSize());
+                listRes = new ArrayList<>();
                 do {
                     listRes.add(new LibroDTO(
                             rs.getInt("id"),
@@ -185,17 +95,16 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         if (libro == null || libro.getId() < 0) {
             return false;
         }
-        String sql = """
-                UPDATE libros
-                SET titulo = ?,
+        String sql = "UPDATE " + getTablaName();
+        sql.concat("""
+                 SET titulo = ?,
                     autor = ?,
                     fecha_publicacion = ?,
                     valoracion = ?,
                     id_genero = ?,
                     copias_totales = ?,
                     copias_disponibles = ?
-                WHERE id = ?
-                """;
+                WHERE id = ?""");
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
             int parIndx = 0;
@@ -228,11 +137,10 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         if (libro == null || libro.getId() < 0) {
             return false;
         }
-        String sql = """
-                UPDATE libros
-                SET id_genero = ?
-                WHERE id = ?
-                """;
+        String sql = "UPDATE " + getTablaName();
+        sql.concat("""
+                 SET id_genero = ?
+                WHERE id = ?""");
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
             int parIndx = 0;
@@ -254,12 +162,11 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
         if (libro == null || libro.getId() < 0) {
             return false;
         }
-        String sql = """
-                UPDATE libros
-                SET copias_totales = ?,
+        String sql = "UPDATE " + getTablaName();
+        sql.concat("""
+                 SET copias_totales = ?,
                     copias_disponibles = ?
-                WHERE id = ?
-                """;
+                WHERE id = ?""");
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
             int parIndx = 0;
@@ -306,5 +213,13 @@ public class LibroDAOtran extends AbstractDAOtran<LibroDTO>{
             System.out.println("No se pudo acceder a la BD");
         }
         return libros == null ? null : libros.toArray(new LibroDTO[0]);
+    }
+
+    @Override
+    public boolean isBorradoPosible(LibroDTO dto) {
+        if (dto == null || new PrestamoDAOtran(con).findByLibro(dto) != null) {
+            return false;
+        }
+        return true;
     }
 }
