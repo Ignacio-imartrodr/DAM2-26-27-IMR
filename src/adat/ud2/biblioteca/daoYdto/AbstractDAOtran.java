@@ -46,7 +46,11 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
             isSuccess = true;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            try {
+                con.rollback();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         } finally {
             try {
                 con.setAutoCommit(true);
@@ -63,6 +67,7 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
         }
         return delete(dto);
     }
+
     public boolean borrarById(int id){
         T dto = findById(id);
         if (dto == null || !isBorradoPosible(dto)) {
@@ -70,7 +75,8 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
         }
         return delete(dto);
     }
-    private boolean delete(T dto){
+    
+    protected boolean delete(T dto){
         String sql = "DELETE FROM " + getTablaName().strip() + " WHERE ID = ?";
         try {
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
@@ -84,7 +90,7 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
 
     public abstract boolean isBorradoPosible(T dto);
 
-    public abstract boolean insertar(T dto);
+    public abstract int insertar(T dto);
 
     public abstract boolean actualizar(T dto);
 

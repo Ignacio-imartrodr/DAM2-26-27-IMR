@@ -18,70 +18,25 @@ public class GeneroDAOtran extends AbstractDAOtran<GeneroDTO> {
     }
 
     @Override
-    public GeneroDTO findById(int id) {
-        if (id < 0) {
-            return null;
-        }
-        GeneroDTO generoRes = null;
-        String sql = """
-                SELECT * FROM generos
-                WHERE id = ?
-                """;
-        try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
-            sentenciaSQL.setInt(1, id);
-            ResultSet rs = sentenciaSQL.executeQuery();
-            if (rs.next()) {
-                generoRes = new GeneroDTO(
-                        rs.getInt("id"),
-                        rs.getString("nombre")
-                    );
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return generoRes;
-    }
-
-    @Override
-    public boolean borrarById(int id) {
-        if (id < 0) {
-            return false;
-        }
-        String sql = """
-                DELETE FROM generos
-                WHERE id = ?
-                """;
-        try {
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
-            sentenciaSQL.setInt(1, id);
-            return sentenciaSQL.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean insertar(GeneroDTO genero) {
-         String sql = """
-                INSERT INTO generos
-                (nombre)
-                VALUES
-                (?)
-                """;
+    public int insertar(GeneroDTO genero) {
+        String sql = "INSERT INTO " + getTablaName() + " (nombre) VALUES (?)";
         try {
             int parIndx = 0;
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             sentenciaSQL.setString(++parIndx, genero.getNombre());
-            return sentenciaSQL.executeUpdate() > 0;
+            if (sentenciaSQL.executeUpdate() <= 0) {
+                return -1;
+            }
+            try (ResultSet claves = sentenciaSQL.getGeneratedKeys()) {
+                return claves.next() ? claves.getInt(1) : -1;
+            }
         } catch (SQLException e) {
             if ("23000".equals(e.getSQLState())) {
-                System.out.println("Ya existe un genero con el nombre \"" + genero.getNombre() + "\"");
+                System.out.println("Ya existe un " + getTablaName().substring(0, getTablaName().length() - 1) + " con el nombre \"" + genero.getNombre() + "\"");
             } else {
                 e.printStackTrace();
             }
-            return false;
+            return -1;
         }
     }
 
@@ -106,28 +61,6 @@ public class GeneroDAOtran extends AbstractDAOtran<GeneroDTO> {
             }
             return false;
         }
-    }
-
-    @Override
-    public GeneroDTO[] findAll() {
-        List<GeneroDTO> generos = null;
-
-        try (Statement sentenciaSQL = con.createStatement()){
-            ResultSet rs = sentenciaSQL.executeQuery("SELECT * FROM usuarios");
-            if (rs.next()) {
-                generos = new ArrayList<>();
-                do {
-                    generos.add(new GeneroDTO(
-                            rs.getInt("id"),
-                            rs.getString("nombre")
-                        ));
-                } while (rs.next());
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return generos == null ? null : generos.toArray(new GeneroDTO[0]);
     }
 
     @Override

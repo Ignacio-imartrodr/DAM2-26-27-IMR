@@ -13,7 +13,7 @@ public class LibroDTO extends AbstractDTO {
     private Double valoracion;
     private GeneroDTO genero;
     private int copiasTotales;
-    private int copiasDisponibles;//TODO aplicar totales y disponibles
+    private int copiasDisponibles;
     
     public LibroDTO(int id, String titulo, String autor, LocalDate fechaPub, Double valoracion, GeneroDTO genero, Integer copiasTotales, Integer copiasDisponibles) {
         super(id);
@@ -23,6 +23,8 @@ public class LibroDTO extends AbstractDTO {
         if (!setFechaPub(fechaPub)) {
             throw new IllegalArgumentException("La fecha de publicación no pueden ser null o futuro");
         }
+        this.copiasTotales = 0;
+        this.copiasDisponibles = -1;
         if (!setCopiasTotales(copiasTotales)) {
             throw new IllegalArgumentException("La cantidad total de copias debe ser mayor a 0");
         }
@@ -77,7 +79,10 @@ public class LibroDTO extends AbstractDTO {
     }
 
     public boolean setFechaPub(LocalDate fechaPublicacion) {
-        if (fechaPub == null || fechaPub.isAfter(LocalDate.now())) {
+        if (fechaPub != null && (fechaPublicacion == null || fechaPub.isAfter(LocalDate.now()))) {
+            return false;
+        }
+        if (fechaPublicacion == null) {
             return false;
         }
         this.fechaPub = fechaPublicacion;
@@ -120,9 +125,12 @@ public class LibroDTO extends AbstractDTO {
         return copiasTotales;
     }
 
-    protected boolean setCopiasTotales(Integer nCopias) {
-        if (nCopias != null && nCopias < 1) {
+    public boolean setCopiasTotales(Integer nCopias) {
+        if (nCopias != null && (nCopias < 1 || copiasDisponibles - (copiasTotales - nCopias) < 0)) {
             return false;
+        }
+        if (copiasDisponibles >= 0) {
+            copiasDisponibles -= (copiasTotales - nCopias);
         }
         copiasTotales = nCopias == null ? N_COPIAS_DEFAULT : nCopias;
         return true;
@@ -133,8 +141,16 @@ public class LibroDTO extends AbstractDTO {
         copiasDisponibles++;
     }
 
+    public boolean devolverCopia(){
+        if (copiasDisponibles < copiasTotales) {
+            copiasDisponibles++;
+            return true;
+        }
+        return false;
+    }
+
     public boolean prestarCopia(){
-        if (copiasDisponibles > 1) {
+        if (copiasDisponibles >= 1) {
             copiasDisponibles--;
             return true;
         }

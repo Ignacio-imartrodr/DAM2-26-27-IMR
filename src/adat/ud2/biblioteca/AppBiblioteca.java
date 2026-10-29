@@ -36,21 +36,20 @@ public class AppBiblioteca {
         libroDAO = new LibroDAOtran(con);
         prestamoDAO = new PrestamoDAOtran(con);
         sc = new Scanner(System.in);
+        String pregunta = "MENU LIBROS";
+        String opciones = """
+                            0. Crear Tablas/BD
+                            1. Insertar
+                            2. Listar
+                            3. Buscar por ID
+                            4. Actualizar
+                            5. Eliminar
+                            6. TRANSACCION PRUEBA: Insertar usuarios, generos, libros y prestamos
+                            7. Salir""";
         boolean continuar = true;
         Integer opcion;
         do {
-            System.out.println("MENU LIBROS");
-            System.out.println("0. Crear Tablas/BD");
-            System.out.println("1. Insertar");
-            System.out.println("2. Listar");
-            System.out.println("3. Buscar por ID");
-            System.out.println("4. Actualizar");
-            System.out.println("5. Eliminar");
-            System.out.println("6. TRANSACCION PRUEBA: Insertar usuarios, generos, libros y prestamos");
-            System.out.println("7. Salir");
-            System.out.print("Seleccione una opción: ");
-            opcion = pedirInt();
-            opcion = opcion == null ? -1 : opcion;
+            opcion = pedirOpcion(pregunta, opciones);
             switch (opcion) {
                 case 0:
                     // Crear Tablas/BD
@@ -64,18 +63,15 @@ public class AppBiblioteca {
                 case 1:
                     // Insertar
                     
-                    //TODO añadir resto de casos
-                    System.out.println("Que quiere insertar?\nOPCIONES");
-                    System.out.println("0- Libro\n1 - Usuario\n2 - Genero\n3 - Prestamo\nOtro - Cancelar");
-                    System.out.print("Seleccione una opción: ");
-                    opcion = pedirInt();
-                    opcion = opcion == null ? -1 : opcion;
+                    pregunta ="Que quiere insertar?";
+                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcion = pedirOpcion(pregunta, opciones);
                     switch (opcion) {
                         case 0:
                             //Libro
 
                             LibroDTO libro = pedirLibro();
-                            if (libroDAO.insertar(libro)) {
+                            if (libroDAO.insertar(libro) >= 0) {
                                 System.out.println("Inserción correcta");
                             } else {
                                 System.out.println("Error insertando libro");
@@ -86,7 +82,7 @@ public class AppBiblioteca {
                             //Usuario
 
                             UsuarioDTO us = pedirUsuario();
-                            if (usuarioDAO.insertar(us)) {
+                            if (usuarioDAO.insertar(us) >= 0) {
                                 System.out.println("Inserción correcta");
                             } else {
                                 System.out.println("Error insertando usuario");
@@ -94,10 +90,10 @@ public class AppBiblioteca {
                             break;
 
                         case 2:
-                            //Genero
+                            //Género
 
                             GeneroDTO genero = pedirGenero();
-                            if (generoDAO.insertar(genero)) {
+                            if (generoDAO.insertar(genero) >= 0) {
                                 System.out.println("Inserción correcta");
                             } else {
                                 System.out.println("Error insertando género");
@@ -105,17 +101,17 @@ public class AppBiblioteca {
                             break;
 
                         case 3:
-                            //Prestamo
+                            //Préstamo
 
                             PrestamoDTO prest = pedirPrestamo();
-                            if (prestamoDAO.insertar(prest)) {
+                            if (prestamoDAO.insertar(prest) >= 0) {
                                 System.out.println("Inserción correcta");
                             } else {
-                                System.out.println("Error insertando prestamo");
+                                System.out.println("Error insertando préstamo");
                             }
                             break;
                         default:
-                            System.out.println("Operacion cancelada");
+                            System.out.println("Operación cancelada");
                             break;
                     }
                     break;
@@ -123,11 +119,9 @@ public class AppBiblioteca {
                     // Listar
 
                     boolean isAll = false;
-                    System.out.println("Que quiere listar?\nOPCIONES");
-                    System.out.println("0 - Todo\n1- Libros\n2 - Usuarios\nOtro - Cancelar");
-                    System.out.print("Seleccione una opción: ");
-                    opcion = pedirInt();
-                    opcion = opcion == null ? -1 : opcion;
+                    
+                    opcion = pedirOpcion("Que quiere listar?\nOPCIONES", "0 - Todo\n1- Libros\n2 - Usuarios\n3 - Géneros\n4 - Préstamos\nOtro - Cancelar");
+                    
                     switch (opcion) {
                         case 0: 
                             //Todo
@@ -169,19 +163,17 @@ public class AppBiblioteca {
                             if (isAll) {
                                 break;
                             }
-                            System.out.println("Operacion cancelada");
+                            System.out.println("Operación cancelada");
                             break;
                     }
                     break;
                 case 3:
                     // Buscar por ID
 
-                    //TODO añadir resto de casos
-                    System.out.println("Que quiere buscar?\nOPCIONES");
-                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
-                    System.out.print("Seleccione una opción: ");
-                    opcion = pedirInt();
-                    opcion = opcion == null ? -1 : opcion;
+                    pregunta = "Que quiere buscar?";
+                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2- Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcion = pedirOpcion(pregunta, opciones);
+                    
                     switch (opcion) {
                         case 0:
                             //Libro
@@ -211,95 +203,153 @@ public class AppBiblioteca {
                             }
                             break;
 
+                        case 2:
+                            //Género
+
+                            System.out.print("Id del género a recuperar: ");
+                            id = pedirInt();
+                            id = (id == null) ? -1 : id;
+                            GeneroDTO g = generoDAO.findById(id);
+                            if (g != null) {
+                                System.out.println("GÉNERO ENCONTRADO: " + g);
+                            } else {
+                                System.out.println("Error al recuperar el género (o no existe)");
+                            }
+                            break;
+
+                        case 3:
+                            //Préstamo
+
+                            System.out.print("Id del préstamo a recuperar: ");
+                            id = pedirInt();
+                            id = (id == null) ? -1 : id;
+                            PrestamoDTO p = prestamoDAO.findById(id);
+                            if (p != null) {
+                                System.out.println("PRÉSTAMO ENCONTRADO: " + p);
+                            } else {
+                                System.out.println("Error al recuperar el préstamo (o no existe)");
+                            }
+                            break;
+
                         default:
-                            System.out.println("Operacion cancelada");
+                            System.out.println("Operación cancelada");
                             break;
                     }
                     break;
                 case 4:
                     // Actualizar
-
-                    //TODO añadir resto de casos
-                    System.out.println("Que quiere insertar?\nOPCIONES");
-                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
-                    System.out.print("Seleccione una opción: ");
-                    opcion = pedirInt();
-                    opcion = opcion == null ? -1 : opcion;
+                    pregunta = "Que quiere insertar?";
+                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcion = pedirOpcion(pregunta, opciones);
+                    
+                    boolean isSuccess;
                     switch (opcion) {
                         case 0:
+                            //Libro
+
                             System.out.println("Id del libro que quiere actualizar?");
                             Integer id = pedirInt();
                             id = id == null ? -1 : id;
                             LibroDTO libro = libroDAO.findById(id);
-                            boolean isSuccess = libro != null;
+                            isSuccess = libro != null;
                             if (isSuccess) {
-                                System.out.println("Que parametro quiere modificar?\nOPCIONES");
-                                System.out.println(
-                                        "0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Genero\n6 - Copias\nOtro - Cancelar");
-                                opcion = pedirInt();
-                                opcion = opcion == null ? -1 : opcion;
+                                isAll = false;
+                                System.out.println(libro.toString());
+                                pregunta = "Que parámetro quiere modificar?";
+                                opciones = "OPCIONES\n0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Género\n6 - Copias\nOtro - Cancelar";
+                                opcion = pedirOpcion(pregunta, opciones);
+                                
                                 switch (opcion) {
                                     case 0:
+                                        isAll = true;
+                                    case 1:
                                         LibroDTO libro2 = pedirLibro();
                                         libro = new LibroDTO(libro.getId(), libro2.getTitulo(), libro2.getAutor(),
                                                 libro2.getFechaPub(), libro2.getValoracion(), libro2.getGenero(), libro2.getCopiasTotales(), libro2.getCopiasDisponibles());
-                                        break;
-
-                                    case 1:
-                                        System.out.print("Titulo del libro?: ");
-                                        libro.setTitulo(pedirStringNoVacía());
-                                        break;
+                                        if (!isAll) {
+                                            break;
+                                        }
 
                                     case 2:
-                                        libro.setAutor(pedirAutor());
-                                        break;
+                                        System.out.print("Titulo del libro?: ");
+                                        libro.setTitulo(pedirStringNoVacía());
+                                        if (!isAll) {
+                                            break;
+                                        }
 
                                     case 3:
-                                        libro.setFechaPub(pedirFecha());
-                                        break;
+                                        libro.setAutor(pedirAutor());
+                                        if (!isAll) {
+                                            break;
+                                        }
 
                                     case 4:
+                                        libro.setFechaPub(pedirFecha());
+                                        if (!isAll) {
+                                            break;
+                                        }
+
+                                    case 5:
                                         if (!libro.setValoracion(pedirValoracion())) {
                                             System.out.println("Error asignando la Valoración");
                                             isSuccess = false;
                                         }
-                                        break;
-
-                                    case 5:
-                                        //TODO modificar genero
-                                        break;
+                                        if (!isAll || !isSuccess) {
+                                            break;
+                                        }
 
                                     case 6:
-                                        //TODO modificar copias
-                                        break;
+                                        System.out.println("Id del género que quiere asignar? (Otro o -1 para quitarlo)");
+                                        id = pedirInt();
+                                        id = id == null ? -1 : id;
+                                        libro.setGenero(generoDAO.findById(id));
+                                        if (!isAll) {
+                                            break;
+                                        }
+
+                                    case 7:
+                                        System.out.println("Nuevo número de copias totales?");
+                                        id = pedirInt();
+                                        id = id == null ? -1 : id;
+                                        if (libro.setCopiasTotales(id)) {
+                                            System.out.println("Valor no válido o menor a la cantidad ya prestada");
+                                            isSuccess = false;
+                                        }
+                                        if (!isAll || !isSuccess) {
+                                            break;
+                                        }
 
                                     default:
+                                        if (isAll) {
+                                            break;
+                                        }
                                         isSuccess = false;
                                         break;
                                 }
                                 if (!isSuccess) {
                                     System.out.println("Operación cancelada");
+                                    
                                 }
                             }
-                            if (isSuccess) {
-                                if (!libroDAO.actualizar(libro)) {
-                                    System.out.println("Error al actualizar el libro");
-                                }
+                            if (isSuccess && !libroDAO.actualizar(libro)) {
+                                System.out.println("Error al actualizar el préstamo");
                             }
                             break;
 
                         case 1:
+                            //Usuario
+
                             System.out.println("Id del usuario que quiere actualizar?");
                             id = pedirInt();
                             id = id == null ? -1 : id;
                             UsuarioDTO us = usuarioDAO.findById(id);
                             isSuccess = us != null;
                             if (isSuccess) {
+                                System.out.println(us.toString());
                                 isAll = false;
-                                System.out.println("Que parametro quiere modificar?\nOPCIONES");
-                                System.out.println("0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
-                                opcion = pedirInt();
-                                opcion = opcion == null ? -1 : opcion;
+                                pregunta = "Que parámetro quiere modificar?";
+                                opciones = "OPCIONES\n0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar";
+                                opcion = pedirOpcion(pregunta, opciones);
                                 switch (opcion) {
                                     case 0:
                                         isAll = true;
@@ -315,33 +365,142 @@ public class AppBiblioteca {
                                         break;
 
                                     default:
-                                        System.out.println("Operacion cancelada");
+                                        if (isAll) {
+                                            break;
+                                        }
                                         isSuccess = false;
                                         break;
                                 }
+                                if (!isSuccess) {
+                                    System.out.println("Operación cancelada");
+                                    
+                                }
                             }
+                            if (isSuccess && !usuarioDAO.actualizar(us)) {
+                                System.out.println("Error al actualizar el usuario");
+                            }
+
+                            break;
+
+                        case 2:
+                            //Género
+
+                            System.out.println("Id del género que quiere actualizar?");
+                            id = pedirInt();
+                            id = id == null ? -1 : id;
+                            GeneroDTO g = generoDAO.findById(id);
+                            isSuccess = g != null;
                             if (isSuccess) {
-                                if (!usuarioDAO.actualizar(us)) {
-                                    System.out.println("Error al actualizar el usuario");
+                                System.out.println(g.toString());
+                                System.out.println("Nombre del género?");
+                                g.setNombre(pedirStringNoVacía());
+                                /* 
+                                isAll = false;
+                                System.out.println("Que parámetro quiere modificar?\nOPCIONES");
+                                System.out.println("0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
+                                opcion = pedirInt();
+                                opcion = opcion == null ? -1 : opcion;
+                                switch (opcion) {
+                                    case 0:
+                                        isAll = true;
+                                    case 1:
+                                        System.out.println("Nombre del género?");
+                                        g.setNombre(pedirStringNoVacía());
+                                        if (!isAll) {
+                                            break;
+                                        }
+                                    default:
+                                        if (isAll) {
+                                            break;
+                                        }
+                                        isSuccess = false;
+                                        break;
+                                }
+                                if (!isSuccess) {
+                                    System.out.println("Operación cancelada");
+                                    
+                                }*/
+                                if (isSuccess && !generoDAO.actualizar(g)) {
+                                    System.out.println("Error al actualizar el género");
                                 }
                             }
 
                             break;
 
+                        case 3:
+                            //Préstamo
+
+                            System.out.println("Id del préstamo que quiere actualizar?");
+                            id = pedirInt();
+                            id = id == null ? -1 : id;
+                            PrestamoDTO p = prestamoDAO.findById(id);
+                            isSuccess = p != null;
+                            if (isSuccess) {
+                                System.out.println(p.toString());
+                                isAll = false;
+                                pregunta = "Que parámetro quiere modificar?";
+                                opciones = "OPCIONES\n0- Todos\n1 - Libro\n2 - Usuario\nOtro - Cancelar";
+                                opcion = pedirOpcion(pregunta, opciones);
+                                
+                                switch (opcion) {
+                                    case 0:
+                                        isAll = true;
+                                    case 1:
+                                        listarUsuarios();
+                                        System.out.println("Id del usuario que quiere asignar?");
+                                        id = pedirInt();
+                                        id = id == null ? -1 : id;
+                                        us = usuarioDAO.findById(id);
+                                        isSuccess = us != null;
+                                        if (isSuccess) {
+                                            p.setIdUsuario(us.getId());
+                                        }
+                                        if (!isAll || !isSuccess) {
+                                            break;
+                                        }
+                                    case 2:
+                                        listarLibros();
+                                        System.out.println("Id del libro que quiere asignar?");
+                                        id = pedirInt();
+                                        id = id == null ? -1 : id;
+                                        libro = libroDAO.findById(id);
+                                        isSuccess = libro != null;
+                                        if (isSuccess) {
+                                            p.setIdLibro(libro.getId());
+                                        }
+                                        if (!isAll || !isSuccess) {
+                                            break;
+                                        }
+
+                                    default:
+                                        if (isAll) {
+                                            break;
+                                        }
+                                        isSuccess = false;
+                                        break;
+                                }
+                                if (!isSuccess) {
+                                    System.out.println("Operación cancelada");
+                                    
+                                }
+                            }
+                            if (isSuccess && !prestamoDAO.actualizar(p)) {
+                                System.out.println("Error al actualizar el préstamo");
+                            }
+                            break;
+
                         default:
-                            System.out.println("Operacion cancelada");
+                            System.out.println("Operación cancelada");
                             break;
                     }
                     break;
                 case 5:
                     // Eliminar
                     
-                    //TODO añadir resto de casos
-                    System.out.println("Que quiere buscar?\nOPCIONES");
-                    System.out.println("0- Libro\n1 - Usuario\nOtro - Cancelar");
-                    System.out.print("Seleccione una opción: ");
-                    opcion = pedirInt();
-                    opcion = opcion == null ? -1 : opcion;
+                    pregunta = "Que quiere eliminar?";
+                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcion = pedirOpcion(pregunta, opciones);
+                    
                     switch (opcion) {
                         case 0:
                             //Libro
@@ -354,7 +513,7 @@ public class AppBiblioteca {
                                 if(libroDAO.borrarById(opcion)) {
                                     System.out.println("Libro borrado correctamente");
                                 } else {
-                                    System.out.println("Error al borrar el libro");
+                                    System.out.println("Para borrar este libro primero deben ser devueltas todas las copias");
                                 }
                             } else {
                                 System.out.println("Error al encotrar el libro (o no existe)");
@@ -379,8 +538,44 @@ public class AppBiblioteca {
                             }
                             break;
 
+                        case 2:
+                            //Género
+                            
+                            System.out.print("Id del género a borrar: ");
+                            opcion = pedirInt();
+                            opcion = opcion == null ? -1 : opcion;
+                            GeneroDTO g = generoDAO.findById(opcion);
+                            if (g != null) {
+                                if (generoDAO.borrar(g)) {
+                                    System.out.println("Genero borrado correctamente");
+                                } else {
+                                    System.out.println("Para borrar este género primero debe quitarlo de los libros que tiene asigandos");
+                                }
+                            } else {
+                                System.out.println("Error al encotrar el genero (o no existe)");
+                            }
+                            break;
+
+                        case 3:
+                            //Prestamo
+                            
+                            System.out.print("Id del préstamo a borrar: ");
+                            opcion = pedirInt();
+                            opcion = opcion == null ? -1 : opcion;
+                            PrestamoDTO p = prestamoDAO.findById(opcion);
+                            if (p != null) {
+                                if (prestamoDAO.borrarById(opcion)) {
+                                    System.out.println("Préstamo borrado correctamente");
+                                } else {
+                                    System.out.println("Error borrando préstamo");
+                                }
+                            } else {
+                                System.out.println("Error al encotrar el préstamo (o no existe)");
+                            }
+                            break;
+
                         default:
-                            System.out.println("Operacion cancelada");
+                            System.out.println("Operación cancelada");
                             break;
                     }
                     
@@ -393,29 +588,48 @@ public class AppBiblioteca {
                         System.out.println("No se pudo iniciar la transacción");
                         break;
                     }
-                    boolean hasSucceded =
-                            usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))
-                        &&  usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))
-                        &&  usuarioDAO.insertar(new UsuarioDTO("Marta López","martalopez@example.com"))
-                        &&  generoDAO.insertar(new GeneroDTO("fantasía"))
-                        &&  generoDAO.insertar(new GeneroDTO("acción"))
-                        &&  generoDAO.insertar(new GeneroDTO("ciencia ficción"))
-                        &&  libroDAO.insertar(new LibroDTO(-1, "Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8, generoDAO.findById(1), 3, null))
-                        &&  libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca", LocalDate.of(1936, 6, 1), 4.6))
-                        &&  libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2))
-                        &&  prestamoDAO.insertar(new PrestamoDTO(1, 2))
-                        &&  prestamoDAO.insertar(new PrestamoDTO(1, 3))
-                        &&  prestamoDAO.insertar(new PrestamoDTO(3, 1));
+                    boolean hasSucceded = false;
+                    int[] idLibros = new int[3];
+                    int[] idUsuarios = new int[3];
+                    int idGenero;
+                    try {
+                        hasSucceded = (idUsuarios[0] = usuarioDAO.insertar(new UsuarioDTO("Ana García", "anagarcia@exemple.com"))) >= 0
+                        &&  (idUsuarios[1] = usuarioDAO.insertar(new UsuarioDTO("Luis Pérez","luisperez@exemple.com"))) >= 0
+                        &&  (idUsuarios[2] = usuarioDAO.insertar(new UsuarioDTO("Marta López","martalopez@example.com"))) >= 0
+                        &&  (idGenero = generoDAO.insertar(new GeneroDTO("fantasía"))) >= 0
+                        &&  (generoDAO.insertar(new GeneroDTO("acción")) >= 0)
+                        &&  (generoDAO.insertar(new GeneroDTO("ciencia ficción")) >= 0)
+                        &&  (idLibros[0] = libroDAO.insertar(new LibroDTO(-1, "Don Quijote de la Mancha", "Miguel de Cervantes", LocalDate.of(1605, 1, 16), 4.8, generoDAO.findById(idGenero), 3, null))) >= 0
+                        &&  (idLibros[1] = libroDAO.insertar(new LibroDTO("La casa de Bernarda Alba", "Federico García Lorca", LocalDate.of(1936, 6, 1), 4.6))) >= 0
+                        &&  (idLibros[2] = libroDAO.insertar(new LibroDTO("Niebla", "Miguel de Unamuno", LocalDate.of(1914, 1, 1), 4.2))) >= 0
+                        &&  (prestamoDAO.insertar(new PrestamoDTO(idUsuarios[0], idLibros[1])) >= 0)
+                        &&  (prestamoDAO.insertar(new PrestamoDTO(idUsuarios[0],  idLibros[2])) >= 0)
+                        &&  (prestamoDAO.insertar(new PrestamoDTO(idUsuarios[2],  idLibros[0])) >= 0);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                    
                     try {
                         if (hasSucceded) {
                             con.commit();
-                            System.out.println("Transacción completada: se insertaron 3 usuarios y 3 libros");
+                            System.out.println("Transacción completada: se insertaron 3 libros, 3 usuarios, 3 géneros y 3 préstamos");
                         } else {
                             con.rollback();
                             System.out.println("Error en la transacción, se ha cancelado la inserción");
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        try {
+                            con.rollback();
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                    } finally {
+                        try {
+                            con.setAutoCommit(true);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
                 case 7:
@@ -435,6 +649,16 @@ public class AppBiblioteca {
             }
         } while (continuar);
         System.out.println("Gracias por usar la biblioteca");
+    }
+
+    private static int pedirOpcion(String pregunta, String opciones) {
+        Integer opcion;
+        System.out.println(pregunta + "\n" + opciones);
+        System.out.print("Seleccione una opción: ");
+        opcion = pedirInt();
+        System.out.println();
+        opcion = opcion == null ? -1 : opcion;
+        return opcion;
     }
 
     /* Idea interesante que se me ocurío para generalizar, falta testeo
@@ -526,7 +750,8 @@ public class AppBiblioteca {
                         id_genero INT,
                         copias_totales INT DEFAULT 1 NOT NULL,
                         copias_disponibles INT DEFAULT 1 NOT NULL,
-                        FOREIGN KEY(id_genero) REFERENCES genero(id)
+                        FOREIGN KEY(id_genero) REFERENCES generos(id),
+                        UNIQUE (titulo, autor, fecha_publicacion)
                     );""";
             statement.executeUpdate(sqlCreateLibros);
             
@@ -536,11 +761,13 @@ public class AppBiblioteca {
                         id_usuario INT NOT NULL,
                         id_libro INT NOT NULL,
                         FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
-                        FOREIGN KEY(id_libro) REFERENCES libros(id)
+                        FOREIGN KEY(id_libro) REFERENCES libros(id),
+                        UNIQUE (id_usuario, id_libro)
                     );""";
             statement.executeUpdate(sqlCreatePrestamos);
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }

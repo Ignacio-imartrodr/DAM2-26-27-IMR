@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS libros (
     id_genero INT,
     copias_totales INT DEFAULT 1 NOT NULL,
     copias_disponibles INT DEFAULT 1 NOT NULL,
-    FOREIGN KEY(id_genero) REFERENCES genero(id)
+    FOREIGN KEY(id_genero) REFERENCES generos(id),
+    UNIQUE (titulo, autor, fecha_publicacion)
 );
 
 CREATE TABLE IF NOT EXISTS prestamos (
@@ -26,5 +27,6 @@ CREATE TABLE IF NOT EXISTS prestamos (
     id_usuario INT NOT NULL,
     id_libro INT NOT NULL,
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
-    FOREIGN KEY(id_libro) REFERENCES libros(id)
+    FOREIGN KEY(id_libro) REFERENCES libros(id),
+    UNIQUE (id_usuario, id_libro)
 );

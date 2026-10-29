@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
 
@@ -18,31 +19,28 @@ public class UsuarioDAOtran extends AbstractDAOtran<UsuarioDTO> {
     }
 
     @Override 
-    public boolean insertar(UsuarioDTO us) {
-        String sql = "INSERT INTO " + getTablaName();
-        sql.concat("""
-                 (nombre, correo)
-                VALUES
-                (?, ?)""");
+    public int insertar(UsuarioDTO us) {
+        String sql = "INSERT INTO " + getTablaName() + " (nombre, correo) VALUES (?, ?)";
         try {
             int parIndx = 0;
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             sentenciaSQL.setString(++parIndx, us.getNombre());
             sentenciaSQL.setString(++parIndx, us.getCorreo());
-            return sentenciaSQL.executeUpdate() > 0;
+            if (sentenciaSQL.executeUpdate() <= 0) {
+                return -1;
+            }
+            try (ResultSet claves = sentenciaSQL.getGeneratedKeys()) {
+                return claves.next() ? claves.getInt(1) : -1;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
 
     @Override
     public boolean actualizar(UsuarioDTO usuario) {
-        String sql = "UPDATE " + getTablaName();
-        sql.concat("""
-                 SET nombre = ?,
-                    correo = ?
-                WHERE ID = ?""");
+        String sql = "UPDATE " + getTablaName() + " SET nombre = ?, correo = ? WHERE ID = ?";
         try {
             int parIndex = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);

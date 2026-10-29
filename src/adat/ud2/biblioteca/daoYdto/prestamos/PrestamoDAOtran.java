@@ -21,42 +21,173 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
     }
 
     @Override
-    public boolean insertar(PrestamoDTO prest) {
-        String sql = "INSERT INTO " + getTablaName();
-        sql.concat("""
-                 (id_usuario, id_libro)
-                VALUES
-                (?, ?)""");
+    public int insertar(PrestamoDTO prest) {
+        boolean notTranPrev = false;
         try {
-            int parIndx = 0;
-            PreparedStatement sentenciaSQL = con.prepareStatement(sql);
-            sentenciaSQL.setInt(++parIndx, prest.getIdUsuario());
-            sentenciaSQL.setInt(++parIndx, prest.getIdLibro());
-            return sentenciaSQL.executeUpdate() > 0;
+            notTranPrev = con.getAutoCommit();
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
+        }
+        if (notTranPrev) {
+            if (!beginTransaction()) {
+                return -1;
+            }
+        }
+        LibroDAOtran lDAO = new LibroDAOtran(con);
+        LibroDTO l = lDAO.findById(prest.getIdLibro());
+        if (l == null) {
+            System.out.println("No se encontró el libro");
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return -1;
+        }
+        if (!l.prestarCopia()) {
+            System.out.println("No quedan copias del libro \"" + l.toString() + "\" para prestar");
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return -1;
+        }
+        String sql = "INSERT INTO " + getTablaName() + " (id_usuario, id_libro) VALUES (?, ?)";
+        try {
+            int parIndx = 0;
+            PreparedStatement sentenciaSQL = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            sentenciaSQL.setInt(++parIndx, prest.getIdUsuario());
+            sentenciaSQL.setInt(++parIndx, prest.getIdLibro());
+            if (sentenciaSQL.executeUpdate() <= 0 || !lDAO.actualizarCopias(l)) {
+                if (notTranPrev) {
+                    endTransaction(false);
+                }
+                return -1;
+            }
+            try (ResultSet claves = sentenciaSQL.getGeneratedKeys()) {
+                int id = claves.next() ? claves.getInt(1) : -1;
+                if (notTranPrev) {
+                    if (!endTransaction(id > 0)) {
+                        return -1;   
+                    }
+                }
+                return id;
+            }
+        } catch (SQLException e) {
+            if ("23000".equals(e.getSQLState())) {
+                System.out.println("Ya existe un " + getTablaName().substring(0, getTablaName().length() - 1) + " con la combinación de usuario y libro de \"" + prest.toString() + "\"");
+            } else {
+                e.printStackTrace();
+            }
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return -1;
         }
     }
 
     @Override
     public boolean actualizar(PrestamoDTO prest) {
-        String sql = "UPDATE " + getTablaName();
-        sql.concat("""
-                 SET id_usuario = ?,
-                    id_libro = ?
-                WHERE ID = ?
-                """);
+        PrestamoDTO pPrev = findById(prest.getId());
+        if (pPrev == null) {
+            System.err.println("No se encontró el id de este prestamo");
+            return false;
+        }
+        boolean notTranPrev = false;
+        try {
+            notTranPrev = con.getAutoCommit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (notTranPrev) {
+            if (!beginTransaction()) {
+                return false;
+            }
+        }
+        UsuarioDAOtran uDAO = new UsuarioDAOtran(con);
+        if (uDAO.findById(prest.getIdUsuario()) == null) {
+            System.err.println("No se encuentra este id de usuario");
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return false;
+        }
+        LibroDAOtran lDAO = new LibroDAOtran(con);
+        LibroDTO l = lDAO.findById(prest.getIdLibro());
+        LibroDTO l2 = lDAO.findById(pPrev.getIdLibro());
+        if (l == null || l2 == null) {
+            System.err.println("No se encuentra este id de libro");
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return false;
+        }
+        boolean sameLibro = l.equals(l2);
+        if (!sameLibro) {
+            if (!l.prestarCopia()) {
+                System.err.println("No quedan copias del libro \"" + l.toString() + "\" para prestar");
+                if (notTranPrev) {
+                    endTransaction(false);
+                }
+                return false;
+            }
+        }
+        String sql = "UPDATE " + getTablaName() + " SET id_usuario = ?, id_libro = ? WHERE ID = ?";
         try {
             int parIndex = 0;
             PreparedStatement sentenciaSQL = con.prepareStatement(sql);
             sentenciaSQL.setInt(++parIndex, prest.getIdUsuario());
             sentenciaSQL.setInt(++parIndex, prest.getIdLibro());
-            return sentenciaSQL.executeUpdate() > 0;
+            boolean valido = sentenciaSQL.executeUpdate() > 0;
+            if (valido) {
+                if (!sameLibro) {
+                    valido = l2.devolverCopia() && lDAO.actualizarCopias(l) && lDAO.actualizarCopias(l2);
+                }
+            }
+            if (notTranPrev) {
+                return endTransaction(valido);
+            }
+            return valido;
+        } catch (SQLException e) {
+            if ("23000".equals(e.getSQLState())) {
+                System.err.println("Ya existe un " + getTablaName().substring(0, getTablaName().length() - 1) + " con la combinación de usuario y libro de \"" + prest.toString() + "\"");
+            } else {
+                e.printStackTrace();
+            }
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return false;
+        }
+    }
+
+    @Override 
+    protected boolean delete(PrestamoDTO p){
+        boolean notTranPrev = false;
+        try {
+            notTranPrev = con.getAutoCommit();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+        if (notTranPrev) {
+            if (!beginTransaction()) {
+                return false;
+            }
+        }
+        LibroDAOtran lDAO = new LibroDAOtran(con);
+        LibroDTO l = lDAO.findById(p.getIdLibro());
+        if (l != null && !l.devolverCopia()) {
+            System.out.println("Error al devolver el libro \"" + l.toString());
+            if (notTranPrev) {
+                endTransaction(false);
+            }
+            return false;
+        }
+        boolean valid = lDAO.actualizarCopias(l) && super.delete(p);
+        if (notTranPrev) {
+            return endTransaction(valid);
+        }
+        return valid;
     }
 
     public PrestamoDTO[] findByUsuario(UsuarioDTO us) {
