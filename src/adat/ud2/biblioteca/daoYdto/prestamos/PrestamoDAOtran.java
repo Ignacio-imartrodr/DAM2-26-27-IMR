@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import adat.ud2.biblioteca.ConexionBD;
 import adat.ud2.biblioteca.daoYdto.AbstractDAOtran;
 import adat.ud2.biblioteca.daoYdto.libro.LibroDAOtran;
 import adat.ud2.biblioteca.daoYdto.libro.LibroDTO;
@@ -30,7 +31,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
             return -1;
         }
         if (notTranPrev) {
-            if (!beginTransaction()) {
+            if (!ConexionBD.beginTransaction(con)) {
                 return -1;
             }
         }
@@ -39,14 +40,14 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         if (l == null) {
             System.out.println("No se encontró el libro");
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return -1;
         }
         if (!l.prestarCopia()) {
             System.out.println("No quedan copias del libro \"" + l.toString() + "\" para prestar");
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return -1;
         }
@@ -58,14 +59,14 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
             sentenciaSQL.setInt(++parIndx, prest.getIdLibro());
             if (sentenciaSQL.executeUpdate() <= 0 || !lDAO.actualizarCopias(l)) {
                 if (notTranPrev) {
-                    endTransaction(false);
+                    ConexionBD.endTransaction(con, false);
                 }
                 return -1;
             }
             try (ResultSet claves = sentenciaSQL.getGeneratedKeys()) {
                 int id = claves.next() ? claves.getInt(1) : -1;
                 if (notTranPrev) {
-                    if (!endTransaction(id > 0)) {
+                    if (!ConexionBD.endTransaction(con, id > 0)) {
                         return -1;   
                     }
                 }
@@ -78,7 +79,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
                 e.printStackTrace();
             }
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return -1;
         }
@@ -99,7 +100,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
             return false;
         }
         if (notTranPrev) {
-            if (!beginTransaction()) {
+            if (!ConexionBD.beginTransaction(con)) {
                 return false;
             }
         }
@@ -107,7 +108,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         if (uDAO.findById(prest.getIdUsuario()) == null) {
             System.err.println("No se encuentra este id de usuario");
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return false;
         }
@@ -117,7 +118,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         if (l == null || l2 == null) {
             System.err.println("No se encuentra este id de libro");
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return false;
         }
@@ -126,7 +127,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
             if (!l.prestarCopia()) {
                 System.err.println("No quedan copias del libro \"" + l.toString() + "\" para prestar");
                 if (notTranPrev) {
-                    endTransaction(false);
+                    ConexionBD.endTransaction(con, false);
                 }
                 return false;
             }
@@ -144,7 +145,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
                 }
             }
             if (notTranPrev) {
-                return endTransaction(valido);
+                return ConexionBD.endTransaction(con, valido);
             }
             return valido;
         } catch (SQLException e) {
@@ -154,7 +155,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
                 e.printStackTrace();
             }
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return false;
         }
@@ -170,7 +171,7 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
             return false;
         }
         if (notTranPrev) {
-            if (!beginTransaction()) {
+            if (!ConexionBD.beginTransaction(con)) {
                 return false;
             }
         }
@@ -179,13 +180,13 @@ public class PrestamoDAOtran extends AbstractDAOtran<PrestamoDTO> {
         if (l != null && !l.devolverCopia()) {
             System.out.println("Error al devolver el libro \"" + l.toString());
             if (notTranPrev) {
-                endTransaction(false);
+                ConexionBD.endTransaction(con, false);
             }
             return false;
         }
         boolean valid = lDAO.actualizarCopias(l) && super.delete(p);
         if (notTranPrev) {
-            return endTransaction(valid);
+            return ConexionBD.endTransaction(con, valid);
         }
         return valid;
     }

@@ -41,10 +41,10 @@ public class GeneroDTO extends AbstractDTO {
             return 0;
         if (o == null)
             return -1;
-        int compId = Integer.compare(id, o.getId());
+        int compId = id < 0 || o.getId() < 0 ? 0 : Integer.compare(id, o.getId()); 
         GeneroDTO g;
         if (getClass() == o.getClass()){
-            g = (GeneroDTO) o;
+            g = getClass().cast(o);
         } else {
             return compId;
         }

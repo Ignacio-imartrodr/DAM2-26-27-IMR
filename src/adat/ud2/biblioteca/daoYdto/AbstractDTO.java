@@ -2,6 +2,7 @@ package adat.ud2.biblioteca.daoYdto;
 
 public abstract class AbstractDTO implements Comparable<AbstractDTO>{
     protected int id;
+    public abstract int getId();
     
     public AbstractDTO(Integer id) {
         if (id == null) {
@@ -9,8 +10,6 @@ public abstract class AbstractDTO implements Comparable<AbstractDTO>{
         }
         this.id = id;
     }
-
-    public abstract int getId();
 
     @Override
     public boolean equals(Object obj) {
@@ -20,8 +19,10 @@ public abstract class AbstractDTO implements Comparable<AbstractDTO>{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractDTO other = (AbstractDTO) obj;
-        return compareTo(other) == 0;
+        return compareTo(getClass().cast(obj)) == 0;
     }
-
+    
+    public static <T extends AbstractDTO> int compare(T o1, T o2){
+        return o1.compareTo(o2);
+    }
 }

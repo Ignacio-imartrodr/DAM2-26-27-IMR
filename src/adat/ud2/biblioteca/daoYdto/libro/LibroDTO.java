@@ -168,10 +168,10 @@ public class LibroDTO extends AbstractDTO {
             return 0;
         if (o == null)
             return -1;
-        int compId = Integer.compare(id, o.getId());
+        int compId = id < 0 || o.getId() < 0 ? 0 : Integer.compare(id, o.getId()); 
         LibroDTO l;
         if (getClass() == o.getClass()){
-            l = (LibroDTO) o;
+            l = getClass().cast(o);
         } else {
             return compId;
         }

@@ -106,7 +106,7 @@ public class AppBiblioteca {
                             //Préstamo
 
                             PrestamoDTO prest = pedirPrestamo();
-                            if (prestamoDAO.insertar(prest) >= 0) {
+                            if (prest != null && prestamoDAO.insertar(prest) >= 0) {
                                 System.out.println("Inserción correcta");
                             } else {
                                 System.out.println("Error insertando préstamo");
@@ -587,11 +587,17 @@ public class AppBiblioteca {
                 case 6:
                     // Transacción
 
-                    try {
-                        con.setAutoCommit(false);
-                    } catch (SQLException e) {
-                        System.out.println("No se pudo iniciar la transacción");
-                        break;
+                    if (ConexionBD.beginTransaction(con)) {
+                        try {
+                            if (con.getAutoCommit() == true) {
+                                System.out.println("No se pudo iniciar la transacción");
+                                break;
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            System.out.println("No se pudo iniciar la transacción");
+                            break;
+                        }
                     }
                     boolean hasSucceded = false;
                     int[] idLibros = new int[3];
@@ -614,27 +620,10 @@ public class AppBiblioteca {
                         System.out.println(e.getMessage());
                     }
                     
-                    try {
-                        if (hasSucceded) {
-                            con.commit();
-                            System.out.println("Transacción completada: se insertaron 3 libros, 3 usuarios, 3 géneros y 3 préstamos");
-                        } else {
-                            con.rollback();
-                            System.out.println("Error en la transacción, se ha cancelado la inserción");
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        try {
-                            con.rollback();
-                        } catch (SQLException e1) {
-                            e1.printStackTrace();
-                        }
-                    } finally {
-                        try {
-                            con.setAutoCommit(true);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
+                    if (ConexionBD.endTransaction(con, hasSucceded)) {
+                        System.out.println("Transacción completada: se insertaron 3 libros, 3 usuarios, 3 géneros y 3 préstamos");
+                    } else {
+                        System.out.println("Error en la transacción, se ha cancelado la inserción");
                     }
                     break;
                 case 7:
@@ -789,7 +778,7 @@ public class AppBiblioteca {
 
     private static PrestamoDTO pedirPrestamo() {
         listarLibros();
-        System.out.print("Id del libro a recuperar: ");
+        System.out.print("Id del libro a prestar: ");
         Integer id = pedirInt();
         id = (id == null) ? -1 : id;
         LibroDTO libro = libroDAO.findById(id);
@@ -799,7 +788,7 @@ public class AppBiblioteca {
         }
 
         listarUsuarios();
-        System.out.print("Id del usuario a recuperar: ");
+        System.out.print("Id del usuario solicitante: ");
         id = pedirInt();
         id = (id == null) ? -1 : id;
         UsuarioDTO us = usuarioDAO.findById(id);
