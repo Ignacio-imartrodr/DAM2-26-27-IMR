@@ -36,8 +36,13 @@ public class AppBiblioteca {
         libroDAO = new LibroDAOtran(con);
         prestamoDAO = new PrestamoDAOtran(con);
         sc = new Scanner(System.in);
-        String pregunta = "MENU LIBROS";
-        String opciones = """
+        String pregunta;
+        String opciones;
+        boolean continuar = true;
+        Integer opcionMenu;
+        do {
+            pregunta = "MENU LIBROS";
+            opciones = """
                             0. Crear Tablas/BD
                             1. Insertar
                             2. Listar
@@ -46,11 +51,8 @@ public class AppBiblioteca {
                             5. Eliminar
                             6. TRANSACCION PRUEBA: Insertar usuarios, generos, libros y prestamos
                             7. Salir""";
-        boolean continuar = true;
-        Integer opcion;
-        do {
-            opcion = pedirOpcion(pregunta, opciones);
-            switch (opcion) {
+            opcionMenu = pedirOpcion(pregunta, opciones);
+            switch (opcionMenu) {
                 case 0:
                     // Crear Tablas/BD
 
@@ -64,9 +66,9 @@ public class AppBiblioteca {
                     // Insertar
                     
                     pregunta ="Que quiere insertar?";
-                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
-                    opcion = pedirOpcion(pregunta, opciones);
-                    switch (opcion) {
+                    opciones = "OPCIONES\n0 - Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    Integer opcionEleccion = pedirOpcion(pregunta, opciones);
+                    switch (opcionEleccion) {
                         case 0:
                             //Libro
 
@@ -120,9 +122,9 @@ public class AppBiblioteca {
 
                     boolean isAll = false;
                     
-                    opcion = pedirOpcion("Que quiere listar?\nOPCIONES", "0 - Todo\n1- Libros\n2 - Usuarios\n3 - Géneros\n4 - Préstamos\nOtro - Cancelar");
+                    opcionEleccion = pedirOpcion("Que quiere listar?", "OPCIONES\n0 - Todo\n1 - Libros\n2 - Usuarios\n3 - Géneros\n4 - Préstamos\nOtro - Cancelar");
                     
-                    switch (opcion) {
+                    switch (opcionEleccion) {
                         case 0: 
                             //Todo
 
@@ -171,10 +173,10 @@ public class AppBiblioteca {
                     // Buscar por ID
 
                     pregunta = "Que quiere buscar?";
-                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2- Género\n3 - Préstamo\nOtro - Cancelar";
-                    opcion = pedirOpcion(pregunta, opciones);
+                    opciones = "OPCIONES\n0 - Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcionEleccion = pedirOpcion(pregunta, opciones);
                     
-                    switch (opcion) {
+                    switch (opcionEleccion) {
                         case 0:
                             //Libro
 
@@ -233,17 +235,18 @@ public class AppBiblioteca {
 
                         default:
                             System.out.println("Operación cancelada");
+                            opcionEleccion = -1;
                             break;
                     }
                     break;
                 case 4:
                     // Actualizar
                     pregunta = "Que quiere insertar?";
-                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
-                    opcion = pedirOpcion(pregunta, opciones);
+                    opciones = "OPCIONES\n0 - Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcionEleccion = pedirOpcion(pregunta, opciones);
                     
                     boolean isSuccess;
-                    switch (opcion) {
+                    switch (opcionEleccion) {
                         case 0:
                             //Libro
 
@@ -256,10 +259,10 @@ public class AppBiblioteca {
                                 isAll = false;
                                 System.out.println(libro.toString());
                                 pregunta = "Que parámetro quiere modificar?";
-                                opciones = "OPCIONES\n0- Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Género\n6 - Copias\nOtro - Cancelar";
-                                opcion = pedirOpcion(pregunta, opciones);
+                                opciones = "OPCIONES\n0 - Todos\n1 - Titulo\n2 - Autor\n3 - Fecha\n4 - Valoración\n5 - Género\n6 - Copias\nOtro - Cancelar";
+                                opcionEleccion = pedirOpcion(pregunta, opciones);
                                 
-                                switch (opcion) {
+                                switch (opcionEleccion) {
                                     case 0:
                                         isAll = true;
                                     case 1:
@@ -348,9 +351,9 @@ public class AppBiblioteca {
                                 System.out.println(us.toString());
                                 isAll = false;
                                 pregunta = "Que parámetro quiere modificar?";
-                                opciones = "OPCIONES\n0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar";
-                                opcion = pedirOpcion(pregunta, opciones);
-                                switch (opcion) {
+                                opciones = "OPCIONES\n0 - Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar";
+                                opcionEleccion = pedirOpcion(pregunta, opciones);
+                                switch (opcionEleccion) {
                                     case 0:
                                         isAll = true;
                                     case 1:
@@ -397,7 +400,7 @@ public class AppBiblioteca {
                                 /* 
                                 isAll = false;
                                 System.out.println("Que parámetro quiere modificar?\nOPCIONES");
-                                System.out.println("0- Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
+                                System.out.println("0 - Todos\n1 - Nombre\n2 - Correo\nOtro - Cancelar");
                                 opcion = pedirInt();
                                 opcion = opcion == null ? -1 : opcion;
                                 switch (opcion) {
@@ -439,10 +442,10 @@ public class AppBiblioteca {
                                 System.out.println(p.toString());
                                 isAll = false;
                                 pregunta = "Que parámetro quiere modificar?";
-                                opciones = "OPCIONES\n0- Todos\n1 - Libro\n2 - Usuario\nOtro - Cancelar";
-                                opcion = pedirOpcion(pregunta, opciones);
+                                opciones = "OPCIONES\n0 - Todos\n1 - Libro\n2 - Usuario\nOtro - Cancelar";
+                                opcionEleccion = pedirOpcion(pregunta, opciones);
                                 
-                                switch (opcion) {
+                                switch (opcionEleccion) {
                                     case 0:
                                         isAll = true;
                                     case 1:
@@ -498,19 +501,19 @@ public class AppBiblioteca {
                     // Eliminar
                     
                     pregunta = "Que quiere eliminar?";
-                    opciones = "OPCIONES\n0- Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
-                    opcion = pedirOpcion(pregunta, opciones);
+                    opciones = "OPCIONES\n0 - Libro\n1 - Usuario\n2 - Género\n3 - Préstamo\nOtro - Cancelar";
+                    opcionEleccion = pedirOpcion(pregunta, opciones);
                     
-                    switch (opcion) {
+                    switch (opcionEleccion) {
                         case 0:
                             //Libro
 
                             System.out.print("Id del libro a borrar: ");
-                            opcion = pedirInt();
-                            opcion = opcion == null ? -1 : opcion;
-                            LibroDTO libro = libroDAO.findById(opcion);
+                            opcionEleccion = pedirInt();
+                            opcionEleccion = opcionEleccion == null ? -1 : opcionEleccion;
+                            LibroDTO libro = libroDAO.findById(opcionEleccion);
                             if (libro != null) {
-                                if(libroDAO.borrarById(opcion)) {
+                                if(libroDAO.borrarById(opcionEleccion)) {
                                     System.out.println("Libro borrado correctamente");
                                 } else {
                                     System.out.println("Para borrar este libro primero deben ser devueltas todas las copias");
@@ -524,11 +527,11 @@ public class AppBiblioteca {
                             //Usuario
                             
                             System.out.print("Id del usuario a borrar: ");
-                            opcion = pedirInt();
-                            opcion = opcion == null ? -1 : opcion;
-                            UsuarioDTO us = usuarioDAO.findById(opcion);
+                            opcionEleccion = pedirInt();
+                            opcionEleccion = opcionEleccion == null ? -1 : opcionEleccion;
+                            UsuarioDTO us = usuarioDAO.findById(opcionEleccion);
                             if (us != null) {
-                                if (usuarioDAO.borrarById(opcion)) {
+                                if (usuarioDAO.borrarById(opcionEleccion)) {
                                     System.out.println("Usuario borrado correctamente");
                                 } else {
                                     System.out.println("Para borrar este usuario primero debe devolver los libros que posee");
@@ -542,9 +545,9 @@ public class AppBiblioteca {
                             //Género
                             
                             System.out.print("Id del género a borrar: ");
-                            opcion = pedirInt();
-                            opcion = opcion == null ? -1 : opcion;
-                            GeneroDTO g = generoDAO.findById(opcion);
+                            opcionEleccion = pedirInt();
+                            opcionEleccion = opcionEleccion == null ? -1 : opcionEleccion;
+                            GeneroDTO g = generoDAO.findById(opcionEleccion);
                             if (g != null) {
                                 if (generoDAO.borrar(g)) {
                                     System.out.println("Genero borrado correctamente");
@@ -560,11 +563,11 @@ public class AppBiblioteca {
                             //Prestamo
                             
                             System.out.print("Id del préstamo a borrar: ");
-                            opcion = pedirInt();
-                            opcion = opcion == null ? -1 : opcion;
-                            PrestamoDTO p = prestamoDAO.findById(opcion);
+                            opcionEleccion = pedirInt();
+                            opcionEleccion = opcionEleccion == null ? -1 : opcionEleccion;
+                            PrestamoDTO p = prestamoDAO.findById(opcionEleccion);
                             if (p != null) {
-                                if (prestamoDAO.borrarById(opcion)) {
+                                if (prestamoDAO.borrarById(opcionEleccion)) {
                                     System.out.println("Préstamo borrado correctamente");
                                 } else {
                                     System.out.println("Error borrando préstamo");
@@ -576,12 +579,14 @@ public class AppBiblioteca {
 
                         default:
                             System.out.println("Operación cancelada");
+                            opcionEleccion = -1;
                             break;
                     }
                     
                     break;
                 case 6:
                     // Transacción
+
                     try {
                         con.setAutoCommit(false);
                     } catch (SQLException e) {
@@ -653,7 +658,7 @@ public class AppBiblioteca {
 
     private static int pedirOpcion(String pregunta, String opciones) {
         Integer opcion;
-        System.out.println(pregunta + "\n" + opciones);
+        System.out.println("\n" + pregunta + "\n" + opciones);
         System.out.print("Seleccione una opción: ");
         opcion = pedirInt();
         System.out.println();
