@@ -1,0 +1,3 @@
+db.url=jdbc:sqlite:./BD/AvaliacionDiaria
+db.user=sa
+db.password=
