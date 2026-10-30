@@ -5,58 +5,47 @@ import java.util.List;
 
 public class Oficina {
     Jefe j;
-    List<Empleado> personalEnOficina;
+    List<Personal> PersonalEnOficina;
 
     public Oficina() {
         this.j = null;
-        personalEnOficina = new ArrayList<>();
-    }
-
-    public Oficina(Jefe j) {
-        this.j = j;
-        personalEnOficina = new ArrayList<>();
+        PersonalEnOficina = new ArrayList<>();
     }
 
     public Personal[] getPersonalEnOficinal(){
-        return personalEnOficina.toArray(new Personal[0]);
+        return PersonalEnOficina.toArray(new Personal[0]);
     }
 
     public synchronized boolean entrar(Personal p) {
         if (p == null) {
             return false;
         }
-        if (setJefe(p)) {
-            return true;
-        }
-        try {
-            Empleado e = (Empleado) p;
-            return personalEnOficina.add(e);
-        } catch (Exception e) {
-            return false;
-        }
+        return PersonalEnOficina.add(p);
     }
+
     public synchronized boolean salir(Personal p) {
         if (p == null) {
             return false;
         }
-        if (removeJefe(p)) {
-            return true;
-        }
-        return personalEnOficina.remove(p);
+        return PersonalEnOficina.remove(p);
     }
 
-    private boolean setJefe(Personal jefe){
-        if (jefe != null && this.j == null && jefe instanceof Jefe) {
-            this.j = (Jefe) jefe;
+    public synchronized boolean setJefe(Jefe jefe){
+        if (jefe != null && this.j == null) {
+            this.j = jefe;
+            notifyAll();
             return true;
         }
         return false;
     }
 
-    private boolean removeJefe(Personal jefe){
-        if (jefe != null && this.j != null && jefe instanceof Jefe && j.equals(jefe)) {
-            this.j = null;
-            return true;
+    public synchronized boolean removeJefe(Jefe jefe){
+        if (jefe != null && this.j != null) {
+            if (j.equals(jefe)) {
+                this.j = null;
+                notifyAll();
+                return true;
+            }
         }
         return false;
     }

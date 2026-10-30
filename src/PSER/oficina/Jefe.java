@@ -14,10 +14,7 @@ public class Jefe extends Personal {
     @Override
     void aTrabajar() {
         saludar();
-        for (int i = 0; i < oficina.getPersonalEnOficinal().length; i++) {
-            oficina.notify();   
-        }
-        //oficina.notifyAll();
+        oficina.setJefe(this);
         try {
             oficina.wait(getTiempoTrabajoMillis());
         } catch (InterruptedException e) {
@@ -28,10 +25,7 @@ public class Jefe extends Personal {
     @Override
     void salirTrabajo() {
         despedirse();
-        for (int i = 0; i < oficina.getPersonalEnOficinal().length; i++) {
-            oficina.notify();   
-        }
-        //oficina.notifyAll();
+        oficina.removeJefe(this);
     }
 
     @Override

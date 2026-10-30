@@ -1,7 +1,7 @@
 package PSER.oficina;
 
 public class Empleado extends Personal {
-    long leftJornada = getTiempoTrabajoMillis();
+    long timeLeftJornada = getTiempoTrabajoMillis();
     public Empleado(String nombre, Oficina oficina) {
         super(nombre, oficina);
     }
@@ -22,19 +22,21 @@ public class Empleado extends Personal {
         saludar();
         try {
             long inicioJornada = System.currentTimeMillis();
-            oficina.wait(leftJornada);
+            oficina.wait(timeLeftJornada);
             long finJornada = System.currentTimeMillis();
-            leftJornada -= (finJornada - inicioJornada);
+            timeLeftJornada -= (finJornada - inicioJornada);
         } catch (InterruptedException e) {
             System.err.println(getName() + ": Error durmiendo");
         }
-        if (oficina.hasJefe() && leftJornada > 0) {
+        if (timeLeftJornada > 0 && oficina.hasJefe()) {
             System.out.println(this.getName() + ": Buenas jefe, aquí trabajando");
             try {
-                long inicioJornada = System.currentTimeMillis();
-                oficina.wait(leftJornada);
-                long finJornada = System.currentTimeMillis();
-                leftJornada -= (finJornada - inicioJornada);
+                while (oficina.hasJefe() && timeLeftJornada > 0) {
+                    long inicioJornada = System.currentTimeMillis();
+                    oficina.wait(timeLeftJornada);
+                    long finJornada = System.currentTimeMillis();
+                    timeLeftJornada -= (finJornada - inicioJornada);
+                }
             } catch (InterruptedException e) {
                 System.err.println(getName() + ": Error trabajando");
             }
@@ -44,7 +46,7 @@ public class Empleado extends Personal {
     @Override
     String getDespedida() {
         String saludo = this.getName() + ": ";
-        if (leftJornada <= 0) {
+        if (timeLeftJornada <= 0) {
             if (oficina.hasJefe()) {
                 saludo += "Adiós jefe, me toca irme";
             } else {
