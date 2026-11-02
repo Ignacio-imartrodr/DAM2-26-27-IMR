@@ -1,20 +1,24 @@
 package adat.ud2.sqlLite.bibliotecaSQLite;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBD {
     public static Connection conectar() {
-        final String URL = "jdbc:sqlite:./BD/Bilioteca/BDbiblioteca.sqlite";
+        final String URL = "jdbc:sqlite:./BDs/Biblioteca/BDbiblioteca.sqlite";
         final String USER = "sa";
         final String PASS = "";
 
         Connection con = null;
 
         try {
+            Files.createDirectories(Path.of("./BDs/Biblioteca"));
             con = DriverManager.getConnection(URL, USER, PASS);
-        } catch (SQLException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
         

@@ -75,7 +75,9 @@ public abstract class AbstractDAOtran<T extends AbstractDTO>{
         try (PreparedStatement sentenciaSQL = con.prepareStatement(sql)){
             ResultSet rs = sentenciaSQL.executeQuery();
             dtos = parseRs(rs);
-            Arrays.sort(dtos);
+            if (dtos != null) {
+                Arrays.sort(dtos);
+            }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();

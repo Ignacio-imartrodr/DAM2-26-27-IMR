@@ -722,7 +722,7 @@ public class AppBiblioteca {
         try (Statement statement = con.createStatement();) {
             String sqlCreateUsuarios = """
                     CREATE TABLE IF NOT EXISTS usuarios (
-                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nombre VARCHAR (100) NOT NULL,
                         correo VARCHAR (100) NOT NULL
                     );""";
@@ -730,14 +730,14 @@ public class AppBiblioteca {
 
             String sqlCreateGeneros = """
                     CREATE TABLE IF NOT EXISTS generos (
-                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nombre VARCHAR (100) NOT NULL UNIQUE
                     );""";
             statement.executeUpdate(sqlCreateGeneros);
 
             String sqlCreateLibros = """
                     CREATE TABLE IF NOT EXISTS libros (
-                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         titulo VARCHAR (100) NOT NULL,
                         autor VARCHAR (50),
                         fecha_publicacion DATE NOT NULL,
@@ -752,7 +752,7 @@ public class AppBiblioteca {
             
             String sqlCreatePrestamos = """
                     CREATE TABLE IF NOT EXISTS prestamos (
-                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         id_usuario INT NOT NULL,
                         id_libro INT NOT NULL,
                         FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
