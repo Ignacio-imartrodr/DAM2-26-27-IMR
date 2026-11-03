@@ -1,12 +1,12 @@
 package PSER.pescadores;
 
-import java.util.Random;
+//import java.util.Random;
 
 /**
  * Pescador
  */
 public class Pescador extends Thread {
-    private static Random rnd = new Random();
+    //private static Random rnd = new Random();
     Lector lector;
 
     public Pescador(String nombre, Lector lector) {
@@ -22,16 +22,9 @@ public class Pescador extends Thread {
         } catch (InterruptedException ex) {
             System.out.println("Error mientras pensaba");
         }*/
-        String frase;
-        while ((frase = lector.leer()) != null) {
-            System.out.println(getName() + " > " + frase);
-            synchronized(lector){
-                try {
-                    lector.wait();
-                } catch (InterruptedException e) {
-                    System.out.println(getName() + " > Error espeando");
-                }
-            }
-        }
+        lector.leer(this);
+    }
+    public void hablar(String frase) {
+        System.out.println(getName() + " > " + frase);
     }
 }

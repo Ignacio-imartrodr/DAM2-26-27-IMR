@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class Lector {
     private BufferedReader in;
@@ -12,13 +13,13 @@ public class Lector {
         in = new BufferedReader(new FileReader(conversacion));
     }
     
-    public synchronized String leer() {
+    public synchronized void leer(Pescador p) {
         String frase = null;
         try {
             in.read();
             int codePoint;
             char letra;
-            if ((codePoint = in.read()) != -1 && (letra = Character.toChars(codePoint)[0]) != '—') {
+            while ((codePoint = in.read()) != -1 && (letra = Character.toChars(codePoint)[0]) != '—') {
                 frase = "";
                 do {
                     if (letra == '\n' || letra == '\r') {
@@ -26,11 +27,17 @@ public class Lector {
                     }
                     frase += letra;
                 } while ((codePoint = in.read()) != -1 && (letra = Character.toChars(codePoint)[0]) != '—');
+                p.hablar(frase.strip());
+                notify();
+                wait();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             frase = "Error leyendo";
+            p.hablar(frase);
+        } catch (InterruptedException e) {
+            frase = "Error esperando";
+            p.hablar(frase);
         }
         notify();
-        return frase;
     }
 }

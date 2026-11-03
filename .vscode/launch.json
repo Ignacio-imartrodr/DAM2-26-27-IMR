@@ -9,6 +9,13 @@
             "name": "AppConversacion",
             "request": "launch",
             "mainClass": "PSER.pescadores.AppConversacion",
+            "projectName": "DAM2-26-27-IMR_fac21486"
+        },
+        {
+            "type": "java",
+            "name": "AppConversacion",
+            "request": "launch",
+            "mainClass": "PSER.pescadores.AppConversacion",
             "projectName": "DAM2-26-27-IMR_81cea406"
         },
         {
