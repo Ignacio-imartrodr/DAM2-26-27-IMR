@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppApuesta",
+            "request": "launch",
+            "mainClass": "PSER.apuestas.AppApuesta",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppConversacion",
             "request": "launch",
             "mainClass": "PSER.pescadores.AppConversacion",
