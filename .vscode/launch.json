@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Autoevaluacion",
+            "request": "launch",
+            "mainClass": "adat.ud2.examen.corregido.Autoevaluacion",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
+            "name": "Autoevaluacion",
+            "request": "launch",
+            "mainClass": "adat.ud2.examen.entregado.Autoevaluacion",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppVentaCoches",
             "request": "launch",
             "mainClass": "PSER.ventas.AppVentaCoches",

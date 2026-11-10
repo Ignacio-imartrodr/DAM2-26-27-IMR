@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class ConexionDB {
 
-    private static final String CONFIG_FILE = "./DATOS/configSQLite.properties";
+    private static final String CONFIG_FILE = "BDs\\Torneo3x3\\configSQLite.properties";
 
     public static Connection getConexion() throws SQLException {
         Properties props = new Properties();
