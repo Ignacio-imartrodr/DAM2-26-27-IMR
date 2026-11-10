@@ -558,7 +558,7 @@ public class Autoevaluacion {
         final double obtenido;
         final String estado;
         final String detalle;
-        final long ms;
+        //final long ms;
 
         Resultado(String nombre, double posible, double obtenido,
                   String estado, String detalle, long ms) {
@@ -567,7 +567,7 @@ public class Autoevaluacion {
             this.obtenido = obtenido;
             this.estado = estado;
             this.detalle = detalle;
-            this.ms = ms;
+            //this.ms = ms;
         }
     }
 }
