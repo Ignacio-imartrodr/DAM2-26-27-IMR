@@ -60,6 +60,5 @@ public class AppVentaCoches {
             clientes[i] = new Cliente("cliente" + i, concesionario, VER_DETALLE);
             clientes[i].start();
         }
-        clientes = null;
     }
 }
