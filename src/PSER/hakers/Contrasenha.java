@@ -2,11 +2,11 @@ package PSER.hakers;
 
 import PSER.Utiles;
 
-public class Cotrasenha {
+public class Contrasenha {
     private final int MAX_LENGTH;
     private String contrasenha;
 
-    public Cotrasenha(String contrasenha, int maxLenght) throws IllegalArgumentException {
+    public Contrasenha(String contrasenha, int maxLenght) throws IllegalArgumentException {
         if ((MAX_LENGTH = maxLenght) < 1 || !setContrasenha(contrasenha)) {
             throw new IllegalArgumentException();
         }
@@ -20,7 +20,7 @@ public class Cotrasenha {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Cotrasenha other = (Cotrasenha) obj;
+        Contrasenha other = (Contrasenha) obj;
         if (contrasenha == null) {
             if (other.contrasenha != null)
                 return false;
@@ -35,10 +35,13 @@ public class Cotrasenha {
 
     private boolean setContrasenha(String contrasenha) {
         if (contrasenha != null && contrasenha.length() <= MAX_LENGTH) {
-            this.contrasenha = Utiles.generateHash(contrasenha);
+            this.contrasenha = hashear(contrasenha);
             return true;
         }
         return false;
+    }
+    public static String hashear(String txt){
+        return Utiles.generateHash(txt);
     }
     
 }

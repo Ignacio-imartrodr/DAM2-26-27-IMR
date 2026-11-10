@@ -7,17 +7,24 @@ public abstract class Hacker extends Thread {
     protected final int MAX_LENGHT;
     protected static Random rnd = new Random();
     protected boolean verDetalle;
+    protected Contrasenha contrasenha;
 
-    public Hacker(String name, Tabla tabla, boolean verDetalle, int maxLenght) {
+    public Hacker(String name, Tabla tabla, boolean verDetalle, int maxLenght, Contrasenha contrasenha) {
         MAX_LENGHT = maxLenght;
         super(name);
         this.verDetalle = verDetalle;
+        this.contrasenha = contrasenha;
     }
 
     @Override
     public void run() {
-        String contrasenha = "";
-        
+        String key = generateContrasenha();
+        String value = Contrasenha.hashear(key);
+        try {
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
     
     private void hablar(String txt) {

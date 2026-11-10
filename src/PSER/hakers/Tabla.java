@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class Tabla {
-    private Map<String, Integer> tabla;
+    private Map<String, String> tabla;
     private Map<String, Integer> consultas;
 
     public Tabla() {
@@ -14,28 +14,33 @@ public class Tabla {
         this.consultas = new HashMap<>();
     }
 
-    public String getEntrada(String key){
-        synchronized(tabla){
-            synchronized(consultas){
-                
+    public String getValue(String key){
+        consultas.putIfAbsent(entradaKey, (consultas.getOrDefault(entradaKey, 0) + 1));
+    }
+    public Entry<String, String> getEntrada(String key){
+        if (!tabla.containsKey(key)) {
+            return null;
+        }
+        Iterator<Entry<String, String>> it = tabla.entrySet().iterator();
+        Entry<String, String> entrada;
+        while (it.hasNext()) {
+            entrada = it.next();
+            String entradaKey = entrada.getKey();
+            if (entradaKey.equals(key)) {
+               return entrada;
             }
         }
         return null;
     }
 
-    public boolean setEntrada(String key, int value){
-        boolean add;
-        synchronized(tabla){
-            add = tabla.putIfAbsent(key, value) == null;
-        }
+    public boolean setEntrada(String key, String value){
+        boolean add = tabla.putIfAbsent(key, value) == null;
         if (add) {
-            synchronized(consultas){
-                Iterator<Entry<String, Integer>> it = tabla.entrySet().iterator();
-                while (it.hasNext()) {
-                    String entradaKey = it.next().getKey();
-                    if (entradaKey.equals(entradaKey)) {
-                        consultas.put(entradaKey, (consultas.getOrDefault(entradaKey, 0) + 1));
-                    }
+            Iterator<Entry<String, String>> it = tabla.entrySet().iterator();
+            while (it.hasNext()) {
+                String entradaKey = it.next().getKey();
+                if (entradaKey.equals(entradaKey)) {
+                    consultas.putIfAbsent(entradaKey, (consultas.getOrDefault(entradaKey, 0) + 1)));
                 }
             }
         }

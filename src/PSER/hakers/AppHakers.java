@@ -1,5 +1,7 @@
 package PSER.hakers;
 
+import java.util.Scanner;
+
 /**
  * Realice un programa que pida por teclado una contraseña (de no más de
  * MAX_CHARS~4) caracteres alfanuméricos, y guárdela hasheada*. Desgraciadamente
@@ -33,6 +35,7 @@ package PSER.hakers;
  * AppHakers
  */
 public class AppHakers {
+    private final static Scanner SC = new Scanner(System.in);
     private final static int NUM_HACKS = 5;
     private final static int NUM_GRUPOS = 3;
     private final static String STR_FIN = "fin";
@@ -42,22 +45,25 @@ public class AppHakers {
     public static void main(String[] args) {
         Hacker[] hackers = new Hacker[NUM_HACKS*NUM_GRUPOS];
         Tabla t = new Tabla();
-        String contra = "";
+        String contra = pedirStringContrasenha();
+        Contrasenha contrasenha = new Contrasenha(contra, MAX_LENGTH);
+        int pos; 
         while (!contra.equals(STR_FIN)) {
-            int pos = 0;
+            contrasenha = new Contrasenha(contra, MAX_LENGTH);
+            pos = 0;
             for (int i = 0; i < NUM_GRUPOS; i++) {
                 for (int j = 0; j < NUM_HACKS; j++, pos++) {
                     switch (i) {
                         case 0:
-                            hackers[pos]  = new HackerNum("h" + pos, t, VER_DETALLE);
+                            hackers[pos]  = new HackerNum("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
 
                         case 1:
-                            hackers[pos]  = new HackerAlfab("h" + pos, t, VER_DETALLE);
+                            hackers[pos]  = new HackerAlfab("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
                         
                         case 2:
-                            hackers[pos]  = new HackerAlfanum("h" + pos, t, VER_DETALLE);
+                            hackers[pos]  = new HackerAlfanum("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
 
                         default:
@@ -65,6 +71,7 @@ public class AppHakers {
                             break;
                     }
                 }
+                contra = pedirStringContrasenha();
             }
             for (Hacker haker : hackers) {
                 haker.start();
@@ -75,7 +82,16 @@ public class AppHakers {
                 }
             }
         }
-        
-        
+    }
+
+    private static String pedirStringContrasenha() {
+        String txt;
+        do {
+
+            System.out.print("Contraseña de hasta " + MAX_LENGTH + " caracteres o \"" + STR_FIN + "\" para terminar: ");
+            txt = SC.nextLine();
+            System.out.println();
+        } while (txt.length() <= MAX_LENGTH);
+        return txt;
     }
 }
