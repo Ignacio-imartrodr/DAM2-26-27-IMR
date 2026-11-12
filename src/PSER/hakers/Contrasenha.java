@@ -29,7 +29,7 @@ public class Contrasenha {
         return true;
     }
 
-    public String getContrasenha() {
+    public String getHash() {
         return contrasenha;
     }
 

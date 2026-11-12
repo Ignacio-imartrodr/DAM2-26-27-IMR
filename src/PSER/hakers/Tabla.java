@@ -1,9 +1,7 @@
 package PSER.hakers;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class Tabla {
     private Map<String, String> tabla;
@@ -14,35 +12,25 @@ public class Tabla {
         this.consultas = new HashMap<>();
     }
 
-    public String getValue(String key){
-        consultas.putIfAbsent(entradaKey, (consultas.getOrDefault(entradaKey, 0) + 1));
-    }
-    public Entry<String, String> getEntrada(String key){
-        if (!tabla.containsKey(key)) {
-            return null;
+    public String getHash(String clave){
+        if (tabla.containsKey(clave)) {
+            contarUso(clave);
         }
-        Iterator<Entry<String, String>> it = tabla.entrySet().iterator();
-        Entry<String, String> entrada;
-        while (it.hasNext()) {
-            entrada = it.next();
-            String entradaKey = entrada.getKey();
-            if (entradaKey.equals(key)) {
-               return entrada;
-            }
-        }
-        return null;
+        return tabla.getOrDefault(clave, null);
     }
 
-    public boolean setEntrada(String key, String value){
-        boolean add = tabla.putIfAbsent(key, value) == null;
-        if (add) {
-            Iterator<Entry<String, String>> it = tabla.entrySet().iterator();
-            while (it.hasNext()) {
-                String entradaKey = it.next().getKey();
-                if (entradaKey.equals(entradaKey)) {
-                    consultas.putIfAbsent(entradaKey, (consultas.getOrDefault(entradaKey, 0) + 1)));
-                }
+    private void contarUso(String clave){
+        if (consultas.putIfAbsent(clave, 1) != null) {
+            synchronized(consultas){
+                consultas.put(clave, consultas.get(clave) + 1);
             }
+        }
+    }
+
+    public boolean setNewEntrada(String clave, String hash){
+        boolean add = tabla.putIfAbsent(clave, hash) == null;
+        if (add) {
+            contarUso(clave);
         }
         return add;
     }

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppHakers",
+            "request": "launch",
+            "mainClass": "PSER.hakers.AppHakers",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "Autoevaluacion",
             "request": "launch",
             "mainClass": "adat.ud2.examen.corregido.Autoevaluacion",

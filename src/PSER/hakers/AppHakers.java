@@ -39,10 +39,11 @@ public class AppHakers {
     private final static int NUM_HACKS = 5;
     private final static int NUM_GRUPOS = 3;
     private final static String STR_FIN = "fin";
-    private final static boolean VER_DETALLE = false;
+    private final static boolean VER_DETALLE = true;
     private final static int MAX_LENGTH = 4;
 
     public static void main(String[] args) {
+        ThreadGroup hakers = new ThreadGroup("Hakers");
         Hacker[] hackers = new Hacker[NUM_HACKS*NUM_GRUPOS];
         Tabla t = new Tabla();
         String contra = pedirStringContrasenha();
@@ -53,26 +54,26 @@ public class AppHakers {
             pos = 0;
             for (int i = 0; i < NUM_GRUPOS; i++) {
                 for (int j = 0; j < NUM_HACKS; j++, pos++) {
-                    switch (i) {
+                    switch (3) {
                         case 0:
-                            hackers[pos]  = new HackerNum("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerNum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
 
                         case 1:
-                            hackers[pos]  = new HackerAlfab("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerAlfab(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
                         
                         case 2:
-                            hackers[pos]  = new HackerAlfanum("h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerAlfanum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
 
                         default:
-                            System.out.println("grupo del haker " + i + " no identificado");
+                            hackers[pos]  = new HackerAlfanum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
                     }
                 }
-                contra = pedirStringContrasenha();
             }
+            Hacker.setWasFounded(false);
             for (Hacker haker : hackers) {
                 haker.start();
                 try {
@@ -81,17 +82,16 @@ public class AppHakers {
                     e.printStackTrace();
                 }
             }
+            contra = pedirStringContrasenha();
         }
     }
 
     private static String pedirStringContrasenha() {
         String txt;
         do {
-
             System.out.print("Contraseña de hasta " + MAX_LENGTH + " caracteres o \"" + STR_FIN + "\" para terminar: ");
             txt = SC.nextLine();
-            System.out.println();
-        } while (txt.length() <= MAX_LENGTH);
-        return txt;
+        } while (!txt.equals(STR_FIN) && (txt.length() == 0 || txt.length() > MAX_LENGTH));
+        return txt.toLowerCase();
     }
 }
