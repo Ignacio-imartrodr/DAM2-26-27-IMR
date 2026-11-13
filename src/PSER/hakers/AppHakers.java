@@ -1,5 +1,6 @@
 package PSER.hakers;
 
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 /**
@@ -36,52 +37,65 @@ import java.util.Scanner;
  */
 public class AppHakers {
     private final static Scanner SC = new Scanner(System.in);
-    private final static int NUM_HACKS = 5;
+    private final static int NUM_HACKS = 10;
     private final static int NUM_GRUPOS = 3;
     private final static String STR_FIN = "fin";
     private final static boolean VER_DETALLE = true;
     private final static int MAX_LENGTH = 4;
 
     public static void main(String[] args) {
-        ThreadGroup hakers = new ThreadGroup("Hakers");
+        ThreadGroup grupoHackers = new ThreadGroup("Hackers");
         Hacker[] hackers = new Hacker[NUM_HACKS*NUM_GRUPOS];
         Tabla t = new Tabla();
         String contra = pedirStringContrasenha();
         Contrasenha contrasenha = new Contrasenha(contra, MAX_LENGTH);
-        int pos; 
+        int pos;
+        boolean doIt = true;
         while (!contra.equals(STR_FIN)) {
             contrasenha = new Contrasenha(contra, MAX_LENGTH);
             pos = 0;
             for (int i = 0; i < NUM_GRUPOS; i++) {
                 for (int j = 0; j < NUM_HACKS; j++, pos++) {
-                    switch (3) {
+                    switch (i % 3) {
                         case 0:
-                            hackers[pos]  = new HackerNum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            if (doIt) {
+                                hackers[pos]  = new HackerNum(grupoHackers, "hn" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            } else {
+                                hackers[pos]  = new HackerBago(grupoHackers, "hb" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            }
+                            doIt = !doIt;
                             break;
 
                         case 1:
-                            hackers[pos]  = new HackerAlfab(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerAlfab(grupoHackers, "ha" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
                         
                         case 2:
-                            hackers[pos]  = new HackerAlfanum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerAlfanum(grupoHackers, "hh" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
 
                         default:
-                            hackers[pos]  = new HackerAlfanum(hakers, "h" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
+                            hackers[pos]  = new HackerAlfanum(grupoHackers, "hh" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);
                             break;
                     }
                 }
             }
             Hacker.setWasFounded(false);
-            for (Hacker haker : hackers) {
-                haker.start();
+            System.out.println("Comenzando el ataque de fuerza bruta...");
+            for (Hacker hacker : hackers) {
+                hacker.start();
+            }
+            for (Hacker hacker : hackers) {
                 try {
-                    haker.join();
+                    hacker.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+            System.out.println("La contraseña real era: \"" + contra + "\", con hash: " + contrasenha.getHash());
+            Entry<String, Integer> e = t.getResultados().getFirst();
+            System.out.println("La contraseña más consultada fué \"" + e.getKey() + "\" con " + e.getValue() + " consultas");
+            t.clearPruebas();
             contra = pedirStringContrasenha();
         }
     }

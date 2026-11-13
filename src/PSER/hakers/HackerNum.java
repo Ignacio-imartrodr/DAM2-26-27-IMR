@@ -8,10 +8,7 @@ public class HackerNum extends Hacker{
     @Override
     String generateContrasenha() {
         String contrasenha = "";
-        int lenght = rnd.nextInt(1, MAX_LENGHT + 1);
-        int corrector = lenght == 1 ? 1 : 0;
-        contrasenha += rnd.nextInt(Math.powExact(10, (lenght - 1)) - corrector, Math.powExact(10, lenght));
+        contrasenha += rnd.nextInt(Math.powExact(10, MAX_LENGHT));
         return contrasenha; 
     }
-
 }

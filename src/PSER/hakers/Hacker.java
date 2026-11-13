@@ -4,7 +4,7 @@ import java.util.Random;
 
 public abstract class Hacker extends Thread {
     private static volatile boolean wasFounded = false;
-    protected static final String LETRAS = "qwertyuiopasdfghjklñzxcvbnm";//QWERTYUIOPASDFGHJKLÑZXCVBNM";
+    protected static final String LETRAS = "qwertyuiopasdfghjklñzxcvbnmQWERTYUIOPASDFGHJKLÑZXCVBNM";
     protected final int MAX_LENGHT;
     protected static Random rnd = new Random();
     protected boolean verDetalle;
@@ -15,7 +15,7 @@ public abstract class Hacker extends Thread {
         super(grupo, name);
         this.tabla = tabla;
         this.verDetalle = verDetalle;
-        MAX_LENGHT = maxLenght;
+        this.MAX_LENGHT = maxLenght;
         this.contrasenha = contrasenha;
     }
 
@@ -23,34 +23,43 @@ public abstract class Hacker extends Thread {
     public void run() {
         String key;
         String value;
-        int i = 1;
+        int i = 0;
         while (!wasFounded){
             key = generateContrasenha();
             value = tabla.getHash(key);
-            if (value == null) {
-                value = Contrasenha.hashear(key);
-                tabla.setNewEntrada(key, value);
-            }
-            if (verDetalle) {
-                hablar("En vuelta " + i + " generó: " + key);
-                i++;
-            }
-            if (value.equals(contrasenha.getHash())) {
-                synchronized(Hacker.class){
-                    if (!wasFounded) {
-                        wasFounded = true;
-                        hablar("Encontré la contraseña!, es: " + key);
+            if (tabla.addPrueba(key)) {
+                if (value == null) {
+                    value = Contrasenha.hashear(key);
+                    tabla.setNewEntrada(key, value);
+                }
+                if (verDetalle) {
+                    if (!wasFounded()) {
+                        hablar("En vuelta " + ++i + " generó: " + key);
                     }
-                } 
+                }
+                if (value.equals(contrasenha.getHash())) {
+                    if (!wasFounded()) {
+                        setWasFounded(true);
+                        hablar("Encontré la contraseña!, es: \"" + key + "\", con hash: " + value);
+                    }
+                }
             }
         }
     }
     
-    public static void setWasFounded(boolean wasFounded) {
-        Hacker.wasFounded = wasFounded;
+    public static boolean wasFounded() {
+        synchronized(Hacker.class){
+            return Hacker.wasFounded;
+        }
     }
 
-    private void hablar(String txt) {
+    protected static void setWasFounded(boolean wasFounded) {
+        synchronized(Hacker.class){
+            Hacker.wasFounded = wasFounded;
+        }
+    }
+
+    protected void hablar(String txt) {
         System.out.println(getName() + " > " + txt);
     }
 
