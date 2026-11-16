@@ -44,6 +44,7 @@ import java.util.List;
  * AppNaves
  */
 public class AppNaves {
+    private final static boolean VER_DETALLE = true;
     private final static int NUM_METEORITOS = 10;
     private final static int NUM_NAVES_A = 5;
     private final static int NUM_NAVES_BS = 3;
@@ -56,9 +57,9 @@ public class AppNaves {
         Nave[] naves = new Nave[NUM_NAVES_A + NUM_NAVES_BS];
         for (int i = 0, a = 0, bs = 0; i < naves.length; i++) {
             if (i < NUM_NAVES_A) {
-                naves[i] = new NaveA("nA" + a++, central);
+                naves[i] = new NaveA("nA" + a++, central, VER_DETALLE);
             } else {
-                naves[i] = new NaveBS("nBS" + bs++, central);
+                naves[i] = new NaveBS("nBS" + bs++, central, VER_DETALLE);
             }
         }
         for (Nave nave : naves) {

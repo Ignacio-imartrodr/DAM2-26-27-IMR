@@ -56,7 +56,7 @@ public class AppHakers {
             pos = 0;
             for (int i = 0; i < NUM_GRUPOS; i++) {
                 for (int j = 0; j < NUM_HACKS; j++, pos++) {
-                    switch (i % 3) {
+                    switch (i % NUM_GRUPOS) {
                         case 0:
                             if (doIt) {
                                 hackers[pos]  = new HackerNum(grupoHackers, "hn" + pos, t, VER_DETALLE, MAX_LENGTH, contrasenha);

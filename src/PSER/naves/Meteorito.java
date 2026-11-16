@@ -11,22 +11,29 @@ public class Meteorito {
         this.hole = false;
     }
 
-    public boolean hasHole(){
+    public synchronized boolean hasHole(){
         return hole;
     }
     
-    public boolean setAndGetHole(NaveA n) {
+    public synchronized boolean setAndGetHole(NaveA n) {
         if (n != null && n.equals(naveA)) {
             hole = true;
         }
         return hole;
     }
-
     public String getName(){
         return nombre;
     }
 
-    public boolean hasNaveA(){
+    public synchronized boolean hasNaveA(){
         return naveA != null;
+    }
+    
+    public void setNaveA(NaveA naveA) {
+        this.naveA = naveA;
+    }
+
+    public String getNaveAName() {
+        return hasNaveA() ? naveA.getName() : null;
     }
 }

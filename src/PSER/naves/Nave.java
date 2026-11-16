@@ -1,28 +1,39 @@
 package PSER.naves;
 
 public abstract class Nave extends Thread {
-    Central central;
-    Meteorito meteorito;
+    
+    private Runnable tratarMeteorito;
+    protected Central central;
+    protected Meteorito meteorito;
+    protected final boolean VER_DETALLE;
 
-    public Nave(String name, Central central) {
+    protected Nave(String name, Central central, boolean verDetalle) {
         super(name);
         this.central = central;
+        VER_DETALLE = verDetalle;
+        tratarMeteorito = tratarMeteorito();
     }
     
     @Override
     public void run() {
-        comportamiento().run();
+        Meteorito m = obtenerMeteoritObjetivo();
+        while (m != null) {
+            synchronized(m){
+                meteorito = m;
+                tratarMeteorito.run();
+            }
+            m = central.getMeteorito();
+        }
     }
 
-    protected abstract Runnable comportamiento();
+    protected abstract Runnable tratarMeteorito();
     protected abstract boolean validarMeteorito(Meteorito meteorito);
 
-    protected Meteorito obtenerMeteoritoObjetivo() {
-        //TODO terminar y corregir
-        Meteorito m = central.getMeteorito();
-        if (m != null && validarMeteorito(m)) {
-            
-        }
+    protected Meteorito obtenerMeteoritObjetivo() {
+        Meteorito m;
+        do {
+            m = central.getMeteorito();
+        } while (m != null && !validarMeteorito(m));
         return m;
     }
 
@@ -37,4 +48,7 @@ public abstract class Nave extends Thread {
         return false;
     }
     
+    protected void comunicar(String msj){
+        System.out.println(getName() + " > " + msj);
+    }
 }

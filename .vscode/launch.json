@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AppNaves",
+            "request": "launch",
+            "mainClass": "PSER.naves.AppNaves",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppHakers",
             "request": "launch",
             "mainClass": "PSER.hakers.AppHakers",
