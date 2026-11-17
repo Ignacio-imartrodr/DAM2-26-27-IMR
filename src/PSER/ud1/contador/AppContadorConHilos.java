@@ -1,4 +1,4 @@
-package PSER.contador;
+package PSER.ud1.contador;
 
 import java.util.Random;
 

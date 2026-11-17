@@ -1,4 +1,4 @@
-package PSER.hakers;
+package PSER.ud1.hakers;
 
 public class HackerAlfanum extends Hacker{
     public HackerAlfanum(ThreadGroup grupo, String name, Tabla tabla, boolean verDetalle, int maxLenght, Contrasenha contrasenha) {

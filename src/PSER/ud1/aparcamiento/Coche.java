@@ -1,4 +1,4 @@
-package PSER.aparcamiento;
+package PSER.ud1.aparcamiento;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package PSER.aparcamiento;
+package PSER.ud1.aparcamiento;
 
 public class AppAparcamientoCoches {
     final static int N_PLAZAS = 10;

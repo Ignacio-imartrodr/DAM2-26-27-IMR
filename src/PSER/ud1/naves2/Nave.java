@@ -1,4 +1,4 @@
-package PSER.naves2;
+package PSER.ud1.naves2;
 
 public abstract class Nave extends Thread {
     protected final Central CENTRAL;

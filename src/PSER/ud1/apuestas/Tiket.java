@@ -1,4 +1,4 @@
-package PSER.apuestas;
+package PSER.ud1.apuestas;
 
 public class Tiket {
     int id;

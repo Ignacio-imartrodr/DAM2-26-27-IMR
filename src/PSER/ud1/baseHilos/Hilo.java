@@ -1,4 +1,4 @@
-package PSER.baseHilos;
+package PSER.ud1.baseHilos;
 
 public class Hilo extends Thread {
     public Hilo(String nombre) {

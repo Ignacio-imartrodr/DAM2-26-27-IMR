@@ -1,4 +1,4 @@
-package PSER.hakers;
+package PSER.ud1.hakers;
 
 public class HackerAlfab extends Hacker{
     

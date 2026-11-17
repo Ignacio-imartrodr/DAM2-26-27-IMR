@@ -1,4 +1,4 @@
-package PSER.oficina;
+package PSER.ud1.oficina;
 
 public abstract class Personal extends Thread {
     Oficina oficina;

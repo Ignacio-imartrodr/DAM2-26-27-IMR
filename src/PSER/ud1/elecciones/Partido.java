@@ -1,4 +1,4 @@
-package PSER.elecciones;
+package PSER.ud1.elecciones;
 
 /**
  * Partido

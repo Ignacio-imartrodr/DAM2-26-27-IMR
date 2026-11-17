@@ -1,4 +1,4 @@
-package PSER.apuestas;
+package PSER.ud1.apuestas;
 
 import java.util.HashMap;
 import java.util.Map;

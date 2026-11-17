@@ -1,4 +1,4 @@
-package PSER.naves2;
+package PSER.ud1.naves2;
 
 public class NaveBS extends Nave {
     private String nombreNaveA;

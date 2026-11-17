@@ -1,4 +1,4 @@
-package PSER.hakers;
+package PSER.ud1.hakers;
 
 public class HackerNum extends Hacker{
     public HackerNum(ThreadGroup grupo, String name, Tabla tabla, boolean verDetalle, int maxLenght, Contrasenha contrasenha) {

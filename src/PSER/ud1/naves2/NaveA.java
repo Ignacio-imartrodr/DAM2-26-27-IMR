@@ -1,4 +1,4 @@
-package PSER.naves2;
+package PSER.ud1.naves2;
 
 import java.util.Random;
 

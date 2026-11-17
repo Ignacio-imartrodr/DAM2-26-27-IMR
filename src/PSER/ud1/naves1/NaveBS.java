@@ -1,4 +1,4 @@
-package PSER.naves1;
+package PSER.ud1.naves1;
 
 public class NaveBS extends Nave {
 

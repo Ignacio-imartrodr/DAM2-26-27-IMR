@@ -1,4 +1,4 @@
-package PSER.pescadores;
+package PSER.ud1.pescadores;
 
 import java.io.BufferedReader;
 import java.io.File;
