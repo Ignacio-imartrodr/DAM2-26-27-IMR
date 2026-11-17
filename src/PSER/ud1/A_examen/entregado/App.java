@@ -2,7 +2,6 @@ package PSER.ud1.A_examen.entregado;
 
 public class App {
     final static int NUM_HIJOS = 5;
-    final static int NUM_PADRES = 1;
     final static int INGRESO_HUCHA = 10;
     final static int MIN_ESPERA = 10;
     final static int MAX_ESPERA = 100;
@@ -10,7 +9,7 @@ public class App {
 
     public static void main(String[] args) {
         Hucha hucha = new Hucha();
-        Hilo[] hilos = new Hilo[NUM_HIJOS + NUM_PADRES];
+        Hilo[] hilos = new Hilo[NUM_HIJOS + 1];
 
         for (int i = 0; i < NUM_HIJOS + 1; i++) {
             if(i < NUM_HIJOS) {

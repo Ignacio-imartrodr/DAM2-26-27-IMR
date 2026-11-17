@@ -12,8 +12,10 @@ public class Padre extends Hilo {
     protected void manejarHucha() {
         boolean interrumpido = false;
         while (!isInterrupted() && !interrumpido) {
-            HUCHA.ingresar(INGRESO_HUCHA);
-            hablar("Ingresó "+ INGRESO_HUCHA + " en la semana " + HUCHA.getSemana() + ", Total actual: " + HUCHA.getCantidad());
+            synchronized(HUCHA){
+                HUCHA.ingresar(INGRESO_HUCHA);
+                hablar("Ingresó "+ INGRESO_HUCHA + " en la semana " + HUCHA.getSemana() + ", Total actual: " + HUCHA.getCantidad());
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
