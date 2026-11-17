@@ -1,9 +1,10 @@
-package PSER.naves;
+package PSER.naves1;
 
 public class Meteorito {
     private String nombre;
     private NaveA naveA;
     private boolean hole;
+    private boolean hasBS;
 
     public Meteorito(String nombre) {
         this.nombre = nombre;
@@ -28,9 +29,17 @@ public class Meteorito {
     public synchronized boolean hasNaveA(){
         return naveA != null;
     }
-    
+
     public void setNaveA(NaveA naveA) {
         this.naveA = naveA;
+    }
+
+    public synchronized boolean hasBS(){
+        return hasBS;
+    }
+
+    public void setBS(boolean  hasBS) {
+        this.hasBS = hasBS;
     }
 
     public String getNaveAName() {

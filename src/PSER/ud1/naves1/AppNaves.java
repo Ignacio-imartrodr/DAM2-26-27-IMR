@@ -1,4 +1,4 @@
-package PSER.naves;
+package PSER.naves1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +65,7 @@ public class AppNaves {
         for (Nave nave : naves) {
             nave.start();
         }
+        //central.getMeteorito(naves[0]); //Comentar o descomentar para debug
     }
     
 }

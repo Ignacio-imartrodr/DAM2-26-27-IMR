@@ -1,4 +1,4 @@
-package PSER.naves;
+package PSER.naves1;
 
 public abstract class Nave extends Thread {
     
@@ -16,26 +16,18 @@ public abstract class Nave extends Thread {
     
     @Override
     public void run() {
-        Meteorito m = obtenerMeteoritObjetivo();
+        Meteorito m = central.getMeteorito(this);
         while (m != null) {
-            synchronized(m){
+            if (validarMeteorito(m)) {
                 meteorito = m;
                 tratarMeteorito.run();
             }
-            m = central.getMeteorito();
+            m = central.getMeteorito(this);
         }
     }
 
     protected abstract Runnable tratarMeteorito();
-    protected abstract boolean validarMeteorito(Meteorito meteorito);
-
-    protected Meteorito obtenerMeteoritObjetivo() {
-        Meteorito m;
-        do {
-            m = central.getMeteorito();
-        } while (m != null && !validarMeteorito(m));
-        return m;
-    }
+    public abstract boolean validarMeteorito(Meteorito meteorito);
 
     @Override
     public boolean equals(Object obj) {
@@ -43,7 +35,7 @@ public abstract class Nave extends Thread {
             return true;
         }
         if (getClass() == obj.getClass()) {
-            return this.getName().endsWith(getClass().cast(obj).getName());
+            return this.getName().equals(getClass().cast(obj).getName());
         }
         return false;
     }
