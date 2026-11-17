@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "PSER.ud1.A_examen.entregado.App",
+            "projectName": "DAM2-26-27-IMR_81cea406"
+        },
+        {
+            "type": "java",
             "name": "AppNaves",
             "request": "launch",
             "mainClass": "PSER.naves.AppNaves",
