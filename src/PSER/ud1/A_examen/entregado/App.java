@@ -5,7 +5,7 @@ public class App {
     final static int INGRESO_HUCHA = 10;
     final static int MIN_ESPERA = 10;
     final static int MAX_ESPERA = 100;
-    final static int NUM_RETIRADAS = 5;
+    final static int NUM_RETIRADAS = 10;
 
     public static void main(String[] args) {
         Hucha hucha = new Hucha();
