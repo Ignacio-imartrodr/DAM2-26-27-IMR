@@ -14,13 +14,11 @@ public class Hijo extends Familiar {
 
     @Override
     protected void manejarHucha() {
-        int retirada; 
-        int retiradaAnterior = 0;
-        int retiradaPreAnterior = 0;
+        int retirada = 0;
+        int retiradAnterior = 0;
         for (int i = 1; i <= NUM_RETIRADAS; i++) {
-            retirada = calculoRetirada(retiradaPreAnterior, retiradaAnterior);
-            retiradaPreAnterior = retiradaAnterior;
-            retiradaAnterior = retirada;
+            retiradAnterior = retirada;
+            retirada = calculoRetirada(retiradAnterior, retirada);
             synchronized(HUCHA){
                 HUCHA.retirar(retirada);
                 hablar("Semana " + getSemana() + " (retirada " + i + "), retiró: " + retirada);
