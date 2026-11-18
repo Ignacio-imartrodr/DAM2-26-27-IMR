@@ -5,6 +5,11 @@ public class Semana {
 
     public synchronized void incrementar(){
         num++;
+        notifyAll();
+    }
+
+    protected synchronized void esperarNuevaSemana() throws InterruptedException {
+        wait();
     }
 
     public int getNum(){

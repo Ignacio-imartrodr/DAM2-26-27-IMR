@@ -12,16 +12,18 @@ public class Progenitor extends Familiar {
     protected void manejarHucha() {
         boolean interrumpido = false;
         while (!isInterrupted() && !interrumpido) {
-            HUCHA.ingresar(INGRESO_HUCHA);
-            hablar("Ingresó "+ INGRESO_HUCHA + " en la semana " + getSemana() + ", Total actual: " + HUCHA.getCantidad());
-            synchronized(SEMANA){
-                try {
-                    SEMANA.wait();
-                } catch (InterruptedException e) {
-                    interrumpido = true;
+            try {
+                esperarNuevaSemana();
+            } catch (InterruptedException e) {
+                interrumpido = true;
+            }
+            if (!isInterrupted() && !interrumpido) {
+                synchronized(HUCHA){
+                    hablar(HUCHA.ingresar(INGRESO_HUCHA)
+                        ? "Ingresó "+ INGRESO_HUCHA + " en la semana " + getSemana() + ", Total actual: " + HUCHA.getCantidad()
+                        : "No pudo ingresar en la semana " + getSemana());
                 }
             }
         }
     }
-
 }

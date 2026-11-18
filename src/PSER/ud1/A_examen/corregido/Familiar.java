@@ -2,7 +2,7 @@ package PSER.ud1.A_examen.corregido;
 
 public abstract class Familiar extends Thread {
     protected final Hucha HUCHA;
-    protected final Semana SEMANA;
+    private final Semana SEMANA;
 
     public Familiar(String name, Hucha hucha, Semana semana) {
         super(name);
@@ -21,7 +21,12 @@ public abstract class Familiar extends Thread {
     protected void hablar(String msj){
         System.out.println(getName() + " > " + msj);
     }
+
     protected int getSemana(){
         return SEMANA.getNum();
+    }
+    
+    protected void esperarNuevaSemana() throws InterruptedException {
+        SEMANA.esperarNuevaSemana();
     }
 }

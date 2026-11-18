@@ -21,8 +21,10 @@ public class Hijo extends Familiar {
             retirada = calculoRetirada(retiradaPreAnterior, retiradaAnterior);
             retiradaPreAnterior = retiradaAnterior;
             retiradaAnterior = retirada;
-            HUCHA.retirar(retirada);
-            hablar("Semana " + getSemana() + " (retirada " + i + "), retiró: " + retirada);
+            synchronized(HUCHA){
+                HUCHA.retirar(retirada);
+                hablar("Semana " + getSemana() + " (retirada " + i + "), retiró: " + retirada);
+            }
             try {
                 Thread.sleep(MIN_ESPERA, MAX_ESPERA);
             } catch (InterruptedException e) {
