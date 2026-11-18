@@ -1,4 +1,4 @@
-package PSER.ud1.A_examen.entregado;
+package PSER.examenes.ud1.entregado;
 
 public class Hijo extends Hilo {
     final int MIN_ESPERA;

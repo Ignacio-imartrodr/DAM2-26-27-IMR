@@ -1,4 +1,4 @@
-package PSER.ud1.A_examen.entregado;
+package PSER.examenes.ud1.entregado;
 
 public abstract class Hilo extends Thread {
     protected final Hucha HUCHA;

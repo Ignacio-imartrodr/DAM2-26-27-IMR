@@ -1,4 +1,4 @@
-package PSER.ud1.A_examen.corregido;
+package PSER.examenes.ud1.corregido;
 
 public class Semana {
     int num = 0;

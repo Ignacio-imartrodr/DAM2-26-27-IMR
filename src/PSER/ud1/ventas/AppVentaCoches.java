@@ -1,4 +1,4 @@
-package PSER.ventas;
+package PSER.ud1.ventas;
 
 import java.util.Random;
 
